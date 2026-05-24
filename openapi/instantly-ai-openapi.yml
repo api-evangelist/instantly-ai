@@ -1,0 +1,199 @@
+openapi: 3.1.0
+info:
+  title: Instantly.ai API v2
+  description: |
+    Instantly.ai REST API v2 for managing email outreach campaigns. Authentication
+    is Bearer token (API keys are created/revoked in the Instantly dashboard).
+  version: "2"
+  contact:
+    name: Instantly Developer Docs
+    url: https://developer.instantly.ai/api-reference
+servers:
+  - url: https://api.instantly.ai
+security:
+  - BearerAuth: []
+paths:
+  /api/v2/campaigns:
+    get:
+      summary: List campaigns
+      operationId: listCampaigns
+      responses:
+        "200":
+          description: Campaign list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Campaign' }
+    post:
+      summary: Create a campaign
+      operationId: createCampaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Campaign' }
+      responses:
+        "201":
+          description: Created campaign
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Campaign' }
+  /api/v2/campaigns/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    get:
+      summary: Get a campaign
+      operationId: getCampaign
+      responses:
+        "200":
+          description: Campaign
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Campaign' }
+    patch:
+      summary: Update a campaign
+      operationId: updateCampaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Campaign' }
+      responses:
+        "200":
+          description: Updated campaign
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Campaign' }
+    delete:
+      summary: Delete a campaign
+      operationId: deleteCampaign
+      responses:
+        "204":
+          description: Deleted
+  /api/v2/campaigns/{id}/activate:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      summary: Activate campaign
+      operationId: activateCampaign
+      responses:
+        "200":
+          description: Activated
+  /api/v2/campaigns/{id}/pause:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      summary: Pause campaign
+      operationId: pauseCampaign
+      responses:
+        "200":
+          description: Paused
+  /api/v2/campaigns/search-by-contact:
+    get:
+      summary: Search campaigns by contact
+      operationId: searchCampaignsByContact
+      parameters:
+        - in: query
+          name: contact_email
+          schema: { type: string, format: email }
+      responses:
+        "200":
+          description: Matching campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Campaign' }
+  /api/v2/campaigns/{id}/share:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      summary: Share campaign
+      operationId: shareCampaign
+      responses:
+        "200":
+          description: Share link
+  /api/v2/campaigns/{id}/duplicate:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      summary: Duplicate campaign
+      operationId: duplicateCampaign
+      responses:
+        "201":
+          description: Duplicated campaign
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Campaign' }
+  /api/v2/campaigns/{id}/export:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      summary: Export campaign
+      operationId: exportCampaign
+      responses:
+        "200":
+          description: Export payload
+  /api/v2/campaigns/count-launched:
+    get:
+      summary: Count launched campaigns
+      operationId: countLaunchedCampaigns
+      responses:
+        "200":
+          description: Count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count: { type: integer }
+  /api/v2/campaigns/{id}/sending-status:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    get:
+      summary: Get campaign sending status
+      operationId: getSendingStatus
+      responses:
+        "200":
+          description: Sending status
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+  schemas:
+    Campaign:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        status: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
