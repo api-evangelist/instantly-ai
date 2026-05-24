@@ -205,6 +205,8 @@ common:
     url: https://x.com/Instantlydotai
   - type: YouTube
     url: https://www.youtube.com/@instantly-ai
+  - type: LLMsTxt
+    url: https://developer.instantly.ai/llms.txt
 integrations:
   - name: Clay
   - name: HubSpot
