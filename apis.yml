@@ -2,220 +2,211 @@ aid: instantly-ai
 url: https://raw.githubusercontent.com/api-evangelist/instantly-ai/refs/heads/main/apis.yml
 name: Instantly
 kind: company
-description: >-
-  Instantly is a cold email outbound platform that combines mailbox sending
-  infrastructure, email warmup, a B2B lead database, deliverability tools, and
-  a unified inbox for replies. The Instantly v2 REST API at
-  api.instantly.ai/api/v2 covers campaigns, leads, accounts, email
-  verification, inbox placement tests, webhooks, analytics, API keys, and
-  workspaces, with Bearer token authentication and scoped API keys.
+description: Instantly is a cold email outbound platform that combines mailbox sending
+  infrastructure, email warmup, a B2B lead database, deliverability tools, and a unified
+  inbox for replies. The Instantly v2 REST API at api.instantly.ai/api/v2 covers campaigns,
+  leads, accounts, email verification, inbox placement tests, webhooks, analytics,
+  API keys, and workspaces, with Bearer token authentication and scoped API keys.
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - Cold Email
-  - Outbound
-  - Sales
-  - Deliverability
-  - Lead Database
-  - Email Verification
-  - Webhooks
+- Cold Email
+- Outbound
+- Sales
+- Deliverability
+- Lead Database
+- Email Verification
+- Webhooks
 created: '2026-05-23'
 modified: '2026-05-23'
 specificationVersion: '0.19'
 apis:
-  - aid: instantly-ai:campaigns-api
-    name: Instantly Campaigns API
-    description: >-
-      REST endpoints to create, list, fetch, update, launch, pause, and
-      schedule cold email campaigns, plus manage sequences, A/B variants, and
-      sender mailbox assignments.
-    humanURL: https://developer.instantly.ai/api-reference/groups/campaign
-    baseURL: https://api.instantly.ai/api/v2/campaigns
-    tags:
-      - Campaigns
-      - Sequences
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/campaign
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:leads-api
-    name: Instantly Leads API
-    description: >-
-      Endpoints to create, list, fetch, update, and delete leads, manage lead
-      lists, move leads between campaigns, and update lead interest status.
-    humanURL: https://developer.instantly.ai/api-reference/groups/lead
-    baseURL: https://api.instantly.ai/api/v2/leads
-    tags:
-      - Leads
-      - Contacts
-      - Lists
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/lead
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:accounts-api
-    name: Instantly Accounts API
-    description: >-
-      Endpoints to add, list, update, and remove sender email accounts (SMTP,
-      Gmail, Microsoft), configure per-account sending limits, and toggle
-      warmup state.
-    humanURL: https://developer.instantly.ai/api-reference/groups/account
-    baseURL: https://api.instantly.ai/api/v2/accounts
-    tags:
-      - Email Accounts
-      - Mailboxes
-      - Warmup
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/account
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:email-verification-api
-    name: Instantly Email Verification API
-    description: >-
-      Single and bulk email address verification endpoints that check syntax,
-      MX records, deliverability, and risk scoring before sending.
-    humanURL: https://developer.instantly.ai/api-reference/groups/email-verification
-    baseURL: https://api.instantly.ai/api/v2/email-verification
-    tags:
-      - Verification
-      - Deliverability
-      - Email
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/email-verification
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:inbox-placement-api
-    name: Instantly Inbox Placement Test API
-    description: >-
-      Endpoints to run and read inbox placement tests across major mailbox
-      providers, used to measure deliverability and quantify spam-folder risk
-      before launching campaigns.
-    humanURL: https://developer.instantly.ai/api-reference/groups/inbox-placement-test
-    baseURL: https://api.instantly.ai/api/v2/inbox-placement-tests
-    tags:
-      - Inbox Placement
-      - Deliverability
-      - Testing
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/inbox-placement-test
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:webhooks-api
-    name: Instantly Webhooks API
-    description: >-
-      CRUD endpoints for webhook subscriptions on campaign, lead, and account
-      events (sent, opened, replied, bounced, unsubscribed) for streaming
-      activity to external systems.
-    humanURL: https://developer.instantly.ai/api-reference/groups/webhook
-    baseURL: https://api.instantly.ai/api/v2/webhooks
-    tags:
-      - Webhooks
-      - Events
-      - Subscriptions
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/webhook
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:analytics-api
-    name: Instantly Analytics API
-    description: >-
-      Campaign and account-level analytics — sent, open, click, reply, bounce,
-      unsubscribe, and interested-lead counts aggregated over time ranges.
-    humanURL: https://developer.instantly.ai/api-reference/groups/analytics
-    baseURL: https://api.instantly.ai/api/v2
-    tags:
-      - Analytics
-      - Reporting
-      - Metrics
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/analytics
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:api-keys-api
-    name: Instantly API Keys API
-    description: >-
-      Endpoints to create, list, scope, and revoke API keys — the v2 API uses
-      scoped Bearer tokens that can be restricted to specific resource
-      permissions.
-    humanURL: https://developer.instantly.ai/api-reference/groups/api-key
-    baseURL: https://api.instantly.ai/api/v2/api-keys
-    tags:
-      - API Keys
-      - Auth
-      - Scopes
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/api-key
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-  - aid: instantly-ai:workspaces-api
-    name: Instantly Workspaces API
-    description: >-
-      Endpoints for managing workspaces — the multi-tenant boundary used by
-      agencies and large teams to isolate campaigns, accounts, and billing.
-    humanURL: https://developer.instantly.ai/api-reference/groups/workspace
-    baseURL: https://api.instantly.ai/api/v2/workspaces
-    tags:
-      - Workspaces
-      - Multi-Tenant
-      - Agency
-    properties:
-      - type: Documentation
-        url: https://developer.instantly.ai/api-reference/groups/workspace
-      - type: OpenAPI
-        url: https://api.instantly.ai/openapi/api_v2.json
-common:
-  - type: Website
-    url: https://instantly.ai
-  - type: App
-    url: https://app.instantly.ai
+- aid: instantly-ai:campaigns-api
+  name: Instantly Campaigns API
+  description: REST endpoints to create, list, fetch, update, launch, pause, and schedule
+    cold email campaigns, plus manage sequences, A/B variants, and sender mailbox
+    assignments.
+  humanURL: https://developer.instantly.ai/api-reference/groups/campaign
+  baseURL: https://api.instantly.ai/api/v2/campaigns
+  tags:
+  - Campaigns
+  - Sequences
+  properties:
   - type: Documentation
-    url: https://developer.instantly.ai
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: GettingStarted
-    url: https://developer.instantly.ai/getting-started/getting-started
-  - type: Authentication
-    url: https://developer.instantly.ai/getting-started/authorization
+    url: https://developer.instantly.ai/api-reference/groups/campaign
   - type: OpenAPI
     url: https://api.instantly.ai/openapi/api_v2.json
-  - type: Pricing
-    url: https://instantly.ai/pricing
-  - type: Blog
-    url: https://instantly.ai/blog
-  - type: Help
-    url: https://help.instantly.ai
-  - type: SignUp
-    url: https://app.instantly.ai/auth/signup
-  - type: SignIn
-    url: https://app.instantly.ai/auth/login
-  - type: PrivacyPolicy
-    url: https://instantly.ai/privacy-policy
-  - type: TermsOfService
-    url: https://instantly.ai/terms
-  - type: LinkedIn
-    url: https://www.linkedin.com/company/instantlyai
-  - type: Twitter
-    url: https://x.com/Instantlydotai
-  - type: YouTube
-    url: https://www.youtube.com/@instantly-ai
-  - type: LLMsTxt
-    url: https://developer.instantly.ai/llms.txt
+  - url: graphql/instantly-ai-graphql.md
+    type: GraphQL
+- aid: instantly-ai:leads-api
+  name: Instantly Leads API
+  description: Endpoints to create, list, fetch, update, and delete leads, manage
+    lead lists, move leads between campaigns, and update lead interest status.
+  humanURL: https://developer.instantly.ai/api-reference/groups/lead
+  baseURL: https://api.instantly.ai/api/v2/leads
+  tags:
+  - Leads
+  - Contacts
+  - Lists
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/lead
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+- aid: instantly-ai:accounts-api
+  name: Instantly Accounts API
+  description: Endpoints to add, list, update, and remove sender email accounts (SMTP,
+    Gmail, Microsoft), configure per-account sending limits, and toggle warmup state.
+  humanURL: https://developer.instantly.ai/api-reference/groups/account
+  baseURL: https://api.instantly.ai/api/v2/accounts
+  tags:
+  - Email Accounts
+  - Mailboxes
+  - Warmup
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/account
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+- aid: instantly-ai:email-verification-api
+  name: Instantly Email Verification API
+  description: Single and bulk email address verification endpoints that check syntax,
+    MX records, deliverability, and risk scoring before sending.
+  humanURL: https://developer.instantly.ai/api-reference/groups/email-verification
+  baseURL: https://api.instantly.ai/api/v2/email-verification
+  tags:
+  - Verification
+  - Deliverability
+  - Email
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/email-verification
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+- aid: instantly-ai:inbox-placement-api
+  name: Instantly Inbox Placement Test API
+  description: Endpoints to run and read inbox placement tests across major mailbox
+    providers, used to measure deliverability and quantify spam-folder risk before
+    launching campaigns.
+  humanURL: https://developer.instantly.ai/api-reference/groups/inbox-placement-test
+  baseURL: https://api.instantly.ai/api/v2/inbox-placement-tests
+  tags:
+  - Inbox Placement
+  - Deliverability
+  - Testing
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/inbox-placement-test
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+- aid: instantly-ai:webhooks-api
+  name: Instantly Webhooks API
+  description: CRUD endpoints for webhook subscriptions on campaign, lead, and account
+    events (sent, opened, replied, bounced, unsubscribed) for streaming activity to
+    external systems.
+  humanURL: https://developer.instantly.ai/api-reference/groups/webhook
+  baseURL: https://api.instantly.ai/api/v2/webhooks
+  tags:
+  - Webhooks
+  - Events
+  - Subscriptions
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/webhook
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+- aid: instantly-ai:analytics-api
+  name: Instantly Analytics API
+  description: Campaign and account-level analytics — sent, open, click, reply, bounce,
+    unsubscribe, and interested-lead counts aggregated over time ranges.
+  humanURL: https://developer.instantly.ai/api-reference/groups/analytics
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Analytics
+  - Reporting
+  - Metrics
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/analytics
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+- aid: instantly-ai:api-keys-api
+  name: Instantly API Keys API
+  description: Endpoints to create, list, scope, and revoke API keys — the v2 API
+    uses scoped Bearer tokens that can be restricted to specific resource permissions.
+  humanURL: https://developer.instantly.ai/api-reference/groups/api-key
+  baseURL: https://api.instantly.ai/api/v2/api-keys
+  tags:
+  - API Keys
+  - Auth
+  - Scopes
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/api-key
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+- aid: instantly-ai:workspaces-api
+  name: Instantly Workspaces API
+  description: Endpoints for managing workspaces — the multi-tenant boundary used
+    by agencies and large teams to isolate campaigns, accounts, and billing.
+  humanURL: https://developer.instantly.ai/api-reference/groups/workspace
+  baseURL: https://api.instantly.ai/api/v2/workspaces
+  tags:
+  - Workspaces
+  - Multi-Tenant
+  - Agency
+  properties:
+  - type: Documentation
+    url: https://developer.instantly.ai/api-reference/groups/workspace
+  - type: OpenAPI
+    url: https://api.instantly.ai/openapi/api_v2.json
+common:
+- type: Website
+  url: https://instantly.ai
+- type: App
+  url: https://app.instantly.ai
+- type: Documentation
+  url: https://developer.instantly.ai
+- type: APIReference
+  url: https://developer.instantly.ai/api-reference
+- type: GettingStarted
+  url: https://developer.instantly.ai/getting-started/getting-started
+- type: Authentication
+  url: https://developer.instantly.ai/getting-started/authorization
+- type: OpenAPI
+  url: https://api.instantly.ai/openapi/api_v2.json
+- type: Pricing
+  url: https://instantly.ai/pricing
+- type: Blog
+  url: https://instantly.ai/blog
+- type: Help
+  url: https://help.instantly.ai
+- type: SignUp
+  url: https://app.instantly.ai/auth/signup
+- type: SignIn
+  url: https://app.instantly.ai/auth/login
+- type: PrivacyPolicy
+  url: https://instantly.ai/privacy-policy
+- type: TermsOfService
+  url: https://instantly.ai/terms
+- type: LinkedIn
+  url: https://www.linkedin.com/company/instantlyai
+- type: Twitter
+  url: https://x.com/Instantlydotai
+- type: YouTube
+  url: https://www.youtube.com/@instantly-ai
+- type: LLMsTxt
+  url: https://developer.instantly.ai/llms.txt
+- url: graphql/instantly-ai-graphql.md
+  type: GraphQL
 integrations:
-  - name: Clay
-  - name: HubSpot
-  - name: Salesforce
-  - name: Pipedrive
-  - name: Zapier
-  - name: Make
-  - name: n8n
-  - name: Slack
+- name: Clay
+- name: HubSpot
+- name: Salesforce
+- name: Pipedrive
+- name: Zapier
+- name: Make
+- name: n8n
+- name: Slack
 maintainers:
-  - FN: Kin Lane
-    email: kin@apievangelist.com
+- FN: Kin Lane
+  email: kin@apievangelist.com

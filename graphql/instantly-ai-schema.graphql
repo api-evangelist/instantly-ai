@@ -1,0 +1,1018 @@
+"""
+Instantly GraphQL Schema
+Cold email outreach and sales acceleration platform.
+Derived from the Instantly v2 REST API: https://developer.instantly.ai/
+"""
+
+# ---------------------------------------------------------------------------
+# Scalars
+# ---------------------------------------------------------------------------
+
+scalar DateTime
+scalar JSON
+
+# ---------------------------------------------------------------------------
+# Enums
+# ---------------------------------------------------------------------------
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  STOPPED
+}
+
+enum CampaignType {
+  OUTBOUND
+  SUBSEQUENCE
+}
+
+enum LeadStatus {
+  ACTIVE
+  INTERESTED
+  NOT_INTERESTED
+  MEETING_BOOKED
+  MEETING_COMPLETED
+  OUT_OF_OFFICE
+  WRONG_PERSON
+}
+
+enum EmailStatus {
+  SCHEDULED
+  SENT
+  OPENED
+  CLICKED
+  REPLIED
+  BOUNCED
+  UNSUBSCRIBED
+}
+
+enum AccountStatus {
+  ACTIVE
+  PAUSED
+  ERROR
+  WARMING_UP
+}
+
+enum WarmupStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+enum ReplyStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+enum VerificationResult {
+  VALID
+  RISKY
+  INVALID
+  UNKNOWN
+}
+
+enum WebhookEvent {
+  EMAIL_SENT
+  EMAIL_OPENED
+  EMAIL_CLICKED
+  EMAIL_REPLIED
+  EMAIL_BOUNCED
+  EMAIL_UNSUBSCRIBED
+  LEAD_INTERESTED
+  LEAD_STATUS_CHANGED
+  ACCOUNT_ERROR
+}
+
+enum EventType {
+  SENT
+  OPENED
+  CLICKED
+  REPLIED
+  BOUNCED
+  UNSUBSCRIBED
+  INTERESTED
+  STATUS_CHANGED
+}
+
+# ---------------------------------------------------------------------------
+# Campaign Domain
+# ---------------------------------------------------------------------------
+
+"""
+Top-level campaign resource representing a cold email outreach campaign.
+"""
+type Campaign {
+  id: ID!
+  name: String!
+  status: CampaignStatus!
+  type: CampaignType!
+  schedule: CampaignSchedule
+  emailAccounts: [EmailAccount!]
+  tags: [Tag!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Extended campaign representation including sequence steps and analytics summary.
+"""
+type CampaignDetails {
+  id: ID!
+  name: String!
+  status: CampaignStatus!
+  type: CampaignType!
+  schedule: CampaignSchedule
+  steps: [SequenceStep!]
+  subsequences: [Subsequence!]
+  emailAccounts: [EmailAccount!]
+  tags: [Tag!]
+  analytics: CampaignAnalytics
+  blacklist: CampaignBlacklist
+  variables: [Variable!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Sending window configuration for a campaign.
+"""
+type CampaignSchedule {
+  id: ID!
+  timezone: String!
+  daysOfWeek: [Int!]!
+  startHour: Int!
+  endHour: Int!
+  dailyLimit: Int
+  minIntervalMinutes: Int
+  maxIntervalMinutes: Int
+}
+
+"""
+Aggregated campaign-level engagement metrics.
+"""
+type CampaignAnalytics {
+  campaignId: ID!
+  sent: Int!
+  opened: Int!
+  clicked: Int!
+  replied: Int!
+  bounced: Int!
+  unsubscribed: Int!
+  interested: Int!
+  openRate: Float
+  replyRate: Float
+  bounceRate: Float
+}
+
+# ---------------------------------------------------------------------------
+# Sequence / Step Domain
+# ---------------------------------------------------------------------------
+
+"""
+Ordered step within a campaign sequence.
+"""
+type SequenceStep {
+  id: ID!
+  stepIndex: Int!
+  delayDays: Int!
+  variants: [EmailStep!]!
+}
+
+"""
+Concrete email step carrying subject, body, and A/B variant details.
+"""
+type EmailStep {
+  id: ID!
+  subject: String!
+  body: String!
+  isVariant: Boolean!
+  variantLabel: String
+}
+
+"""
+Delay-only step defining a wait interval between email steps.
+"""
+type WaitStep {
+  id: ID!
+  delayDays: Int!
+  delayHours: Int
+}
+
+"""
+Union of all possible sequence step types.
+"""
+union Step = SequenceStep | WaitStep
+
+"""
+A branching sequence triggered by lead behavior such as no reply after N days.
+"""
+type Subsequence {
+  id: ID!
+  campaignId: ID!
+  name: String!
+  triggerEvent: EventType!
+  steps: [SubsequenceStep!]!
+  createdAt: DateTime!
+}
+
+"""
+Individual step within a subsequence.
+"""
+type SubsequenceStep {
+  id: ID!
+  subsequenceId: ID!
+  stepIndex: Int!
+  delayDays: Int!
+  subject: String!
+  body: String!
+}
+
+# ---------------------------------------------------------------------------
+# Lead Domain
+# ---------------------------------------------------------------------------
+
+"""
+Core lead/contact record with email and campaign assignment.
+"""
+type Lead {
+  id: ID!
+  email: String!
+  firstName: String
+  lastName: String
+  companyName: String
+  website: String
+  phone: String
+  campaignId: ID
+  status: LeadStatus!
+  lists: [LeadList!]
+  tags: [Tag!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Extended lead with custom variables, activity history, and interest status.
+"""
+type LeadDetails {
+  id: ID!
+  email: String!
+  firstName: String
+  lastName: String
+  companyName: String
+  website: String
+  phone: String
+  customVariables: JSON
+  campaignId: ID
+  status: LeadStatus!
+  lists: [LeadList!]
+  tags: [Tag!]
+  activity: [LeadActivity!]
+  stats: LeadStats
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Named list of leads that can be associated with campaigns.
+"""
+type LeadList {
+  id: ID!
+  name: String!
+  leadCount: Int!
+  createdAt: DateTime!
+}
+
+"""
+Extended list representation with lead count and creation metadata.
+"""
+type ListDetails {
+  id: ID!
+  name: String!
+  description: String
+  leadCount: Int!
+  campaigns: [Campaign!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Timestamped event record for a single lead interaction.
+"""
+type LeadActivity {
+  id: ID!
+  leadId: ID!
+  campaignId: ID
+  eventType: EventType!
+  emailId: ID
+  timestamp: DateTime!
+  metadata: JSON
+}
+
+"""
+Aggregated per-lead engagement counts.
+"""
+type LeadStats {
+  leadId: ID!
+  emailsSent: Int!
+  emailsOpened: Int!
+  emailsClicked: Int!
+  emailsReplied: Int!
+  emailsBounced: Int!
+}
+
+# ---------------------------------------------------------------------------
+# Email / Reply Domain
+# ---------------------------------------------------------------------------
+
+"""
+A sent or scheduled email message tied to a campaign step and lead.
+"""
+type Email {
+  id: ID!
+  campaignId: ID!
+  leadId: ID!
+  fromAccount: EmailAccount
+  stepIndex: Int
+  status: EmailStatus!
+  subject: String!
+  scheduledAt: DateTime
+  sentAt: DateTime
+}
+
+"""
+Full email representation with headers, body, and tracking metadata.
+"""
+type EmailDetails {
+  id: ID!
+  campaignId: ID!
+  leadId: ID!
+  fromAccount: EmailAccount
+  stepIndex: Int
+  status: EmailStatus!
+  subject: String!
+  bodyHtml: String
+  bodyText: String
+  messageId: String
+  openedAt: DateTime
+  clickedAt: DateTime
+  repliedAt: DateTime
+  bouncedAt: DateTime
+  scheduledAt: DateTime
+  sentAt: DateTime
+}
+
+"""
+Inbound reply message from a lead, surfaced in the unified inbox.
+"""
+type Reply {
+  id: ID!
+  leadId: ID!
+  campaignId: ID
+  fromEmail: String!
+  subject: String!
+  status: ReplyStatus!
+  receivedAt: DateTime!
+}
+
+"""
+Full reply with threading context and read/unread state.
+"""
+type ReplyDetails {
+  id: ID!
+  leadId: ID!
+  campaignId: ID
+  fromEmail: String!
+  toEmail: String!
+  subject: String!
+  bodyHtml: String
+  bodyText: String
+  threadId: String
+  inReplyToMessageId: String
+  status: ReplyStatus!
+  receivedAt: DateTime!
+  readAt: DateTime
+}
+
+"""
+Unsent draft reply composed by the user within the unified inbox.
+"""
+type Draft {
+  id: ID!
+  replyId: ID
+  leadId: ID!
+  subject: String!
+  bodyHtml: String
+  bodyText: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# ---------------------------------------------------------------------------
+# Account / Mailbox Domain
+# ---------------------------------------------------------------------------
+
+"""
+SMTP, Gmail, or Microsoft mailbox configured as a campaign sender.
+"""
+type EmailAccount {
+  id: ID!
+  email: String!
+  firstName: String
+  lastName: String
+  provider: String
+  status: AccountStatus!
+  dailyLimit: Int!
+  warmup: Warmup
+  tags: [Tag!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Alias for EmailAccount at the top-level query surface.
+"""
+type Account {
+  id: ID!
+  email: String!
+  status: AccountStatus!
+  dailyLimit: Int!
+  provider: String
+  warmupActive: Boolean!
+  createdAt: DateTime!
+}
+
+"""
+Per-account sending volume and deliverability metrics.
+"""
+type AccountStats {
+  accountId: ID!
+  emailsSentToday: Int!
+  emailsSentThisWeek: Int!
+  bounceRate: Float
+  replyRate: Float
+  warmupEmailsSent: Int
+}
+
+# ---------------------------------------------------------------------------
+# Warmup Domain
+# ---------------------------------------------------------------------------
+
+"""
+Warmup configuration attached to an email account.
+"""
+type Warmup {
+  id: ID!
+  accountId: ID!
+  status: WarmupStatus!
+  dailyTarget: Int!
+  schedule: WarmupSchedule
+}
+
+"""
+Extended warmup with ramp schedule, daily targets, and current progress.
+"""
+type WarmupDetails {
+  id: ID!
+  accountId: ID!
+  status: WarmupStatus!
+  dailyTarget: Int!
+  currentDailyVolume: Int!
+  daysCompleted: Int!
+  startedAt: DateTime
+  schedule: WarmupSchedule
+  replyRateTarget: Float
+}
+
+"""
+Daily send/receive targets and increment rate for the warmup ramp.
+"""
+type WarmupSchedule {
+  startVolume: Int!
+  maxVolume: Int!
+  incrementPerDay: Int!
+  weekdaysOnly: Boolean!
+}
+
+# ---------------------------------------------------------------------------
+# Organization / Taxonomy Domain
+# ---------------------------------------------------------------------------
+
+"""
+Label applied to campaigns or leads for filtering and segmentation.
+"""
+type Tag {
+  id: ID!
+  name: String!
+  color: String
+  createdAt: DateTime!
+}
+
+"""
+Collection of leads (query-surface alias for LeadList).
+"""
+type List {
+  id: ID!
+  name: String!
+  leadCount: Int!
+  createdAt: DateTime!
+}
+
+"""
+Unified reply inbox scoped to an account or workspace.
+"""
+type Inbox {
+  id: ID!
+  accountId: ID!
+  unreadCount: Int!
+  totalCount: Int!
+}
+
+"""
+Extended inbox with filter state and recent reply preview.
+"""
+type InboxDetails {
+  id: ID!
+  accountId: ID!
+  unreadCount: Int!
+  totalCount: Int!
+  replies: [Reply!]
+  filterStatus: ReplyStatus
+}
+
+# ---------------------------------------------------------------------------
+# Deliverability Domain
+# ---------------------------------------------------------------------------
+
+"""
+Workspace-wide email address or domain suppression entry.
+"""
+type GlobalBlacklist {
+  id: ID!
+  workspaceId: ID!
+  value: String!
+  type: String!
+  createdAt: DateTime!
+}
+
+"""
+Per-campaign email address or domain suppression entry.
+"""
+type CampaignBlacklist {
+  id: ID!
+  campaignId: ID!
+  value: String!
+  type: String!
+  createdAt: DateTime!
+}
+
+"""
+Abstract blacklist record union.
+"""
+union Blacklist = GlobalBlacklist | CampaignBlacklist
+
+"""
+Unsubscribe event record linked to a lead and campaign.
+"""
+type Unsubscribe {
+  id: ID!
+  email: String!
+  campaignId: ID
+  unsubscribedAt: DateTime!
+  workspaceId: ID
+}
+
+"""
+Single address verification result with syntax, MX, and risk fields.
+"""
+type EmailVerification {
+  id: ID!
+  email: String!
+  result: VerificationResult!
+  syntaxValid: Boolean!
+  mxFound: Boolean!
+  disposable: Boolean!
+  roleAccount: Boolean!
+  riskScore: Float
+  verifiedAt: DateTime!
+}
+
+"""
+Batch email verification job with status and result counts.
+"""
+type BulkVerification {
+  id: ID!
+  status: String!
+  totalCount: Int!
+  validCount: Int
+  riskyCount: Int
+  invalidCount: Int
+  unknownCount: Int
+  createdAt: DateTime!
+  completedAt: DateTime
+}
+
+# ---------------------------------------------------------------------------
+# Analytics Domain
+# ---------------------------------------------------------------------------
+
+"""
+Top-level analytics query result container.
+"""
+type Analytics {
+  campaignId: ID
+  accountId: ID
+  dateRangeStart: DateTime
+  dateRangeEnd: DateTime
+  summary: CampaignAnalytics
+  timeSeries: [AnalyticsDetails!]
+}
+
+"""
+Time-series data point for campaign metrics over a date range.
+"""
+type AnalyticsDetails {
+  date: String!
+  sent: Int!
+  opened: Int!
+  clicked: Int!
+  replied: Int!
+  bounced: Int!
+  unsubscribed: Int!
+  interested: Int!
+}
+
+# ---------------------------------------------------------------------------
+# Template / Variable Domain
+# ---------------------------------------------------------------------------
+
+"""
+Custom merge variable defined at workspace or campaign level.
+"""
+type Variable {
+  id: ID!
+  name: String!
+  defaultValue: String
+  scope: String!
+}
+
+"""
+Reusable email template with subject and body placeholders.
+"""
+type Template {
+  id: ID!
+  name: String!
+  subject: String!
+  body: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Extended template with usage stats and version history.
+"""
+type TemplateDetails {
+  id: ID!
+  name: String!
+  subject: String!
+  body: String!
+  usageCount: Int!
+  campaigns: [Campaign!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# ---------------------------------------------------------------------------
+# Integration / Auth Domain
+# ---------------------------------------------------------------------------
+
+"""
+Third-party integration record (Clay, HubSpot, Salesforce, Pipedrive, etc.).
+"""
+type Integration {
+  id: ID!
+  name: String!
+  provider: String!
+  connected: Boolean!
+  connectedAt: DateTime
+}
+
+"""
+Scoped API key record with name, permissions, and creation date.
+"""
+type APIKey {
+  id: ID!
+  name: String!
+  keyPrefix: String!
+  scopes: [String!]!
+  createdAt: DateTime!
+  lastUsedAt: DateTime
+}
+
+"""
+Short-lived session token used for OAuth-connected accounts.
+"""
+type Token {
+  accessToken: String!
+  tokenType: String!
+  expiresAt: DateTime
+}
+
+# ---------------------------------------------------------------------------
+# Webhook Domain
+# ---------------------------------------------------------------------------
+
+"""
+Webhook subscription with target URL and event filter list.
+"""
+type Webhook {
+  id: ID!
+  url: String!
+  events: [WebhookEvent!]!
+  secret: String
+  active: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# ---------------------------------------------------------------------------
+# Workspace Domain
+# ---------------------------------------------------------------------------
+
+"""
+Multi-tenant isolation boundary used by agencies and large teams.
+"""
+type Workspace {
+  id: ID!
+  name: String!
+  plan: String
+  createdAt: DateTime!
+}
+
+"""
+Extended workspace with member list, billing plan, and usage counters.
+"""
+type WorkspaceDetails {
+  id: ID!
+  name: String!
+  plan: String
+  memberCount: Int!
+  campaignCount: Int!
+  emailAccountCount: Int!
+  leadCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# ---------------------------------------------------------------------------
+# Inbox Placement Domain
+# ---------------------------------------------------------------------------
+
+"""
+A deliverability test run across major mailbox providers.
+"""
+type InboxPlacementTest {
+  id: ID!
+  subject: String!
+  body: String!
+  status: String!
+  results: [InboxPlacementResult!]
+  createdAt: DateTime!
+  completedAt: DateTime
+}
+
+"""
+Per-provider result for a placement test.
+"""
+type InboxPlacementResult {
+  provider: String!
+  inbox: Int!
+  spam: Int!
+  missing: Int!
+  inboxRate: Float
+}
+
+# ---------------------------------------------------------------------------
+# Event Domain
+# ---------------------------------------------------------------------------
+
+"""
+Generic event record for tracking campaign and lead interactions.
+"""
+type Event {
+  id: ID!
+  type: EventType!
+  campaignId: ID
+  leadId: ID
+  emailId: ID
+  accountId: ID
+  timestamp: DateTime!
+  metadata: JSON
+}
+
+# ---------------------------------------------------------------------------
+# Pagination
+# ---------------------------------------------------------------------------
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+  total: Int
+}
+
+type CampaignConnection {
+  nodes: [Campaign!]!
+  pageInfo: PageInfo!
+}
+
+type LeadConnection {
+  nodes: [Lead!]!
+  pageInfo: PageInfo!
+}
+
+type EmailAccountConnection {
+  nodes: [EmailAccount!]!
+  pageInfo: PageInfo!
+}
+
+# ---------------------------------------------------------------------------
+# Query
+# ---------------------------------------------------------------------------
+
+type Query {
+  campaign(id: ID!): CampaignDetails
+  campaigns(
+    status: CampaignStatus
+    tag: String
+    first: Int
+    after: String
+  ): CampaignConnection!
+
+  lead(id: ID!): LeadDetails
+  leads(
+    campaignId: ID
+    status: LeadStatus
+    listId: ID
+    first: Int
+    after: String
+  ): LeadConnection!
+
+  emailAccount(id: ID!): EmailAccount
+  emailAccounts(
+    status: AccountStatus
+    first: Int
+    after: String
+  ): EmailAccountConnection!
+
+  warmup(accountId: ID!): WarmupDetails
+
+  inbox(accountId: ID!): InboxDetails
+  replies(
+    accountId: ID
+    status: ReplyStatus
+    first: Int
+    after: String
+  ): [Reply!]!
+
+  analytics(
+    campaignId: ID
+    accountId: ID
+    startDate: String
+    endDate: String
+  ): Analytics
+
+  webhook(id: ID!): Webhook
+  webhooks: [Webhook!]!
+
+  workspace(id: ID!): WorkspaceDetails
+  workspaces: [Workspace!]!
+
+  apiKeys: [APIKey!]!
+
+  verifyEmail(address: String!): EmailVerification
+  bulkVerification(jobId: ID!): BulkVerification
+
+  inboxPlacementTest(id: ID!): InboxPlacementTest
+  inboxPlacementTests(first: Int, after: String): [InboxPlacementTest!]!
+
+  tags: [Tag!]!
+  lists: [ListDetails!]!
+  templates: [Template!]!
+  integrations: [Integration!]!
+  globalBlacklist: [GlobalBlacklist!]!
+  unsubscribes(campaignId: ID, first: Int, after: String): [Unsubscribe!]!
+}
+
+# ---------------------------------------------------------------------------
+# Mutations
+# ---------------------------------------------------------------------------
+
+input CreateCampaignInput {
+  name: String!
+  type: CampaignType
+  scheduleId: ID
+  emailAccountIds: [ID!]
+  tagIds: [ID!]
+}
+
+input UpdateCampaignInput {
+  name: String
+  scheduleId: ID
+  emailAccountIds: [ID!]
+  tagIds: [ID!]
+}
+
+input CreateLeadInput {
+  email: String!
+  firstName: String
+  lastName: String
+  companyName: String
+  website: String
+  phone: String
+  campaignId: ID
+  customVariables: JSON
+}
+
+input UpdateLeadInput {
+  firstName: String
+  lastName: String
+  companyName: String
+  website: String
+  phone: String
+  status: LeadStatus
+  customVariables: JSON
+}
+
+input AddEmailAccountInput {
+  email: String!
+  firstName: String
+  lastName: String
+  smtpHost: String
+  smtpPort: Int
+  smtpUsername: String
+  smtpPassword: String
+  provider: String
+  dailyLimit: Int
+}
+
+input CreateWebhookInput {
+  url: String!
+  events: [WebhookEvent!]!
+  secret: String
+}
+
+input CreateAPIKeyInput {
+  name: String!
+  scopes: [String!]!
+}
+
+input CreateTemplateInput {
+  name: String!
+  subject: String!
+  body: String!
+}
+
+type Mutation {
+  createCampaign(input: CreateCampaignInput!): CampaignDetails
+  updateCampaign(id: ID!, input: UpdateCampaignInput!): CampaignDetails
+  deleteCampaign(id: ID!): Boolean
+  launchCampaign(id: ID!): Campaign
+  pauseCampaign(id: ID!): Campaign
+
+  createLead(input: CreateLeadInput!): Lead
+  updateLead(id: ID!, input: UpdateLeadInput!): Lead
+  deleteLead(id: ID!): Boolean
+  moveLead(leadId: ID!, toCampaignId: ID!): Lead
+
+  addEmailAccount(input: AddEmailAccountInput!): EmailAccount
+  updateEmailAccount(id: ID!, dailyLimit: Int, firstName: String, lastName: String): EmailAccount
+  removeEmailAccount(id: ID!): Boolean
+  startWarmup(accountId: ID!): Warmup
+  pauseWarmup(accountId: ID!): Warmup
+
+  createWebhook(input: CreateWebhookInput!): Webhook
+  updateWebhook(id: ID!, url: String, events: [WebhookEvent!]): Webhook
+  deleteWebhook(id: ID!): Boolean
+
+  createAPIKey(input: CreateAPIKeyInput!): APIKey
+  revokeAPIKey(id: ID!): Boolean
+
+  addToGlobalBlacklist(value: String!, type: String!): GlobalBlacklist
+  removeFromGlobalBlacklist(id: ID!): Boolean
+  addToCampaignBlacklist(campaignId: ID!, value: String!, type: String!): CampaignBlacklist
+
+  createTemplate(input: CreateTemplateInput!): Template
+  updateTemplate(id: ID!, name: String, subject: String, body: String): Template
+  deleteTemplate(id: ID!): Boolean
+
+  replyToLead(leadId: ID!, subject: String!, body: String!, fromAccountId: ID!): Reply
+  markReplyRead(id: ID!): Reply
+  archiveReply(id: ID!): Reply
+
+  createInboxPlacementTest(subject: String!, body: String!, accountIds: [ID!]!): InboxPlacementTest
+  verifyEmailBulk(emails: [String!]!): BulkVerification
+}
