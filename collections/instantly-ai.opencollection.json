@@ -1,0 +1,237 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Instantly.ai API v2",
+    "version": "2"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "List campaigns",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "https://api.instantly.ai/api/v2/campaigns"
+      },
+      "docs": "List campaigns"
+    },
+    {
+      "info": {
+        "name": "Create a campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/campaigns",
+        "body": {
+          "type": "json",
+          "data": "{}"
+        }
+      },
+      "docs": "Create a campaign"
+    },
+    {
+      "info": {
+        "name": "Get a campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Get a campaign"
+    },
+    {
+      "info": {
+        "name": "Update a campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        }
+      },
+      "docs": "Update a campaign"
+    },
+    {
+      "info": {
+        "name": "Delete a campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Delete a campaign"
+    },
+    {
+      "info": {
+        "name": "Activate campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id/activate",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Activate campaign"
+    },
+    {
+      "info": {
+        "name": "Pause campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id/pause",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Pause campaign"
+    },
+    {
+      "info": {
+        "name": "Search campaigns by contact",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "https://api.instantly.ai/api/v2/campaigns/search-by-contact",
+        "params": [
+          {
+            "name": "contact_email",
+            "value": "",
+            "type": "query"
+          }
+        ]
+      },
+      "docs": "Search campaigns by contact"
+    },
+    {
+      "info": {
+        "name": "Share campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id/share",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Share campaign"
+    },
+    {
+      "info": {
+        "name": "Duplicate campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id/duplicate",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Duplicate campaign"
+    },
+    {
+      "info": {
+        "name": "Export campaign",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id/export",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Export campaign"
+    },
+    {
+      "info": {
+        "name": "Count launched campaigns",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "https://api.instantly.ai/api/v2/campaigns/count-launched"
+      },
+      "docs": "Count launched campaigns"
+    },
+    {
+      "info": {
+        "name": "Get campaign sending status",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "https://api.instantly.ai/api/v2/campaigns/:id/sending-status",
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ]
+      },
+      "docs": "Get campaign sending status"
+    }
+  ],
+  "bundled": true
+}
