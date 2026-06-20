@@ -7,7 +7,7 @@ description: Instantly is a cold email outbound platform that combines mailbox s
   inbox for replies. The Instantly v2 REST API at api.instantly.ai/api/v2 covers campaigns,
   leads, accounts, email verification, inbox placement tests, webhooks, analytics,
   API keys, and workspaces, with Bearer token authentication and scoped API keys.
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Cold Email
 - Outbound
