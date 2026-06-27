@@ -2,10 +2,10 @@
   "repo": "instantly-ai",
   "feeds": [
     {
-      "source": "https://instantly.ai/blog/feed",
-      "feed_url": "https://instantly.ai/blog/feed",
+      "source": "https://instantly.ai/blog/feed/",
+      "feed_url": "https://instantly.ai/blog/feed/",
       "title": "",
-      "saved": 15,
+      "saved": 7,
       "method": "feed"
     },
     {
@@ -16,6 +16,6 @@
       "method": "none"
     }
   ],
-  "post_count": 18,
-  "fetched": "2026-06-14T20:42:17Z"
+  "post_count": 28,
+  "fetched": "2026-06-27T12:03:07Z"
 }

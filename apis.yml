@@ -180,9 +180,9 @@ common:
   url: https://instantly.ai/blog
 - type: Help
   url: https://help.instantly.ai
-- type: SignUp
+- type: Signup
   url: https://app.instantly.ai/auth/signup
-- type: SignIn
+- type: Login
   url: https://app.instantly.ai/auth/login
 - type: PrivacyPolicy
   url: https://instantly.ai/privacy-policy
@@ -194,7 +194,7 @@ common:
   url: https://x.com/Instantlydotai
 - type: YouTube
   url: https://www.youtube.com/@instantly-ai
-- type: LLMsTxt
+- type: LlmsText
   url: https://developer.instantly.ai/llms.txt
 - url: graphql/instantly-ai-graphql.md
   type: GraphQL
