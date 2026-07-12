@@ -160,6 +160,10 @@ apis:
   - type: OpenAPI
     url: https://api.instantly.ai/openapi/api_v2.json
 common:
+- type: DomainSecurity
+  url: security/instantly-ai-domain-security.yml
+- type: Authentication
+  url: authentication/instantly-ai-authentication.yml
 - type: Website
   url: https://instantly.ai
 - type: App
