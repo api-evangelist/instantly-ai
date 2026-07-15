@@ -160,6 +160,8 @@ apis:
   - type: OpenAPI
     url: https://api.instantly.ai/openapi/api_v2.json
 common:
+- type: AgenticAccess
+  url: agentic-access/instantly-ai-agentic-access.yml
 - type: DomainSecurity
   url: security/instantly-ai-domain-security.yml
 - type: Authentication
