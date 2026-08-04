@@ -1,0 +1,14 @@
+{
+  "provider": "instantly-ai",
+  "sources": [
+    "instantly-ai-campaigns-api-openapi.yml"
+  ],
+  "outputs": [
+    "instantly-ai-campaigns-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
