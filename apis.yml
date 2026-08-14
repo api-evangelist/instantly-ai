@@ -4,22 +4,33 @@ name: Instantly
 kind: company
 description: Instantly is a cold email outbound platform that combines mailbox sending
   infrastructure, email warmup, a B2B lead database, deliverability tools, and a unified
-  inbox for replies. The Instantly v2 REST API at api.instantly.ai/api/v2 covers campaigns,
-  leads, accounts, email verification, inbox placement tests, webhooks, analytics,
-  API keys, and workspaces, with Bearer token authentication and scoped API keys.
+  inbox for replies. The Instantly v2 REST API at api.instantly.ai/api/v2 publishes a
+  173-operation OpenAPI 3.1 covering campaigns and subsequences, leads and lead lists,
+  sending accounts and warmup, email verification, inbox placement tests, SuperSearch
+  enrichment, blocklists, custom tags, audit logs, background jobs, webhooks, analytics,
+  API keys, workspaces and workspace groups. Authentication is a scoped Bearer API key
+  backed by a full OAuth 2.0 authorization server with 178 published scopes, PKCE and
+  dynamic client registration. Instantly also runs a hosted remote MCP server, publishes
+  an A2A agent card, an llms.txt and first-party Agent Skills.
 accessModel:
-  pricing: free
+  pricing: paid
   onboarding: self-serve
   trial: false
-  try_now: true
+  try_now: false
   public: false
-  label: Free · Self-serve signup
+  label: Paid plan required · Self-serve signup
   confidence: high
   source:
   - plans
   - authentication
-  generated: '2026-07-22'
+  - openapi
+  generated: '2026-08-13'
   method: derived
+  note: >-
+    Corrected from "free" on 2026-08-13. Instantly publishes no free plan — the pricing page starts
+    at $47/month — and API access is gated on a paid subscription: 170 of the 173 operations in the
+    published OpenAPI document a 402 response meaning "the workspace does not have an active paid
+    plan". Signup is self-serve, but an API key cannot be exercised without paying.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/instantly-ai.png
 tags:
 - Cold Email
@@ -30,9 +41,35 @@ tags:
 - Email Verification
 - Webhooks
 created: '2026-05-23'
-modified: '2026-05-23'
+modified: '2026-08-13'
 specificationVersion: '0.19'
 apis:
+- aid: instantly-ai:instantly-ai-api-v2
+  name: Instantly API v2
+  description: The full Instantly REST API v2 — 129 paths, 173 operations across 28 resource
+    groups, published as OpenAPI 3.1.0 by Instantly at api.instantly.ai/openapi/api_v2.json.
+    Every operation carries a unique operationId, a summary and documented 401/402/404/429
+    responses.
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Campaigns
+  - Leads
+  - Accounts
+  - Email Verification
+  - Deliverability
+  - Analytics
+  - Webhooks
+  - Workspaces
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-api-v2-openapi.yml
+  - type: Overlay
+    url: overlays/instantly-ai-api-v2-overlay.yaml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
 - aid: instantly-ai:instantly-ai-campaigns-api
   name: Instantly Campaigns API
   description: The Campaigns API from Instantly — 10 operation(s) for campaigns.
@@ -45,8 +82,6 @@ apis:
     url: openapi/instantly-ai-campaigns-api-openapi.yml
   - type: Documentation
     url: https://developer.instantly.ai/api-reference/groups/campaign
-  - type: GraphQL
-    url: graphql/instantly-ai-graphql.md
   - type: Documentation
     url: https://developer.instantly.ai/api-reference/groups/lead
   - type: Documentation
@@ -106,8 +141,60 @@ common:
   url: https://www.youtube.com/@instantly-ai
 - type: LlmsText
   url: https://developer.instantly.ai/llms.txt
-- url: graphql/instantly-ai-graphql.md
-  type: GraphQL
+- type: LLMsTxt
+  url: llms/instantly-ai-llms.txt
+- type: DeveloperPortal
+  url: https://developer.instantly.ai
+- type: Quickstart
+  url: https://developer.instantly.ai/quickstart
+- type: Support
+  url: https://help.instantly.ai
+- type: Community
+  url: https://developer.instantly.ai/getting-started/slack-channel
+- type: SignUp
+  url: https://app.instantly.ai/auth/signup
+- type: GitHubOrganization
+  url: https://github.com/Instantly-ai
+- type: Packages
+  url: packages/instantly-ai-packages.yml
+- type: SDKs
+  url: packages/instantly-ai-packages.yml
+- type: CLI
+  url: cli/instantly-ai-cli.yml
+- type: WellKnown
+  url: well-known/instantly-ai-well-known.yml
+- type: MCPServer
+  url: mcp/instantly-ai-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/instantly-ai-tool-crosswalk.yml
+- type: AgentCard
+  url: a2a/instantly-ai-a2a.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: OAuthScopes
+  url: scopes/instantly-ai-scopes.yml
+- type: Conventions
+  url: conventions/instantly-ai-conventions.yml
+- type: ErrorCatalog
+  url: errors/instantly-ai-problem-types.yml
+- type: Conformance
+  url: conformance/instantly-ai-conformance.yml
+- type: Lifecycle
+  url: lifecycle/instantly-ai-lifecycle.yml
+- type: Deprecation
+  url: https://developer.instantly.ai/guides/api-v1-migration
+- type: Webhooks
+  url: asyncapi/instantly-ai-webhooks.yml
+- type: DataModel
+  url: data-model/instantly-ai-data-model.yml
+- type: Overlay
+  url: overlays/instantly-ai-api-v2-overlay.yaml
+- type: Plans
+  url: plans/instantly-ai-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/instantly-ai-rate-limits.yml
+- type: FinOps
+  url: finops/instantly-ai-finops.yml
 integrations:
 - name: Clay
 - name: HubSpot
@@ -120,3 +207,8 @@ integrations:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 23
+  pass: local-v1
