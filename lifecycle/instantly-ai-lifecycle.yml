@@ -1,0 +1,62 @@
+generated: '2026-08-13'
+method: searched
+source: https://developer.instantly.ai/guides/api-v1-migration
+also:
+- https://developer.instantly.ai/api-reference/introduction
+- openapi/instantly-ai-api-v2-openapi.yml
+versioning:
+  scheme: uri-path
+  current: v2
+  path_prefix: /api/v2
+  spec_version: 2.0.0
+  docs: https://developer.instantly.ai/api-reference/introduction
+  note: >-
+    Version lives in the path. There is no version header, no date-pinning, and no per-version
+    changelog. API v2 is a clean break from v1 — the introduction states the two are NOT compatible
+    and a v2 key is required.
+deprecation:
+  policy_url: https://developer.instantly.ai/guides/api-v1-migration
+  announced: true
+  sunset_header: false
+  deprecation_header: false
+  detail: >-
+    Instantly ran a real, dated deprecation: API v1 was deprecated on January 19, 2026, announced in
+    the migration guide with a full v1-to-v2 endpoint mapping table covering campaigns, analytics,
+    leads, accounts and unibox. Existing v1-based integrations (Zapier, Make and similar) were
+    explicitly promised no disruption. What is missing is the machine-readable half — no RFC 8594
+    Sunset or Deprecation response headers are documented or observed, and no operation in the
+    173-operation v2 spec carries `deprecated: true`, so an agent cannot detect an impending removal
+    from a response.
+  events:
+  - {version: v1, event: deprecated, date: '2026-01-19', source: 'https://developer.instantly.ai/guides/api-v1-migration'}
+  legacy_docs: https://app.theneo.io/instantly-ai/instantlyapidocs/introduction
+deprecated_operations: []
+sla:
+  url: null
+  uptime_target: null
+  note: No published SLA or uptime commitment was found on the pricing, terms or developer pages.
+status_page:
+  url: null
+  note: >-
+    NOT FOUND. instantly.ai/status and status.instantly.ai do not resolve, no status link appears on
+    the homepage or in the docs, and the plausible-looking instantly.instatus.com page was checked
+    and REJECTED — its components are named "instantly.exchange" and "api", so it belongs to a
+    different company. No StatusPage pointer is emitted.
+  probes:
+  - {url: 'https://status.instantly.ai', result: DNS does not resolve}
+  - {url: 'https://instantly.ai/status', http_status: 404}
+  - {url: 'https://instantly.instatus.com/v2/components.json', http_status: 200, result: 'different company (instantly.exchange)'}
+changelog:
+  url: null
+  note: >-
+    No dated API changelog was found. https://instantly.ai/changelog and
+    https://developer.instantly.ai/changelog both return 404, and the docs carry no release-notes
+    page. The only dated change record in Instantly's public estate is the CHANGELOG.md of the
+    instantly-skills repository, which versions the GTM Agent Skill (1.1.0, 2026-07-31), not the
+    API. No ChangeLog pointer is emitted.
+  probes:
+  - {url: 'https://instantly.ai/changelog', http_status: 404}
+  - {url: 'https://developer.instantly.ai/changelog', http_status: 404}
+support:
+  help_center: https://help.instantly.ai
+  developer_slack: https://developer.instantly.ai/getting-started/slack-channel

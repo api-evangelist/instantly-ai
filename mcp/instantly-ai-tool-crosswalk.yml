@@ -1,0 +1,282 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/instantly-ai-api-v2-openapi.yml + mcp/instantly-ai-mcp.yml + live probes of https://mcp.instantly.ai/
+  and https://developer.instantly.ai/mcp
+note: Instantly runs two remote MCP servers. The product server (mcp.instantly.ai) gates tools/list behind
+  OAuth, so its tool names are NOT known and NOTHING is mapped for it — no tool is invented to fill the
+  gap. The documentation server (developer.instantly.ai/mcp) answers anonymously and its three tools are
+  real, but none of them wraps a REST operation, so they are all mcp_only. Every REST operation therefore
+  lands in rest_only until the product server can be introspected with a key.
+surfaces:
+  openapi:
+    file: openapi/instantly-ai-api-v2-openapi.yml
+    operations: 173
+    gated: false
+    source: https://api.instantly.ai/openapi/api_v2.json
+  mcp_product:
+    url: https://mcp.instantly.ai/
+    gated: true
+    http_status: 401
+    note: tools/list requires an OAuth bearer token from https://api.instantly.ai
+  mcp_docs:
+    url: https://developer.instantly.ai/mcp
+    gated: false
+    http_status: 200
+    tools: 3
+  graphql:
+    endpoint: null
+    gated: false
+    note: Instantly publishes no GraphQL endpoint. POST introspection to https://api.instantly.ai/graphql,
+      https://api.instantly.ai/api/v2/graphql and https://app.instantly.ai/graphql all returned 404. The
+      graphql/ directory in this repo holds a CONCEPTUAL schema modeled from the REST API by an earlier
+      pass, not a provider surface, and is excluded from this crosswalk.
+crosswalk: []
+mcp_only:
+- tool: search_instantly_api_docs
+  server: instantly-api-docs
+  reason: Documentation search over the developer.instantly.ai knowledge base; no REST operation backs
+    it.
+- tool: query_docs_filesystem_instantly_api_docs
+  server: instantly-api-docs
+  reason: Read-only shell query against a virtualized in-memory filesystem of the docs; no REST operation
+    backs it.
+- tool: submit_feedback
+  server: instantly-api-docs
+  reason: Docs feedback submission handled by the documentation platform; no REST operation backs it.
+rest_only:
+- capability: APIKey
+  operations:
+  - createAPIKey
+  - deleteAPIKey
+  - listAPIKey
+- capability: Account
+  operations:
+  - createAccount
+  - deleteAccount
+  - disableWarmupForAccounts
+  - enableWarmupForAccounts
+  - getAccount
+  - getCtdStatus
+  - getDailyAccountAnalytics
+  - getWarmupAnalytics
+  - listAccount
+  - markAccountFixed
+  - moveAccounts
+  - patchAccount
+  - pauseAccount
+  - pauseAccounts
+  - resumeAccount
+  - testAccountVitals
+- capability: AccountCampaignMapping
+  operations:
+  - getAccountCampaignMapping
+- capability: AuditLog
+  operations:
+  - listAuditLog
+- capability: BackgroundJob
+  operations:
+  - getBackgroundJob
+  - listBackgroundJob
+- capability: BlockListEntry
+  operations:
+  - createBlockListEntry
+  - createblukBlockListEntry
+  - deleteBlockListEntry
+  - deleteallBlockListEntry
+  - deletebulkBlockListEntry
+  - downloadBlockListEntry
+  - getBlockListEntry
+  - listBlockListEntry
+  - patchBlockListEntry
+- capability: CRMActions
+  operations:
+  - deletePhoneNumber
+  - listPhoneNumbers
+- capability: Campaign
+  operations:
+  - activateCampaign
+  - addVariables
+  - countLaunched
+  - createCampaign
+  - createFromExport
+  - deleteCampaign
+  - duplicate
+  - exportCampaign
+  - getCampaign
+  - getCampaignAnalytics
+  - getCampaignAnalyticsOverview
+  - getCampaignSendingStatus
+  - getCampaignStepsAnalytics
+  - getDailyCampaignAnalytics
+  - listCampaign
+  - patchCampaign
+  - pauseCampaign
+  - searchByContact
+  - shareCampaign
+- capability: CampaignSubsequence
+  operations:
+  - createCampaignSubsequence
+  - deleteCampaignSubsequence
+  - duplicateSubsequence
+  - getCampaignSubsequence
+  - getSubsequenceAnalytics
+  - getSubsequenceSendingStatus
+  - getSubsequenceStepsAnalytics
+  - listCampaignSubsequence
+  - patchCampaignSubsequence
+  - pauseSubsequence
+  - resumeSubsequence
+- capability: CustomTag
+  operations:
+  - createCustomTag
+  - deleteCustomTag
+  - getCustomTag
+  - listCustomTag
+  - patchCustomTag
+  - toggleTagResource
+- capability: CustomTagMapping
+  operations:
+  - listCustomTagMapping
+- capability: DFYEmailAccountOrder
+  operations:
+  - cancelDFYEmailAccounts
+  - checkDomainsAvailability
+  - createDFYEmailAccountOrder
+  - generateSimilarDomains
+  - listDFYEmailAccountOrder
+  - listDFYEmailAccountOrdersAccounts
+  - preWarmedUpDomainsList
+- capability: Email
+  operations:
+  - countUnreadEmails
+  - deleteEmail
+  - forwardEmail
+  - getEmail
+  - listEmail
+  - markThreadAsRead
+  - patchEmail
+  - replyToEmail
+  - sendTestEmail
+- capability: EmailVerification
+  operations:
+  - checkVerificationStatus
+  - createEmailVerification
+- capability: InboxPlacementAnalytics
+  operations:
+  - getInboxPlacementAnalytics
+  - getInboxPlacementAnalyticsDeliverabilityInsights
+  - getInboxPlacementAnalyticsStatsByDate
+  - getInboxPlacementAnalyticsStatsByTestId
+  - listInboxPlacementAnalytics
+- capability: InboxPlacementBlacklistAndSpamAssassinReport
+  operations:
+  - getInboxPlacementBlacklistAndSpamAssassinReport
+  - listInboxPlacementBlacklistAndSpamAssassinReport
+- capability: InboxPlacementTest
+  operations:
+  - createInboxPlacementTest
+  - deleteInboxPlacementTest
+  - getInboxPlacementTest
+  - getInboxPlacementTestESPOptions
+  - listInboxPlacementTest
+  - patchInboxPlacementTest
+- capability: Lead
+  operations:
+  - bulkAddLeads
+  - bulkAssignLeads
+  - bulkDeleteLeads
+  - createLead
+  - deleteLead
+  - getLead
+  - listLeads
+  - mergeLeads
+  - moveLeadToSubsequence
+  - moveLeads
+  - patchLead
+  - removeLeadFromSubsequence
+  - updateLeadInterestStatus
+- capability: LeadLabel
+  operations:
+  - createLeadLabel
+  - deleteLeadLabel
+  - getLeadLabel
+  - listLeadLabel
+  - patchLeadLabel
+  - testAiReplyLabelLeadLabels
+- capability: LeadList
+  operations:
+  - createLeadList
+  - deleteLeadList
+  - getLeadList
+  - getVerificationStats
+  - listLeadList
+  - patchLeadList
+- capability: OAuth
+  operations:
+  - getOAuthSessionStatus
+  - initGoogleOAuth
+  - initMicrosoftOAuth
+- capability: SuperSearchEnrichment
+  operations:
+  - countLeadsFromSupersearch
+  - createAIEnrichment
+  - createSuperSearchEnrichment
+  - enrichLeadsFromSupersearch
+  - getAiEnrichmentForResource
+  - getEnrichmentForResource
+  - getEnrichmentHistory
+  - previewLeadsFromSupersearch
+  - runEnrichment
+  - signalKeywordsFacet
+  - updateEnrichmentSettingsForResource
+- capability: Webhook
+  operations:
+  - createWebhook
+  - deleteWebhook
+  - getWebhook
+  - listWebhook
+  - listWebhookEventTypes
+  - patchWebhook
+  - resumeWebhook
+  - testWebhook
+- capability: WebhookEvent
+  operations:
+  - getWebhookEvent
+  - getWebhookEventsSummary
+  - getWebhookEventsSummaryByDate
+  - listWebhookEvent
+- capability: Workspace
+  operations:
+  - addWorkspaceAgencyDomain
+  - cancelCurrentWorkspaceRemoval
+  - changeWorkspaceOwner
+  - deleteWorkspaceDomain
+  - getWorkspace
+  - getWorkspaceDomainInfo
+  - patchWorkspace
+  - scheduleCurrentWorkspaceRemoval
+- capability: WorkspaceBilling
+  operations:
+  - getWorkspacePlanDetails
+  - getWorkspaceSubscriptionDetails
+- capability: WorkspaceGroupMember
+  operations:
+  - createWorkspaceGroupMember
+  - deleteWorkspaceGroupMember
+  - getAdminWorkspaceGroupMember
+  - getWorkspaceGroupMember
+  - listWorkspaceGroupMember
+- capability: WorkspaceMember
+  operations:
+  - createWorkspaceMember
+  - deleteWorkspaceMember
+  - getWorkspaceMember
+  - listWorkspaceMember
+  - patchWorkspaceMember
+coverage:
+  tools_named: 3
+  tools_bound: 0
+  mcp_only: 3
+  product_server_tools_unknown: true
+  rest_operations_total: 173
+  rest_operations_with_a_tool: 0

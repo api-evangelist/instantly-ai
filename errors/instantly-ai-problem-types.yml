@@ -1,0 +1,112 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/instantly-ai-api-v2-openapi.yml
+docs:
+- https://developer.instantly.ai/quickstart
+- https://github.com/Instantly-ai/instantly-starter-kit/blob/main/docs/conventions.md
+format: custom-json
+rfc9457: false
+envelope:
+  media_type: application/json
+  schema:
+    statusCode: number
+    error: string
+    message: string
+  example:
+    statusCode: 404
+    error: Not Found
+    message: Resource not found
+  note: >-
+    Instantly does not use application/problem+json. Every documented error response in the
+    173-operation OpenAPI carries the same three-field JSON envelope, with statusCode and error
+    pinned by enum to the specific status. The first-party SDKs surface it as InstantlyApiError
+    with .status, .statusText and the parsed .payload.
+coverage:
+  operations: 173
+  operations_documenting_401: 170
+  operations_documenting_402: 170
+  operations_documenting_404: 170
+  operations_documenting_429: 172
+problems:
+- status: 400
+  error: Bad Request
+  title: Invalid request body
+  description: Missing required fields, or invalid field values.
+  occurrences: 31
+  remediation: Validate the request body against the operation schema before retrying; retrying unchanged will fail again.
+- status: 401
+  error: Unauthorized
+  title: Request is unauthorized
+  description: >-
+    The Authorization header is missing or invalid, or the API key has been revoked.
+  occurrences: 170
+  remediation: >-
+    Send Authorization: Bearer <api_key>. Keys are shown once at creation and cannot be recovered;
+    if lost or revoked, create a new one in Settings > Integrations > API Keys.
+- status: 402
+  error: Payment Required
+  title: Workspace has no active paid plan
+  description: >-
+    The request cannot be fulfilled because the workspace does not have an active paid plan.
+  occurrences: 170
+  remediation: >-
+    An Instantly paid plan is a precondition for API access at all. This is the single most
+    distinctive error in this API — 402 is documented on 170 of 173 operations, so an unpaid
+    workspace gets nothing from the API, not a reduced free tier.
+- status: 403
+  error: Forbidden
+  title: Forbidden
+  description: >-
+    The API key scope or workspace plan does not allow this action. Also returned by
+    getCampaignShareToken-style operations when the requested campaign is not shared.
+  occurrences: 2
+  remediation: Grant the key the scope the operation lists (see scopes/instantly-ai-scopes.yml) and retry.
+- status: 404
+  error: Not Found
+  title: The requested resource was not found
+  occurrences: 170
+  remediation: Confirm the id and that it belongs to the authenticated workspace.
+- status: 409
+  error: Conflict
+  title: Conflict with existing state
+  description: >-
+    Raised on duplicate normalized tag labels within a workspace, and on workspace-hierarchy changes
+    that conflict with an active workspace-group relationship.
+  occurrences: 6
+  remediation: Read the message field — the conflicting entity is named there.
+- status: 413
+  error: Payload Too Large
+  title: Analytics request too large
+  description: The analytics request is too large for the requested workspace or date range.
+  occurrences: 1
+  remediation: Narrow the date range or the campaign set and page through the results.
+- status: 429
+  error: Too Many Requests
+  title: Rate limit exceeded
+  description: >-
+    Workspace-wide limits of 100 requests/second and 6,000 requests/minute, shared across API v1 and
+    v2 and across all keys. Per-endpoint limits are lower on a handful of operations — the OAuth init
+    endpoints document "75 requests per minute per workspace or 150 requests per minute per IP".
+  occurrences: 172
+  remediation: >-
+    Honor Retry-After where present (OAuth init), otherwise back off exponentially. See
+    rate-limits/instantly-ai-rate-limits.yml. Repeated OAuth IP blocks escalate 30 min -> 2 h -> 24 h.
+- status: 500
+  error: Internal Server Error
+  title: Internal server error
+  occurrences: 1
+  remediation: Retry with backoff; the first-party SDKs auto-retry 5xx.
+- status: 503
+  error: Service Unavailable
+  title: Upstream provider temporarily unavailable
+  description: >-
+    The upstream mailbox provider (Google/Microsoft) is rate-limiting Instantly.
+  occurrences: 2
+  remediation: Retry after a short delay.
+gotchas:
+- >-
+  A few endpoints — sendTestEmail is the named example — can return HTTP 200 with an error described
+  in the response body. Parse the body, do not branch on the status line alone.
+- >-
+  Most writes return 200. Exceptions: shareCampaign returns 204; updateLeadInterestStatus and
+  bulkAssignLeads return 202 Accepted, which means accepted, not completed.

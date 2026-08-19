@@ -1,0 +1,99 @@
+generated: '2026-08-13'
+method: searched
+source: https://developer.instantly.ai/guides/webhook-events
+also:
+- https://github.com/Instantly-ai/instantly-starter-kit/blob/main/docs/api/webhooks.md
+- openapi/instantly-ai-api-v2-openapi.yml
+spec_type: null
+asyncapi_published: false
+asyncapi_note: >-
+  Instantly documents a complete webhook event surface — 17 named event types with a documented
+  payload schema, plus 12 REST operations for managing subscriptions — but publishes no AsyncAPI
+  document. Nothing was fabricated to fill the gap; this file is the captured webhook catalog and
+  the apis.yml pointer is type Webhooks, not AsyncAPI.
+transport: http-post
+subscription:
+  management_operations:
+  - listWebhook
+  - createWebhook
+  - getWebhook
+  - patchWebhook
+  - deleteWebhook
+  - testWebhook
+  - resumeWebhook
+  - listWebhookEventTypes
+  - listWebhookEvent
+  - getWebhookEvent
+  - getWebhookEventsSummary
+  - getWebhookEventsSummaryByDate
+  scopes:
+  - webhooks:read
+  - webhooks:create
+  - webhooks:update
+  - webhooks:delete
+  - webhook_events:read
+  required_field: target_hook_url
+  optional_fields:
+  - event_type
+  - campaign
+  - headers
+  detail: >-
+    Only target_hook_url is required. Scope a subscription with event_type (or "all_events") and
+    optionally to a single campaign. Subscriptions auto-disable after repeated delivery failures and
+    are re-enabled with resumeWebhook; testWebhook validates a receiver.
+security:
+  signature: none
+  detail: >-
+    No HMAC and no signature header. The only delivery authentication available is the optional
+    `headers` object set on the subscription, which the receiver must verify itself.
+gotcha: >-
+  Event-type naming differs between the subscription and the payload. Subscribe with e.g.
+  email_link_clicked or reply_received, but match on the payload's actual event_type value, e.g.
+  link_clicked or auto_reply_received. Custom workspace labels arrive as the raw label string.
+  listWebhookEventTypes enumerates the full set.
+payload:
+  content_type: application/json
+  base_fields:
+  - {name: timestamp, type: string, description: ISO timestamp when the event occurred}
+  - {name: event_type, type: string, description: Type of event}
+  - {name: workspace, type: string, description: UUID of the workspace}
+  - {name: campaign_id, type: string, description: UUID of the campaign}
+  - {name: campaign_name, type: string, description: Name of the campaign}
+  optional_fields:
+  - {name: lead_email, type: string}
+  - {name: email_account, type: string}
+  - {name: unibox_url, type: string, description: URL to view the conversation in Unibox (reply events only)}
+  - {name: step, type: integer, description: Step number in the campaign, starting at 1}
+  - {name: variant, type: integer, description: Variant number of the step, starting at 1}
+  - {name: is_first, type: boolean}
+  - {name: email_id, type: string, description: 'The reply_to_uuid — pass it to replyToEmail to respond in-thread'}
+  - {name: email_subject, type: string}
+  - {name: email_text, type: string}
+  - {name: email_html, type: string}
+  - {name: reply_text_snippet, type: string}
+  - {name: reply_subject, type: string}
+  - {name: reply_text, type: string}
+  - {name: reply_html, type: string}
+  note: Additional lead-data fields from the workspace database may appear as extra keys.
+event_count: 17
+events:
+- {name: email_sent, group: email, description: An email was sent}
+- {name: email_opened, group: email, description: A lead opened an email}
+- {name: reply_received, group: email, description: A reply was received from a lead}
+- {name: auto_reply_received, group: email, description: An auto-reply was received}
+- {name: link_clicked, group: email, description: A lead clicked a tracked link, subscribe as email_link_clicked}
+- {name: email_bounced, group: email, description: An email bounced}
+- {name: lead_unsubscribed, group: email, description: A lead unsubscribed}
+- {name: account_error, group: email, description: An account-level error occurred}
+- {name: campaign_completed, group: email, description: A campaign completed}
+- {name: lead_neutral, group: lead-status, description: Lead marked as neutral}
+- {name: lead_interested, group: lead-status, description: Lead marked as interested}
+- {name: lead_not_interested, group: lead-status, description: Lead marked as not interested}
+- {name: lead_meeting_booked, group: meeting, description: A meeting was booked}
+- {name: lead_meeting_completed, group: meeting, description: A meeting was completed}
+- {name: lead_closed, group: lead, description: Lead marked as closed}
+- {name: lead_out_of_office, group: lead, description: Lead is out of office}
+- {name: lead_wrong_person, group: lead, description: Lead marked as wrong person}
+custom_events:
+  supported: true
+  detail: Any custom label configured in the workspace is sent as the event_type value as-is.

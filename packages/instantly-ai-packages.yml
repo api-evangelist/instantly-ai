@@ -1,0 +1,119 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  npm registry (registry.npmjs.org), PyPI, and the Instantly-ai GitHub organization
+  (github.com/Instantly-ai)
+note: >-
+  Instantly's first-party SDKs are real and generated from the OpenAPI, but they are DISTRIBUTED BY
+  CLONE, not by registry. The JS package @instantly-ai/sdk and the Python package `instantly` live in
+  the Instantly-ai/instantly-starter-kit repository and are vendored into a project by the
+  create-instantly-app scaffolder; none of the three names resolves on npm or PyPI (all 404 on
+  2026-08-13). Their own README says so: "Not published yet — the kit is clone-based." The only
+  first-party artifact that IS on a registry is the n8n community node. Versions and dates below are
+  read from registry metadata where a registry exists, and from the repository otherwise.
+packages:
+- language: javascript
+  registry: npm
+  name: n8n-nodes-instantly
+  url: https://www.npmjs.com/package/n8n-nodes-instantly
+  install: npm install n8n-nodes-instantly
+  source: https://github.com/Instantly-ai/n8n-nodes-instantly
+  official: true
+  version: 0.1.7547
+  published: '2025-11-09'
+  license: MIT
+  description: >-
+    Official n8n community node for the Instantly API v2 — campaigns, accounts, leads, analytics and
+    Unibox, as n8n workflow operations.
+  note: >-
+    Maintained in the Instantly-ai GitHub org and published by the npm user brandon-instantly.
+    Last release 2025-11-09, roughly nine months before this pass.
+- language: javascript
+  registry: none
+  name: '@instantly-ai/sdk'
+  url: https://github.com/Instantly-ai/instantly-starter-kit/tree/main/js/sdk
+  install: clone Instantly-ai/instantly-starter-kit, or scaffold with npx create-instantly-app (vendors it into vendor/instantly-sdk)
+  official: true
+  version: null
+  published: null
+  note: >-
+    Checked registry.npmjs.org/@instantly-ai/sdk on 2026-08-13 — HTTP 404, the name is not published.
+    The package is generated from spec/openapi.yaml in the starter kit and is distributed by clone
+    only, so a consumer cannot pin a version and no release date exists to read. Typed TypeScript
+    client; free functions of the form fn(client, input); requires Node >= 18; auto-retries 429/5xx;
+    throws InstantlyApiError carrying {statusCode, error, message}.
+- language: python
+  registry: none
+  name: instantly
+  url: https://github.com/Instantly-ai/instantly-starter-kit/tree/main/python/sdk
+  install: clone Instantly-ai/instantly-starter-kit (python/sdk)
+  official: true
+  version: null
+  published: null
+  note: >-
+    Same clone-only distribution as the JS SDK. The PyPI name `instantly` IS taken, but by an
+    unrelated 2015 project templating tool by Timothy Crosley (instantly 1.0.2, homepage
+    instantly.pl) — it is NOT this company and must not be catalogued as an Instantly SDK.
+    pypi.org/pypi/instantly-ai/json and /instantly-sdk/json both 404.
+- language: javascript
+  registry: none
+  name: create-instantly-app
+  url: https://github.com/Instantly-ai/instantly-starter-kit/tree/main/create-instantly-app
+  install: clone and run node create-instantly-app/index.js
+  official: true
+  version: 0.1.0
+  published: null
+  license: MIT
+  description: >-
+    Scaffolder that generates a wrapper service on top of the Instantly API — SDK + AGENTS.md + docs
+    + a template.
+  note: >-
+    Version 0.1.0 read from create-instantly-app/package.json in the repository. registry.npmjs.org
+    /create-instantly-app returned 404 on 2026-08-13, so `npx create-instantly-app` does not resolve
+    despite the docs implying it will; there is no publish date to record.
+- language: javascript
+  registry: npm
+  name: instantly-mcp
+  url: https://www.npmjs.com/package/instantly-mcp
+  install: npx -y instantly-mcp
+  source: https://github.com/bcharleson/Instantly-MCP
+  official: false
+  version: 1.0.5
+  published: '2025-06-11'
+  description: MCP server for the Instantly v2 API (stdio).
+  note: >-
+    THIRD PARTY. Published from a personal GitHub account (bcharleson/Instantly-MCP), not from the
+    Instantly-ai organization, so it is not marked official even though the same npm user is a
+    maintainer of the official n8n node. Instantly's own MCP surface is the hosted remote server at
+    https://mcp.instantly.ai/ (see mcp/instantly-ai-mcp.yml), not this package. Last release
+    2025-06-11 — over a year stale relative to the API it wraps.
+- language: javascript
+  registry: npm
+  name: '@iflow-mcp/instantly-mcp'
+  url: https://www.npmjs.com/package/@iflow-mcp/instantly-mcp
+  official: false
+  version: 1.2.0
+  published: '2025-11-24'
+  description: Third-party multi-transport MCP server for Instantly.ai (stdio, SSE, DXT).
+  note: THIRD PARTY. Recorded for completeness; not affiliated with Instantly.
+- language: typescript
+  registry: none
+  name: '@activepieces/piece-instantly-ai'
+  url: https://www.npmjs.com/package/@activepieces/piece-instantly-ai
+  official: false
+  version: 0.1.7
+  published: '2026-08-04'
+  description: Activepieces integration piece for Instantly.
+  note: THIRD PARTY, published by the Activepieces project.
+registries_checked:
+- {registry: npm, result: 'n8n-nodes-instantly found; @instantly-ai/sdk 404; create-instantly-app 404'}
+- {registry: pypi, result: 'instantly-ai 404; instantly-sdk 404; instantly resolves to an unrelated project'}
+- {registry: rubygems, result: not checked — no Ruby SDK referenced anywhere in the docs or repos}
+- {registry: packagist, result: not checked — no PHP SDK referenced anywhere in the docs or repos}
+official_sdk_count: 4
+finding: >-
+  The abandonment signal here is not staleness, it is absence from the registries. Instantly ships
+  two genuinely first-party, spec-generated SDKs and a scaffolder, and publishes none of them, so
+  `npm install @instantly-ai/sdk` and `pip install instantly` both fail for every developer who
+  reads the docs. Publishing the three names is a small piece of work with an outsized effect on
+  how reachable this API is.

@@ -1,0 +1,114 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  openapi/instantly-ai-api-v2-openapi.yml, well-known/instantly-ai-oauth-authorization-server.json,
+  well-known/instantly-ai-mcp-oauth-protected-resource.json, a2a/instantly-ai-agent-card.json
+note: >-
+  Standards asserted from artifacts probed or harvested in this repo. Instantly publishes no
+  compliance program page (no trust centre, no SOC 2 / ISO 27001 claim was found), so no Compliance
+  pointer is emitted — see security/instantly-ai-vulnerability-disclosure absence below.
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: >-
+    openapi: 3.1.0 served at https://api.instantly.ai/openapi/api_v2.json — 129 paths, 173
+    operations, 30 component schemas, unique operationId on every operation.
+- id: oauth2
+  conforms: true
+  evidence: >-
+    Authorization server at https://api.instantly.ai with authorization_code and refresh_token
+    grants, code response type, and client_secret_post / client_secret_basic / none client auth.
+- id: rfc8414-authorization-server-metadata
+  conforms: true
+  evidence: https://api.instantly.ai/.well-known/oauth-authorization-server returns 200 with issuer, endpoints and 178 scopes_supported.
+- id: rfc9728-protected-resource-metadata
+  conforms: true
+  evidence: >-
+    https://mcp.instantly.ai/.well-known/oauth-protected-resource returns 200 naming
+    https://api.instantly.ai as the authorization server; the 401 from the MCP endpoint carries a
+    conformant WWW-Authenticate Bearer challenge with resource_metadata.
+- id: rfc7636-pkce
+  conforms: true
+  evidence: code_challenge_methods_supported = [S256]
+- id: rfc7591-dynamic-client-registration
+  conforms: true
+  evidence: registration_endpoint https://api.instantly.ai/oauth/register advertised in the authorization-server metadata.
+- id: rfc7009-token-revocation
+  conforms: true
+  evidence: revocation_endpoint https://api.instantly.ai/oauth/revoke
+- id: rfc7662-token-introspection
+  conforms: true
+  evidence: introspection_endpoint https://api.instantly.ai/oauth/introspect
+- id: rfc6750-bearer-token
+  conforms: true
+  evidence: >-
+    "Authorization: Bearer <api_key>" on every operation; securitySchemes ApiKeyAuth type http
+    scheme bearer.
+- id: mcp
+  conforms: true
+  evidence: >-
+    Two remote MCP servers respond on Instantly hosts — https://mcp.instantly.ai/ (OAuth-gated,
+    conformant challenge) and https://developer.instantly.ai/mcp (anonymous, 3 tools with JSON
+    Schema inputSchema).
+- id: a2a-agent-card
+  conforms: true
+  evidence: >-
+    https://developer.instantly.ai/.well-known/agent-card.json returns 200 with capabilities as an
+    object, protocolVersion 0.3 and skills as an array. Graded conformant in a2a/instantly-ai-a2a.yml
+    with one deviation (supportedInterfaces rather than additionalInterfaces).
+- id: agent-skills
+  conforms: true
+  evidence: >-
+    Provider-published skills at https://developer.instantly.ai/.well-known/agent-skills/instantly/skill.md
+    and in the MIT-licensed Instantly-ai/instantly-skills repository.
+- id: llms-txt
+  conforms: true
+  evidence: https://developer.instantly.ai/llms.txt returns 200 with 197 indexed pages, each carrying its required scopes.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors use a custom {statusCode, error, message} envelope over application/json. No
+    application/problem+json appears in the spec.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation headers documented; no operation carries deprecated:true despite a completed v1 deprecation.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on instantly.ai, api.instantly.ai, app.instantly.ai, developer.instantly.ai and mcp.instantly.ai.
+- id: ratelimit-headers
+  conforms: false
+  evidence: >-
+    No RateLimit-* or X-RateLimit-* response headers are documented. Retry-After appears only on the
+    OAuth sender-connect init endpoints.
+- id: idempotency-key
+  conforms: false
+  evidence: >-
+    Instantly's own conventions document states there is no idempotency-key mechanism; no
+    Idempotency-Key parameter exists in the spec.
+- id: cursor-pagination
+  conforms: true
+  evidence: limit (max 100) + starting_after -> next_starting_after across the list endpoints.
+- id: rfc8615-well-known-uris
+  conforms: true
+  evidence: Four real documents served under /.well-known/ across two Instantly hosts — see well-known/instantly-ai-well-known.yml.
+- id: openid-connect
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on every host; the authorization server is OAuth 2.0 only, no id_token.
+- id: asyncapi
+  conforms: false
+  evidence: >-
+    A real webhook event surface exists (17 documented event types) but no AsyncAPI document is
+    published. See asyncapi/instantly-ai-webhooks.yml.
+- id: webhook-signature
+  conforms: false
+  evidence: >-
+    No HMAC or signature is provided on webhook deliveries; the only delivery authentication is an
+    optional custom headers object set on the subscription.
+compliance_program:
+  published: false
+  certifications: []
+  note: >-
+    No trust centre, security page or certification claim was found. trust.instantly.ai does not
+    resolve; instantly.ai/security, /compliance, /gdpr and /security-policy all 404. A DPA does exist
+    at https://instantly.ai/dpa (HTTP 200) alongside the privacy policy and terms, but a DPA alone is
+    not a published compliance program, so no Compliance pointer is emitted.

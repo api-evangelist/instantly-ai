@@ -1,0 +1,110 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Instantly API v2
+  version: 1.0.0
+extends: openapi/instantly-ai-api-v2-openapi.yml
+x-generated: '2026-08-13'
+x-method: generated
+x-source: >-
+  Derived from artifacts in this repo — well-known/instantly-ai-oauth-authorization-server.json,
+  scopes/instantly-ai-scopes.yml, conventions/instantly-ai-conventions.yml,
+  rate-limits/instantly-ai-rate-limits.yml, errors/instantly-ai-problem-types.yml and
+  mcp/instantly-ai-mcp.yml. Never mutates the harvested spec at
+  openapi/_original/instantly-ai-api-v2-openapi.json.
+actions:
+- target: $.info
+  description: Name the API for what it is — the harvested spec titles itself "API Explorer".
+  update:
+    title: Instantly API v2
+    x-apievangelist-provider: instantly-ai
+    x-apievangelist-enriched: '2026-08-13'
+    contact:
+      name: Instantly Developer Docs
+      url: https://developer.instantly.ai
+    x-documentation: https://developer.instantly.ai
+    x-llms-txt: https://developer.instantly.ai/llms.txt
+- target: $.info
+  description: Record the runtime semantics Instantly documents outside the spec.
+  update:
+    x-conventions:
+      pagination:
+        style: cursor
+        params: [limit, starting_after]
+        response_field: next_starting_after
+        max_limit: 100
+      idempotency:
+        supported: false
+        note: Instantly publishes no idempotency-key mechanism; writes are not safe to retry blindly.
+      error_envelope:
+        media_type: application/json
+        fields: [statusCode, error, message]
+        rfc9457: false
+      multi_tenancy_header: x-as-workspace
+- target: $.info
+  description: Attach the published rate limits, which the spec does not express.
+  update:
+    x-rate-limits:
+      scope: workspace
+      requests_per_second: 100
+      requests_per_minute: 6000
+      shared_with_v1: true
+      exhaustion_status: 429
+      response_headers: []
+      retry_after_on: [initGoogleOAuth, initMicrosoftOAuth]
+      docs: https://developer.instantly.ai/getting-started/rate-limit
+- target: $.components.securitySchemes.ApiKeyAuth
+  description: Describe the bearer credential the spec declares bare.
+  update:
+    description: >-
+      Workspace API key created in Settings > Integrations > API Keys with scopes selected at
+      creation. Shown once, unrecoverable. Sent as Authorization: Bearer <key>.
+    x-scopes-doc: scopes/instantly-ai-scopes.yml
+- target: $.components.securitySchemes
+  description: >-
+    Add the OAuth 2.0 authorization server Instantly actually runs. It is discoverable at
+    https://api.instantly.ai/.well-known/oauth-authorization-server (RFC 8414, HTTP 200) and is the
+    credential the hosted MCP server challenges for, but it is absent from the published spec.
+  update:
+    OAuth2:
+      type: oauth2
+      description: Instantly OAuth 2.0 authorization server (RFC 8414 metadata, PKCE S256, dynamic client registration).
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.instantly.ai/oauth/authorize
+          tokenUrl: https://api.instantly.ai/oauth/token
+          refreshUrl: https://api.instantly.ai/oauth/token
+          scopes:
+            all:all: Full access to every resource in the workspace
+            all:read: Read access to every resource in the workspace
+            campaigns:all: Full access to campaigns
+            campaigns:read: Read access to campaigns
+            leads:all: Full access to leads
+            leads:read: Read access to leads
+            accounts:all: Full access to sending accounts
+            accounts:read: Read access to sending accounts
+            emails:read: Read access to emails
+            webhooks:all: Full access to webhook subscriptions
+      x-full-scope-list: scopes/instantly-ai-scopes.yml
+      x-scope-count: 178
+- target: $.info
+  description: Record the agent surfaces, none of which the spec mentions.
+  update:
+    x-agent-surfaces:
+      mcp:
+        product: https://mcp.instantly.ai/
+        product_auth: oauth
+        documentation: https://developer.instantly.ai/mcp
+        documentation_auth: none
+      agent_card: https://developer.instantly.ai/.well-known/agent-card.json
+      agent_skill: https://developer.instantly.ai/.well-known/agent-skills/instantly/skill.md
+      skills_repository: https://github.com/Instantly-ai/instantly-skills
+- target: $.info
+  description: Record the webhook event surface, which is documented but absent from the spec.
+  update:
+    x-webhooks:
+      documented: true
+      asyncapi: false
+      event_count: 17
+      docs: https://developer.instantly.ai/guides/webhook-events
+      signature: none
+      catalog: asyncapi/instantly-ai-webhooks.yml

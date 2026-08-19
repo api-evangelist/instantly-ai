@@ -1,5 +1,16 @@
 # Instantly GraphQL Schema
 
+> **Not a provider surface — modelled, not published.** Instantly ships no GraphQL API. On
+> 2026-08-13 `POST {__schema{queryType{name}}}` returned HTTP 404 at
+> `https://api.instantly.ai/graphql`, `https://api.instantly.ai/api/v2/graphql` and
+> `https://app.instantly.ai/graphql`. The schema in this directory is a conceptual model of the
+> REST domain authored by an earlier enrichment pass, useful for reasoning about the data model
+> but not callable. The `type: GraphQL` pointers in `apis.yml` were removed on 2026-08-13 because
+> they asserted a surface the provider does not serve. The real entity graph lives in
+> `data-model/instantly-ai-data-model.yml`.
+
+
+
 ## Overview
 
 This conceptual GraphQL schema models the Instantly cold email outreach and sales acceleration platform. Instantly provides mailbox sending infrastructure, email warmup, a B2B lead database, deliverability tools, and a unified inbox for replies via the v2 REST API at `api.instantly.ai/api/v2`.

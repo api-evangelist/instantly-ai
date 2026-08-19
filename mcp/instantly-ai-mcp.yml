@@ -1,0 +1,93 @@
+generated: '2026-08-13'
+method: probed
+status: published
+source: >-
+  https://mcp.instantly.ai/ (WWW-Authenticate challenge + RFC 9728 protected-resource
+  metadata) and https://developer.instantly.ai/mcp (anonymous tools/list, HTTP 200)
+deployment:
+  mode: remote
+  endpoint: https://mcp.instantly.ai/
+  auth: oauth
+  verified: probed
+  note: >-
+    Two distinct provider-hosted remote MCP servers were observed. The product server at
+    https://mcp.instantly.ai/ is the agent surface over the Instantly v2 API and is the
+    endpoint recorded above. The documentation server at https://developer.instantly.ai/mcp
+    answers tools/list anonymously and serves docs search only. No first-party stdio package
+    is published — the npm package `instantly-mcp` is a third-party build (see packages/).
+servers:
+- name: instantly-mcp
+  kind: product
+  transport: http
+  url: https://mcp.instantly.ai/
+  legacy_paths:
+  - /mcp
+  - /mcp/{api_key}
+  auth:
+    type: oauth
+    challenge: 'Bearer realm="instantly-mcp", resource_metadata="https://mcp.instantly.ai/.well-known/oauth-protected-resource"'
+    authorization_servers:
+    - https://api.instantly.ai
+    dynamic_client_registration: https://api.instantly.ai/oauth/register
+    alternative_headers:
+    - x-instantly-api-key
+    - x-as-workspace
+    note: >-
+      The CORS preflight advertises `x-instantly-api-key` and `x-as-workspace` as accepted
+      request headers alongside `authorization`, so a workspace API key appears to be an
+      accepted credential in addition to an OAuth bearer token. Not verified — doing so
+      would require a live key.
+  tools_list:
+    probed: true
+    http_status: 401
+    gated: true
+    note: >-
+      tools/list returns 401 with an OAuth Protected Resource challenge on both `/` and the
+      legacy `/mcp` path, so the live tool schemas require an authenticated introspection.
+      No tool list is recorded here rather than guessing one; the REST operations this
+      server fronts are enumerated in mcp/instantly-ai-tool-crosswalk.yml.
+- name: instantly-api-docs
+  kind: documentation
+  transport: http
+  url: https://developer.instantly.ai/mcp
+  auth:
+    type: none
+  tools_list:
+    probed: true
+    http_status: 200
+    gated: false
+  tools:
+  - name: search_instantly_api_docs
+    description: >-
+      Search across the Instantly API Docs knowledge base to find relevant information,
+      code examples, API references, and guides.
+    input_schema:
+      type: object
+      properties:
+        query: {type: string, description: Search query}
+      required: [query]
+  - name: query_docs_filesystem_instantly_api_docs
+    description: >-
+      Run a read-only shell-like query against a virtualized, in-memory filesystem rooted
+      at `/` that contains ONLY the Instantly API documentation.
+    input_schema:
+      type: object
+      properties:
+        command: {type: string, description: A shell command to run against the virtualized documentation filesystem}
+      required: [command]
+  - name: submit_feedback
+    description: >-
+      Report a problem with this documentation site so the docs team can fix it.
+    input_schema:
+      type: object
+      properties:
+        path: {type: string, description: The documentation page path the feedback is about}
+        feedback: {type: string, description: A clear description of the documentation problem}
+      required: [path, feedback]
+probes:
+- {url: 'https://mcp.instantly.ai/', method: POST, http_status: 401}
+- {url: 'https://mcp.instantly.ai/mcp', method: POST, http_status: 401}
+- {url: 'https://mcp.instantly.ai/.well-known/oauth-protected-resource', method: GET, http_status: 200}
+- {url: 'https://developer.instantly.ai/mcp', method: POST, http_status: 200}
+- {url: 'https://api.instantly.ai/mcp', method: POST, http_status: 404}
+- {url: 'https://api.instantly.ai/api/v2/mcp', method: POST, http_status: 404}

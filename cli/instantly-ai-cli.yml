@@ -1,0 +1,55 @@
+generated: '2026-08-13'
+method: searched
+source: https://github.com/Instantly-ai/instantly-skills
+also:
+- https://github.com/Instantly-ai/instantly-starter-kit/tree/main/create-instantly-app
+note: >-
+  Instantly ships no general-purpose, registry-installable API CLI of the `stripe`/`gh` shape. What it
+  does ship, first-party and MIT-licensed, are two command-line tools with narrower jobs: a
+  bash/Node CLI that backs the official Agent Skills, and a project scaffolder. Both are recorded
+  here as they are, without inflating either into a product CLI.
+tools:
+- name: instantly (skills CLI)
+  official: true
+  repository: https://github.com/Instantly-ai/instantly-skills
+  entrypoint: core/instantly.mjs
+  install:
+  - method: bootstrap script
+    command: ./bootstrap.sh
+  - method: unix installer
+    command: ./install.sh
+  - method: windows installer
+    command: ./install.ps1
+  runtime: Node.js
+  purpose: >-
+    The single small CLI the instantly-gtm Agent Skill drives. Deliberately narrow — the README
+    states it "has no endpoint for deletes, account changes, or billing", so an agent cannot perform
+    a destructive or billing action through it. Endpoint names are held in one core/capability-map.json
+    file so an API rename is a one-line patch rather than a skill rewrite.
+  commands:
+  - {name: setup, description: One-time setup; reads the workspace's website and builds a reusable business profile}
+  - {name: setup --web, description: Connect an API key through a browser page rather than the terminal; the key goes browser to machine and is never seen by the assistant}
+  - {name: auth.mjs disconnect, description: Remove or rotate the stored API key}
+  - {name: doctor, description: Print the CLI VERSION and check the environment}
+  credential_handling: >-
+    The API key is written to a private file readable only by the user (plus the shell profile),
+    never committed, never placed in shell history, and never exposed to the assistant.
+  version: 1.1.0
+  version_date: '2026-07-31'
+  version_source: https://github.com/Instantly-ai/instantly-skills/blob/main/CHANGELOG.md
+- name: create-instantly-app
+  official: true
+  repository: https://github.com/Instantly-ai/instantly-starter-kit/tree/main/create-instantly-app
+  install:
+  - method: clone
+    command: node create-instantly-app/index.js
+  runtime: Node.js >= 18
+  purpose: >-
+    Scaffolds a wrapper service on top of the Instantly API — vendors the generated SDK into
+    vendor/instantly-sdk, and writes AGENTS.md, docs and a chosen template (analytics-service,
+    lead-pipeline, outbound-ops, outreach-service, reply-automation).
+  version: 0.1.0
+  registry: none
+  caveat: >-
+    Named as if it were an npx scaffolder but registry.npmjs.org/create-instantly-app returns 404,
+    so `npx create-instantly-app` does not resolve. Clone-only today.

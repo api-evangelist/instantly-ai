@@ -1,0 +1,10 @@
+{
+  "resource": "https://mcp.instantly.ai",
+  "authorization_servers": [
+    "https://api.instantly.ai"
+  ],
+  "scopes_supported": [],
+  "bearer_methods_supported": [
+    "header"
+  ]
+}

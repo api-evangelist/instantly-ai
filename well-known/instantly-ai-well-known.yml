@@ -1,0 +1,85 @@
+generated: '2026-08-13'
+method: probed
+source: live GET of the /.well-known/ discovery surface on every Instantly host in apis.yml plus the OpenAPI servers[] host and the MCP host
+hosts:
+- host: https://api.instantly.ai
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: instantly-ai-oauth-authorization-server.json
+    spec: RFC 8414 OAuth 2.0 Authorization Server Metadata
+    note: >-
+      Real document. Publishes authorization/token/revocation/introspection/registration
+      endpoints, authorization_code + refresh_token grants, PKCE S256, and 185
+      scopes_supported. This is the anonymous source for scopes/instantly-ai-scopes.yml.
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://mcp.instantly.ai
+  documents:
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    file: instantly-ai-mcp-oauth-protected-resource.json
+    spec: RFC 9728 OAuth 2.0 Protected Resource Metadata
+    note: >-
+      Real document. Names https://api.instantly.ai as the authorization server for the
+      hosted MCP server; scopes_supported is published as an empty array.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    note: >-
+      Mirror of the api.instantly.ai authorization-server metadata (same issuer and
+      endpoints) minus scopes_supported; not saved separately to avoid a duplicate file.
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://developer.instantly.ai
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    file: ../a2a/instantly-ai-agent-card.json
+    spec: A2A Agent Card
+    note: Graded in a2a/instantly-ai-a2a.yml (conformant against A2A 1.0.0).
+  - path: /.well-known/agent-skills/instantly/skill.md
+    status: 200
+    file: ../skills/instantly-ai-instantly-api-v2-skill.md
+    spec: Agent Skill (markdown + frontmatter)
+    note: Referenced by the agent card's skills[0].url; saved verbatim.
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://instantly.ai
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://app.instantly.ai
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+summary:
+  paths_probed: 39
+  hits: 5
+  security_txt: false
+  note: >-
+    No security.txt is served on any Instantly host, so no SecurityTxt pointer is emitted.
+    The WellKnown pointer is justified by four real documents: the RFC 8414 authorization
+    server metadata, the RFC 9728 protected resource metadata, the A2A agent card, and the
+    provider-published agent skill.

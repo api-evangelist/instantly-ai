@@ -1,0 +1,42 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://developer.instantly.ai/.well-known/agent-skills/instantly/skill.md and
+  https://github.com/Instantly-ai/instantly-skills
+note: >-
+  Both skills below are PROVIDER-PUBLISHED and saved verbatim — nothing here was generated on
+  Instantly's behalf. The first is served from Instantly's own documentation host under
+  /.well-known/agent-skills/ and is the skill the A2A agent card points at; the second is the
+  MIT-licensed instantly-gtm skill from the Instantly-ai GitHub organization. Instantly is one of a
+  small number of providers in this catalog shipping real Agent Skills rather than having them
+  derived.
+skills:
+- file: instantly-ai-instantly-api-v2-skill.md
+  name: Instantly
+  description: >-
+    Use when building integrations with Instantly's email outreach platform, automating campaign
+    management, managing email accounts and leads, connecting OAuth accounts, receiving webhook
+    events, or managing workspace operations programmatically.
+  api: openapi/instantly-ai-api-v2-openapi.yml
+  method: searched
+  source: https://developer.instantly.ai/.well-known/agent-skills/instantly/skill.md
+  http_status: 200
+  discovered_via: a2a/instantly-ai-agent-card.json (skills[0].url)
+  version: '1.0'
+- file: instantly-ai-instantly-gtm-SKILL.md
+  name: instantly-gtm
+  description: >-
+    The full cold-email outbound loop run from an agent — find an ICP through SuperSearch, enrich and
+    verify, write a sequence, assemble a draft campaign, scale senders, launch behind a confirmation,
+    triage replies and report. Ships hard guardrails: draft-first, non-skippable verification,
+    confirmed launch, cold-domain refusal, gated spend, no destructive operations.
+  api: openapi/instantly-ai-api-v2-openapi.yml
+  method: searched
+  source: https://raw.githubusercontent.com/Instantly-ai/instantly-skills/main/skills/instantly-gtm/SKILL.md
+  repository: https://github.com/Instantly-ai/instantly-skills
+  license: MIT
+  version: 1.1.0
+  version_date: '2026-07-31'
+  runtime: >-
+    Backed by the first-party CLI in the same repository rather than by MCP — see
+    cli/instantly-ai-cli.yml.

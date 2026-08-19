@@ -3,56 +3,122 @@ specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
 provider: Instantly
 providerId: instantly-ai
+generated: '2026-08-13'
+method: searched
+source: https://developer.instantly.ai/getting-started/rate-limit
+also:
+- https://github.com/Instantly-ai/instantly-starter-kit/blob/main/docs/conventions.md
+- openapi/instantly-ai-api-v2-openapi.yml
 created: '2026-05-22'
-modified: '2026-05-22'
+modified: '2026-08-13'
 tags:
 - Cold Email
 - Outbound
 - Sales
 - Deliverability
-- Lead Database
-- Email Verification
-- Webhooks
 - Rate Limiting
 - Quotas
 - Throttling
-description: Scaffolded rate limit definitions for the Instantly API surface. Captures per-tier quotas, burst behavior, response
-  signaling, and recovery semantics. Defaults are scaffold values to be replaced with published provider limits.
+description: >-
+  Instantly's published API rate limits. The global limits are workspace-wide — they are shared
+  between API v1 and API v2 and across every API key in the workspace, so adding keys does not add
+  headroom. A handful of endpoints carry their own, much lower limits. This file replaces the
+  scaffold defaults written on 2026-05-22, which were invented placeholders (10/min free,
+  120/min pro) and did not match anything Instantly publishes.
+limit_count: 7
 headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
+  limit: null
+  remaining: null
+  reset: null
   retryAfter: Retry-After
-  policy: RateLimit-Policy
+  policy: null
+  note: >-
+    Instantly documents NO X-RateLimit-* / RateLimit-* response headers. An agent cannot read its
+    remaining budget from a response — the only runtime signal is the 429 status itself, plus a
+    Retry-After header (in seconds) on the Google/Microsoft OAuth init endpoints. This is the
+    weakest part of the API's runtime contract and the concrete thing for Instantly to fix.
 responseCodes:
   throttled: 429
   quotaExceeded: 429
-  serviceUnavailable: 503
+  upstreamThrottled: 503
 limits:
-- tier: free
-  name: Free Tier Default
-  scope: api-key
+- name: Global requests per second
+  scope: workspace
+  metric: requests_per_second
+  limit: 100
+  timeFrame: second
+  applies:
+  - https://api.instantly.ai/api/v2
+  description: >-
+    Workspace-wide. Shared between API v1 and API v2 and across all API keys in the workspace.
+    Breaching either the per-second or the per-minute limit returns 429.
+- name: Global requests per minute
+  scope: workspace
+  metric: requests_per_minute
+  limit: 6000
+  timeFrame: minute
+  applies:
+  - https://api.instantly.ai/api/v2
+  description: Workspace-wide, shared across API v1 + v2 and all keys.
+- name: List emails
+  scope: endpoint
+  operationId: listEmail
+  endpoint: GET /api/v2/emails
+  metric: requests_per_minute
+  limit: 20
+  timeFrame: minute
+  description: Documented in the endpoint description — lower than the global limit.
+- name: Send a test email
+  scope: workspace-endpoint
+  operationId: sendTestEmail
+  endpoint: POST /api/v2/emails/test
   metric: requests_per_minute
   limit: 10
-  burst: 20
   timeFrame: minute
-  applies:
-  - https://api.instantly.ai/api/v2/campaigns
-  description: Default per-token request rate for the free tier. Bursts above the limit return HTTP 429 with Retry-After.
-- tier: pro
-  name: Pro Tier Default
-  scope: api-key
+  description: 10 requests per minute per workspace. Can also return 200 with an error in the body.
+- name: AI reply label test
+  scope: workspace-endpoint
+  operationId: testAiReplyLabelLeadLabels
+  metric: requests_per_30_days
+  limit: 500
+  timeFrame: 30 days
+  description: Test endpoint only; 500 requests per 30 days per workspace.
+- name: OAuth sender connect init
+  scope: workspace-endpoint
+  operationId: initGoogleOAuth / initMicrosoftOAuth
+  endpoint: POST /api/v2/oauth/{google|microsoft}/init
   metric: requests_per_minute
-  limit: 120
-  burst: 240
+  limit: 75
+  burst: null
   timeFrame: minute
-  applies:
-  - https://api.instantly.ai/api/v2/campaigns
-  description: Higher rate envelope for paid plans; reconcile against published commercial terms.
+  secondary_limit:
+    scope: ip
+    metric: requests_per_minute
+    limit: 150
+  description: >-
+    75 per minute per workspace AND 150 per minute per IP, to comply with upstream provider limits.
+    Returns 429 with a Retry-After header in seconds. Repeated IP blocks escalate: 30 minutes, then
+    2 hours, then 24 hours. Upstream provider throttling surfaces as 503.
+- name: Check domain availability
+  scope: endpoint
+  operationId: checkDomainsAvailability
+  metric: requests_per_minute
+  limit: 30
+  timeFrame: minute
+  secondary_limit:
+    metric: requests_per_hour
+    limit: 900
+  description: 30 per minute or 900 per hour.
 recoveryStrategies:
-- name: Exponential Backoff
-  description: Wait Retry-After seconds (or back off exponentially up to 60s) before retrying.
-- name: Queue and Retry
-  description: Submit bulk work in batches under the burst envelope.
+- name: Honor Retry-After
+  description: On the OAuth init endpoints, wait the number of seconds in Retry-After before retrying.
+- name: Exponential backoff
+  description: >-
+    Everywhere else there is no reset signal, so back off exponentially. The first-party SDKs
+    auto-retry 429 and 5xx with linear backoff, maxRetries default 1.
+- name: Batch and pace
+  description: >-
+    Instantly's guidance: batch bulk work (their example is 100 leads per batch with a 2 second
+    pause between batches) and spread scheduled automations across 2-4 runs a day instead of one.
 notes:
-- Replace scaffold values with the provider's published rate limit policy.
+- Retries are not safe by default — Instantly ships no idempotency-key mechanism. See conventions/instantly-ai-conventions.yml.

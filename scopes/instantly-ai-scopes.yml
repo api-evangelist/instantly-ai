@@ -1,0 +1,1115 @@
+generated: '2026-08-13'
+method: probed
+source: https://api.instantly.ai/.well-known/oauth-authorization-server
+docs: https://developer.instantly.ai/getting-started/getting-started
+note: Instantly scopes are attached to API keys (created in the app under Settings > Integrations > API Keys, where
+  the scopes are picked at creation) AND to OAuth 2.0 access tokens. The complete list below is read verbatim from
+  the provider-served RFC 8414 authorization-server metadata; the per-operation scope requirements are additionally
+  published in the docs and in llms/instantly-ai-llms.txt, one line per endpoint. Scopes are shaped <resource>:<action>
+  with action in {read, create, update, delete, all}, plus the wildcards all:<action> and all:all. A few resource
+  names differ from their URL slug (lead-labels, background-jobs, email_verifications).
+schemes:
+- name: OAuth2
+  source: https://api.instantly.ai/.well-known/oauth-authorization-server
+  issuer: https://api.instantly.ai
+  dynamic_client_registration: https://api.instantly.ai/oauth/register
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://api.instantly.ai/oauth/authorize
+    tokenUrl: https://api.instantly.ai/oauth/token
+    refreshUrl: https://api.instantly.ai/oauth/token
+    pkce:
+    - S256
+    token_endpoint_auth_methods:
+    - client_secret_post
+    - client_secret_basic
+    - none
+  revocation_endpoint: https://api.instantly.ai/oauth/revoke
+  introspection_endpoint: https://api.instantly.ai/oauth/introspect
+- name: ApiKeyScopes
+  source: https://developer.instantly.ai/getting-started/getting-started
+  note: The same scope vocabulary is selected per API key at creation time in the Instantly dashboard.
+summary:
+  scope_count: 178
+  resource_count: 36
+  actions:
+  - read
+  - create
+  - update
+  - delete
+  - all
+  wildcards:
+  - all:read
+  - all:create
+  - all:update
+  - all:delete
+  - all:all
+scopes:
+- scope: account_campaign_mappings:all
+  resource: account_campaign_mappings
+  action: all
+  description: Full access (read, create, update, delete) to account campaign mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: account_campaign_mappings:create
+  resource: account_campaign_mappings
+  action: create
+  description: Create access to account campaign mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: account_campaign_mappings:read
+  resource: account_campaign_mappings
+  action: read
+  description: Read access to account campaign mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: account_campaign_mappings:update
+  resource: account_campaign_mappings
+  action: update
+  description: Update access to account campaign mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: account_campaign_mappings:delete
+  resource: account_campaign_mappings
+  action: delete
+  description: Delete access to account campaign mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: accounts:all
+  resource: accounts
+  action: all
+  description: Full access (read, create, update, delete) to accounts.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: accounts:create
+  resource: accounts
+  action: create
+  description: Create access to accounts.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: accounts:read
+  resource: accounts
+  action: read
+  description: Read access to accounts.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: accounts:update
+  resource: accounts
+  action: update
+  description: Update access to accounts.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: accounts:delete
+  resource: accounts
+  action: delete
+  description: Delete access to accounts.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_agents:all
+  resource: ai_agents
+  action: all
+  description: Full access (read, create, update, delete) to ai agents.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_agents:create
+  resource: ai_agents
+  action: create
+  description: Create access to ai agents.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_agents:read
+  resource: ai_agents
+  action: read
+  description: Read access to ai agents.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_agents:update
+  resource: ai_agents
+  action: update
+  description: Update access to ai agents.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_agents:delete
+  resource: ai_agents
+  action: delete
+  description: Delete access to ai agents.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_inbox_manager_analytics:all
+  resource: ai_inbox_manager_analytics
+  action: all
+  description: Full access (read, create, update, delete) to ai inbox manager analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_inbox_manager_analytics:create
+  resource: ai_inbox_manager_analytics
+  action: create
+  description: Create access to ai inbox manager analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_inbox_manager_analytics:read
+  resource: ai_inbox_manager_analytics
+  action: read
+  description: Read access to ai inbox manager analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_inbox_manager_analytics:update
+  resource: ai_inbox_manager_analytics
+  action: update
+  description: Update access to ai inbox manager analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_inbox_manager_analytics:delete
+  resource: ai_inbox_manager_analytics
+  action: delete
+  description: Delete access to ai inbox manager analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr:all
+  resource: ai_sdr
+  action: all
+  description: Full access (read, create, update, delete) to ai sdr.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr:create
+  resource: ai_sdr
+  action: create
+  description: Create access to ai sdr.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr:read
+  resource: ai_sdr
+  action: read
+  description: Read access to ai sdr.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr:update
+  resource: ai_sdr
+  action: update
+  description: Update access to ai sdr.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr:delete
+  resource: ai_sdr
+  action: delete
+  description: Delete access to ai sdr.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr_replies:all
+  resource: ai_sdr_replies
+  action: all
+  description: Full access (read, create, update, delete) to ai sdr replies.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr_replies:create
+  resource: ai_sdr_replies
+  action: create
+  description: Create access to ai sdr replies.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr_replies:read
+  resource: ai_sdr_replies
+  action: read
+  description: Read access to ai sdr replies.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr_replies:update
+  resource: ai_sdr_replies
+  action: update
+  description: Update access to ai sdr replies.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: ai_sdr_replies:delete
+  resource: ai_sdr_replies
+  action: delete
+  description: Delete access to ai sdr replies.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: all:all
+  resource: all
+  action: all
+  description: Full access (read, create, update, delete) to every resource in the workspace.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: all:create
+  resource: all
+  action: create
+  description: Create access to every resource in the workspace.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: all:read
+  resource: all
+  action: read
+  description: Read access to every resource in the workspace.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: all:update
+  resource: all
+  action: update
+  description: Update access to every resource in the workspace.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: all:delete
+  resource: all
+  action: delete
+  description: Delete access to every resource in the workspace.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: api_keys:all
+  resource: api_keys
+  action: all
+  description: Full access (read, create, update, delete) to api keys.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: api_keys:create
+  resource: api_keys
+  action: create
+  description: Create access to api keys.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: api_keys:read
+  resource: api_keys
+  action: read
+  description: Read access to api keys.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: api_keys:update
+  resource: api_keys
+  action: update
+  description: Update access to api keys.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: api_keys:delete
+  resource: api_keys
+  action: delete
+  description: Delete access to api keys.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: audit_logs:all
+  resource: audit_logs
+  action: all
+  description: Full access (read, create, update, delete) to audit logs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: audit_logs:create
+  resource: audit_logs
+  action: create
+  description: Create access to audit logs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: audit_logs:read
+  resource: audit_logs
+  action: read
+  description: Read access to audit logs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: audit_logs:update
+  resource: audit_logs
+  action: update
+  description: Update access to audit logs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: audit_logs:delete
+  resource: audit_logs
+  action: delete
+  description: Delete access to audit logs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: auth:all
+  resource: auth
+  action: all
+  description: Full access (read, create, update, delete) to auth.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: auth:create
+  resource: auth
+  action: create
+  description: Create access to auth.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: auth:read
+  resource: auth
+  action: read
+  description: Read access to auth.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: auth:update
+  resource: auth
+  action: update
+  description: Update access to auth.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: auth:delete
+  resource: auth
+  action: delete
+  description: Delete access to auth.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: background-jobs:all
+  resource: background-jobs
+  action: all
+  description: Full access (read, create, update, delete) to background jobs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: background-jobs:create
+  resource: background-jobs
+  action: create
+  description: Create access to background jobs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: background-jobs:read
+  resource: background-jobs
+  action: read
+  description: Read access to background jobs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: background-jobs:update
+  resource: background-jobs
+  action: update
+  description: Update access to background jobs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: background-jobs:delete
+  resource: background-jobs
+  action: delete
+  description: Delete access to background jobs.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: block_list_entries:all
+  resource: block_list_entries
+  action: all
+  description: Full access (read, create, update, delete) to block list entries.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: block_list_entries:create
+  resource: block_list_entries
+  action: create
+  description: Create access to block list entries.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: block_list_entries:read
+  resource: block_list_entries
+  action: read
+  description: Read access to block list entries.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: block_list_entries:update
+  resource: block_list_entries
+  action: update
+  description: Update access to block list entries.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: block_list_entries:delete
+  resource: block_list_entries
+  action: delete
+  description: Delete access to block list entries.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: campaigns:all
+  resource: campaigns
+  action: all
+  description: Full access (read, create, update, delete) to campaigns.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: campaigns:create
+  resource: campaigns
+  action: create
+  description: Create access to campaigns.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: campaigns:read
+  resource: campaigns
+  action: read
+  description: Read access to campaigns.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: campaigns:update
+  resource: campaigns
+  action: update
+  description: Update access to campaigns.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: campaigns:delete
+  resource: campaigns
+  action: delete
+  description: Delete access to campaigns.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: crm_actions:all
+  resource: crm_actions
+  action: all
+  description: Full access (read, create, update, delete) to crm actions.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: crm_actions:create
+  resource: crm_actions
+  action: create
+  description: Create access to crm actions.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: crm_actions:read
+  resource: crm_actions
+  action: read
+  description: Read access to crm actions.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: crm_actions:update
+  resource: crm_actions
+  action: update
+  description: Update access to crm actions.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: crm_actions:delete
+  resource: crm_actions
+  action: delete
+  description: Delete access to crm actions.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_prompt_templates:all
+  resource: custom_prompt_templates
+  action: all
+  description: Full access (read, create, update, delete) to custom prompt templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_prompt_templates:create
+  resource: custom_prompt_templates
+  action: create
+  description: Create access to custom prompt templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_prompt_templates:read
+  resource: custom_prompt_templates
+  action: read
+  description: Read access to custom prompt templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_prompt_templates:update
+  resource: custom_prompt_templates
+  action: update
+  description: Update access to custom prompt templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_prompt_templates:delete
+  resource: custom_prompt_templates
+  action: delete
+  description: Delete access to custom prompt templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tag_mappings:all
+  resource: custom_tag_mappings
+  action: all
+  description: Full access (read, create, update, delete) to custom tag mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tag_mappings:create
+  resource: custom_tag_mappings
+  action: create
+  description: Create access to custom tag mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tag_mappings:read
+  resource: custom_tag_mappings
+  action: read
+  description: Read access to custom tag mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tag_mappings:update
+  resource: custom_tag_mappings
+  action: update
+  description: Update access to custom tag mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tag_mappings:delete
+  resource: custom_tag_mappings
+  action: delete
+  description: Delete access to custom tag mappings.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tags:all
+  resource: custom_tags
+  action: all
+  description: Full access (read, create, update, delete) to custom tags.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tags:create
+  resource: custom_tags
+  action: create
+  description: Create access to custom tags.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tags:read
+  resource: custom_tags
+  action: read
+  description: Read access to custom tags.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tags:update
+  resource: custom_tags
+  action: update
+  description: Update access to custom tags.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: custom_tags:delete
+  resource: custom_tags
+  action: delete
+  description: Delete access to custom tags.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: dfy_email_account_orders:all
+  resource: dfy_email_account_orders
+  action: all
+  description: Full access (read, create, update, delete) to dfy email account orders.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: dfy_email_account_orders:create
+  resource: dfy_email_account_orders
+  action: create
+  description: Create access to dfy email account orders.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: dfy_email_account_orders:read
+  resource: dfy_email_account_orders
+  action: read
+  description: Read access to dfy email account orders.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: dfy_email_account_orders:update
+  resource: dfy_email_account_orders
+  action: update
+  description: Update access to dfy email account orders.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: dfy_email_account_orders:delete
+  resource: dfy_email_account_orders
+  action: delete
+  description: Delete access to dfy email account orders.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_templates:all
+  resource: email_templates
+  action: all
+  description: Full access (read, create, update, delete) to email templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_templates:create
+  resource: email_templates
+  action: create
+  description: Create access to email templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_templates:read
+  resource: email_templates
+  action: read
+  description: Read access to email templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_templates:update
+  resource: email_templates
+  action: update
+  description: Update access to email templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_templates:delete
+  resource: email_templates
+  action: delete
+  description: Delete access to email templates.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_verifications:all
+  resource: email_verifications
+  action: all
+  description: Full access (read, create, update, delete) to email verifications.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_verifications:create
+  resource: email_verifications
+  action: create
+  description: Create access to email verifications.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: email_verifications:read
+  resource: email_verifications
+  action: read
+  description: Read access to email verifications.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: emails:all
+  resource: emails
+  action: all
+  description: Full access (read, create, update, delete) to emails.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: emails:create
+  resource: emails
+  action: create
+  description: Create access to emails.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: emails:read
+  resource: emails
+  action: read
+  description: Read access to emails.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: emails:update
+  resource: emails
+  action: update
+  description: Update access to emails.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: emails:delete
+  resource: emails
+  action: delete
+  description: Delete access to emails.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_analytics:all
+  resource: inbox_placement_analytics
+  action: all
+  description: Full access (read, create, update, delete) to inbox placement analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_analytics:create
+  resource: inbox_placement_analytics
+  action: create
+  description: Create access to inbox placement analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_analytics:read
+  resource: inbox_placement_analytics
+  action: read
+  description: Read access to inbox placement analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_analytics:update
+  resource: inbox_placement_analytics
+  action: update
+  description: Update access to inbox placement analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_analytics:delete
+  resource: inbox_placement_analytics
+  action: delete
+  description: Delete access to inbox placement analytics.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_reports:all
+  resource: inbox_placement_reports
+  action: all
+  description: Full access (read, create, update, delete) to inbox placement reports.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_reports:create
+  resource: inbox_placement_reports
+  action: create
+  description: Create access to inbox placement reports.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_reports:read
+  resource: inbox_placement_reports
+  action: read
+  description: Read access to inbox placement reports.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_reports:update
+  resource: inbox_placement_reports
+  action: update
+  description: Update access to inbox placement reports.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_reports:delete
+  resource: inbox_placement_reports
+  action: delete
+  description: Delete access to inbox placement reports.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_tests:all
+  resource: inbox_placement_tests
+  action: all
+  description: Full access (read, create, update, delete) to inbox placement tests.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_tests:create
+  resource: inbox_placement_tests
+  action: create
+  description: Create access to inbox placement tests.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_tests:read
+  resource: inbox_placement_tests
+  action: read
+  description: Read access to inbox placement tests.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_tests:update
+  resource: inbox_placement_tests
+  action: update
+  description: Update access to inbox placement tests.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: inbox_placement_tests:delete
+  resource: inbox_placement_tests
+  action: delete
+  description: Delete access to inbox placement tests.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead-labels:all
+  resource: lead-labels
+  action: all
+  description: Full access (read, create, update, delete) to lead labels.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead-labels:create
+  resource: lead-labels
+  action: create
+  description: Create access to lead labels.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead-labels:read
+  resource: lead-labels
+  action: read
+  description: Read access to lead labels.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead-labels:update
+  resource: lead-labels
+  action: update
+  description: Update access to lead labels.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead-labels:delete
+  resource: lead-labels
+  action: delete
+  description: Delete access to lead labels.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead_lists:all
+  resource: lead_lists
+  action: all
+  description: Full access (read, create, update, delete) to lead lists.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead_lists:create
+  resource: lead_lists
+  action: create
+  description: Create access to lead lists.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead_lists:read
+  resource: lead_lists
+  action: read
+  description: Read access to lead lists.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead_lists:update
+  resource: lead_lists
+  action: update
+  description: Update access to lead lists.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: lead_lists:delete
+  resource: lead_lists
+  action: delete
+  description: Delete access to lead lists.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: leads:all
+  resource: leads
+  action: all
+  description: Full access (read, create, update, delete) to leads.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: leads:create
+  resource: leads
+  action: create
+  description: Create access to leads.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: leads:read
+  resource: leads
+  action: read
+  description: Read access to leads.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: leads:update
+  resource: leads
+  action: update
+  description: Update access to leads.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: leads:delete
+  resource: leads
+  action: delete
+  description: Delete access to leads.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: sales_flows:all
+  resource: sales_flows
+  action: all
+  description: Full access (read, create, update, delete) to sales flows.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: sales_flows:create
+  resource: sales_flows
+  action: create
+  description: Create access to sales flows.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: sales_flows:read
+  resource: sales_flows
+  action: read
+  description: Read access to sales flows.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: sales_flows:update
+  resource: sales_flows
+  action: update
+  description: Update access to sales flows.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: sales_flows:delete
+  resource: sales_flows
+  action: delete
+  description: Delete access to sales flows.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: security_tokens:all
+  resource: security_tokens
+  action: all
+  description: Full access (read, create, update, delete) to security tokens.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: security_tokens:create
+  resource: security_tokens
+  action: create
+  description: Create access to security tokens.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: security_tokens:read
+  resource: security_tokens
+  action: read
+  description: Read access to security tokens.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: security_tokens:update
+  resource: security_tokens
+  action: update
+  description: Update access to security tokens.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: security_tokens:delete
+  resource: security_tokens
+  action: delete
+  description: Delete access to security tokens.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: subsequences:all
+  resource: subsequences
+  action: all
+  description: Full access (read, create, update, delete) to subsequences.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: subsequences:create
+  resource: subsequences
+  action: create
+  description: Create access to subsequences.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: subsequences:read
+  resource: subsequences
+  action: read
+  description: Read access to subsequences.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: subsequences:update
+  resource: subsequences
+  action: update
+  description: Update access to subsequences.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: subsequences:delete
+  resource: subsequences
+  action: delete
+  description: Delete access to subsequences.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhook_events:all
+  resource: webhook_events
+  action: all
+  description: Full access (read, create, update, delete) to webhook events.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhook_events:create
+  resource: webhook_events
+  action: create
+  description: Create access to webhook events.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhook_events:read
+  resource: webhook_events
+  action: read
+  description: Read access to webhook events.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhook_events:update
+  resource: webhook_events
+  action: update
+  description: Update access to webhook events.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhook_events:delete
+  resource: webhook_events
+  action: delete
+  description: Delete access to webhook events.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhooks:all
+  resource: webhooks
+  action: all
+  description: Full access (read, create, update, delete) to webhooks.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhooks:create
+  resource: webhooks
+  action: create
+  description: Create access to webhooks.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhooks:read
+  resource: webhooks
+  action: read
+  description: Read access to webhooks.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhooks:update
+  resource: webhooks
+  action: update
+  description: Update access to webhooks.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: webhooks:delete
+  resource: webhooks
+  action: delete
+  description: Delete access to webhooks.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_billing:all
+  resource: workspace_billing
+  action: all
+  description: Full access (read, create, update, delete) to workspace billing.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_billing:create
+  resource: workspace_billing
+  action: create
+  description: Create access to workspace billing.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_billing:read
+  resource: workspace_billing
+  action: read
+  description: Read access to workspace billing.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_billing:update
+  resource: workspace_billing
+  action: update
+  description: Update access to workspace billing.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_billing:delete
+  resource: workspace_billing
+  action: delete
+  description: Delete access to workspace billing.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_group_members:all
+  resource: workspace_group_members
+  action: all
+  description: Full access (read, create, update, delete) to workspace group members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_group_members:create
+  resource: workspace_group_members
+  action: create
+  description: Create access to workspace group members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_group_members:read
+  resource: workspace_group_members
+  action: read
+  description: Read access to workspace group members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_group_members:update
+  resource: workspace_group_members
+  action: update
+  description: Update access to workspace group members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_group_members:delete
+  resource: workspace_group_members
+  action: delete
+  description: Delete access to workspace group members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_members:all
+  resource: workspace_members
+  action: all
+  description: Full access (read, create, update, delete) to workspace members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_members:create
+  resource: workspace_members
+  action: create
+  description: Create access to workspace members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_members:read
+  resource: workspace_members
+  action: read
+  description: Read access to workspace members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_members:update
+  resource: workspace_members
+  action: update
+  description: Update access to workspace members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspace_members:delete
+  resource: workspace_members
+  action: delete
+  description: Delete access to workspace members.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspaces:all
+  resource: workspaces
+  action: all
+  description: Full access (read, create, update, delete) to workspaces.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspaces:create
+  resource: workspaces
+  action: create
+  description: Create access to workspaces.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspaces:read
+  resource: workspaces
+  action: read
+  description: Read access to workspaces.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspaces:update
+  resource: workspaces
+  action: update
+  description: Update access to workspaces.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+- scope: workspaces:delete
+  resource: workspaces
+  action: delete
+  description: Delete access to workspaces.
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json

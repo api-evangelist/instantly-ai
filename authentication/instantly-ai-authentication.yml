@@ -1,13 +1,77 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/instantly-ai-openapi.yml
+generated: '2026-08-13'
+method: searched
+source: openapi/instantly-ai-api-v2-openapi.yml
+docs: https://developer.instantly.ai/getting-started/authorization
+probe: https://api.instantly.ai/.well-known/oauth-authorization-server
 summary:
   types:
   - http
+  - oauth2
+  http_schemes:
+  - bearer
+  oauth2_flows:
+  - authorizationCode
+  scope_count: 178
+  scopes: scopes/instantly-ai-scopes.yml
 schemes:
-- name: BearerAuth
+- name: ApiKeyAuth
   type: http
   scheme: bearer
   bearerFormat: API key
+  description: >-
+    The primary credential. A workspace API key is created in the Instantly app under
+    Settings > Integrations > API Keys, with the scopes selected at creation time, and is
+    displayed exactly once — it cannot be recovered. Send it as
+    `Authorization: Bearer <key>` on every request. Keys can be listed, created and
+    revoked through the API itself (listAPIKey / createAPIKey / deleteAPIKey).
+  header: Authorization
+  docs: https://developer.instantly.ai/getting-started/authorization
   sources:
-  - openapi/instantly-ai-openapi.yml
+  - openapi/instantly-ai-api-v2-openapi.yml
+  - https://developer.instantly.ai/getting-started/getting-started
+- name: OAuth2
+  type: oauth2
+  description: >-
+    Instantly runs a full OAuth 2.0 authorization server at https://api.instantly.ai,
+    discoverable anonymously via RFC 8414 metadata. It is not declared in the OpenAPI
+    securitySchemes — it was found by probing /.well-known/oauth-authorization-server —
+    and it is the credential the hosted MCP server at https://mcp.instantly.ai/ challenges
+    for (RFC 9728 protected-resource metadata names api.instantly.ai as its authorization
+    server).
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://api.instantly.ai/oauth/authorize
+    tokenUrl: https://api.instantly.ai/oauth/token
+    refreshUrl: https://api.instantly.ai/oauth/token
+    grant_types:
+    - authorization_code
+    - refresh_token
+    response_types:
+    - code
+    pkce:
+    - S256
+    token_endpoint_auth_methods:
+    - client_secret_post
+    - client_secret_basic
+    - none
+    scopes: 178
+  registration_endpoint: https://api.instantly.ai/oauth/register
+  revocation_endpoint: https://api.instantly.ai/oauth/revoke
+  introspection_endpoint: https://api.instantly.ai/oauth/introspect
+  sources:
+  - well-known/instantly-ai-oauth-authorization-server.json
+notes:
+- >-
+  Third-party sender connection is a separate concern: POST /api/v2/oauth/google/init and
+  POST /api/v2/oauth/microsoft/init start a Google/Microsoft OAuth session so a workspace can
+  attach a sending mailbox. Those flows authorize INSTANTLY against Google/Microsoft; they do
+  not authenticate a caller against Instantly. Refresh tokens are never returned by the API.
+  Requires accounts:create to start and accounts:read to poll. See
+  https://developer.instantly.ai/guides/oauth-connection-flow
+- >-
+  Admin workspaces can act on a sub-workspace by adding the `x-as-workspace: <sub_workspace_id>`
+  header alongside the bearer token. Documented in the first-party starter kit conventions and
+  advertised in the MCP server's CORS allow-headers.
+- >-
+  There is no separate test/live key namespace and no key prefix convention published, so a key
+  cannot be identified as test-mode from its value.

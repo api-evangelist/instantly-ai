@@ -3,8 +3,13 @@ specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
 provider: Instantly
 providerId: instantly-ai
+generated: '2026-08-13'
+method: searched
+source: https://instantly.ai/pricing
 created: '2026-05-22'
-modified: '2026-05-22'
+modified: '2026-08-13'
+currency: USD
+plan_count: 13
 tags:
 - Cold Email
 - Outbound
@@ -12,41 +17,193 @@ tags:
 - Deliverability
 - Lead Database
 - Email Verification
-- Webhooks
-description: Machine-readable plans scaffold for the Instantly API surface. Conforms to the API Commons Plans schema. Tier
-  limits and prices are scaffold defaults; replace with provider-published values.
+description: >-
+  Instantly's published plans, read from https://instantly.ai/pricing on 2026-08-13. Pricing is
+  organised in three families that can be bought separately or as a bundle: Outreach (sending
+  volume + contacts), Credits (lead database and enrichment), and Bundles (the two combined).
+  Every price below is the list monthly price; the annual price shown on the same page is the
+  discounted equivalent. This file replaces the scaffold defaults written on 2026-05-22 (a
+  fictional "free tier, 1000 requests/month"), which did not correspond to anything Instantly
+  publishes — Instantly has no free plan, and 170 of the 173 API operations document a 402 error
+  meaning the workspace has no active paid plan.
+api_access_note: >-
+  API access is not sold as its own plan. It is a feature of the paid Outreach plans (the feature
+  matrix lists "API, webhooks" under the plan comparison), and an unpaid workspace receives HTTP
+  402 on essentially every endpoint. There is no free API tier and no published per-call pricing.
 plans:
-- id: instantly-ai-free
-  name: Free
-  type: freemium
-  description: Free entry tier for the Instantly API surface. Intended for evaluation, prototyping, and low-volume integrations.
-    Real limits and pricing must be reconciled with the provider's published plan documentation.
+- id: instantly-outreach-growth
+  family: Outreach
+  name: Growth
+  type: subscription
+  price: '47.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '37.60'
   entries:
-  - label: API Requests
-    description: Monthly API request quota across all included endpoints
-    name: api_requests
-    type: quota
-    metric: requests
-    limit: 1000
-    timeFrame: month
-    geo: global
-    domains:
-    - https://api.instantly.ai/api/v2/campaigns
-    unit: 1
-    price: '0.00'
-    userMultiplied: false
-  - label: Rate Limit
-    description: Maximum requests per minute on the free tier
-    name: rate_limit
-    type: rate
-    metric: requests_per_minute
-    limit: 10
-    timeFrame: minute
-    geo: global
-    domains:
-    - https://api.instantly.ai/api/v2/campaigns
-    unit: 1
-    price: '0.00'
+  - {label: Emails per month, name: emails_monthly, type: quota, metric: emails, limit: 5000, timeFrame: month}
+  - {label: Uploaded contacts, name: uploaded_contacts, type: quota, metric: contacts, limit: 1000}
+  - {label: Email accounts, name: email_accounts, type: quota, metric: accounts, limit: null, note: unlimited}
+  - {label: Email warmup, name: email_warmup, type: feature, limit: null, note: unlimited}
+  features: [Chat support, API and webhooks]
+- id: instantly-outreach-hypergrowth
+  family: Outreach
+  name: Hypergrowth
+  type: subscription
+  price: '97.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '77.60'
+  entries:
+  - {label: Emails per month, name: emails_monthly, type: quota, metric: emails, limit: 125000, timeFrame: month}
+  - {label: Uploaded contacts, name: uploaded_contacts, type: quota, metric: contacts, limit: 25000}
+  - {label: Email accounts, name: email_accounts, type: quota, metric: accounts, limit: null, note: unlimited}
+  features: [Premium live support, API and webhooks]
+  note: >-
+    The monthly card says 125,000 emails/month; the annual card and the feature-comparison table
+    both say 100,000. Recorded as published, discrepancy included.
+- id: instantly-outreach-light-speed
+  family: Outreach
+  name: Light Speed
+  type: subscription
+  price: '358.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '286.30'
+  entries:
+  - {label: Emails per month, name: emails_monthly, type: quota, metric: emails, limit: 500000, timeFrame: month}
+  - {label: Uploaded contacts, name: uploaded_contacts, type: quota, metric: contacts, limit: 100000}
+  features: [Everything in Hypergrowth, SISR (Server & IP Sharding and Rotation) system]
+- id: instantly-outreach-enterprise
+  family: Outreach
+  name: Enterprise
+  type: custom
+  price: null
+  currency: USD
+  billingPeriod: month
+  cta: Book A Call
+  entries:
+  - {label: Emails per month, name: emails_monthly, type: quota, metric: emails, limit: null, note: 500,000+}
+  - {label: Uploaded contacts, name: uploaded_contacts, type: quota, metric: contacts, limit: null, note: 100,000+}
+  features: [Private deliverability network, Dedicated account manager, Shared Slack channel]
+- id: instantly-credits-growth
+  family: Credits
+  name: Growth Credits
+  type: subscription
+  price: '47.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '37.60'
+  entries:
+  - {label: Instantly credits, name: credits_monthly, type: quota, metric: credits, limit: 2000, minimum: 1500, timeFrame: month}
+  features:
+  - Database of 450M+ B2B leads
+  - 13 filters including keywords and lookalikes
+  - Waterfall work-email enrichment with 5+ providers
+  - Instantly Web Researcher agent
+  - Access to 5 major LLMs
+  - AI Email Writer agent
+  - Bring your own LLM API key
+  - Full profile, job posting, news, technology and funding enrichment
+  - Export to major CRMs and outreach providers
+- id: instantly-credits-supersonic
+  family: Credits
+  name: Supersonic
+  type: subscription
+  price: '97.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '87.30'
+  entries:
+  - {label: Instantly credits, name: credits_monthly, type: quota, metric: credits, limit: 7500, minimum: 5000, timeFrame: month}
+  features: [Everything in Growth Credits]
+- id: instantly-credits-hyper
+  family: Credits
+  name: Hyper Credits
+  type: subscription
+  price: '197.00'
+  price_qualifier: from
+  currency: USD
+  billingPeriod: month
+  annual_price: '177.30'
+  entries:
+  - {label: Instantly credits, name: credits_monthly, type: quota, metric: credits, limit: 200000, minimum: 10000, timeFrame: month}
+  features: [Everything in Growth Credits]
+- id: instantly-credits-enterprise
+  family: Credits
+  name: Enterprise Credits
+  type: custom
+  price: null
+  currency: USD
+  cta: Book A Call
+  entries:
+  - {label: Instantly credits, name: credits_monthly, type: quota, metric: credits, limit: null, note: 200,000+, timeFrame: month}
+  features: [Dedicated account manager and Slack channel]
+- id: instantly-bundle-starter
+  family: Bundle
+  name: Starter
+  type: subscription
+  price: '94.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '85.00'
+  entries:
+  - {label: Emails per month, name: emails_monthly, type: quota, metric: emails, limit: 5000, timeFrame: month}
+  - {label: Uploaded contacts, name: uploaded_contacts, type: quota, metric: contacts, limit: 1000}
+  - {label: Instantly credits, name: credits_monthly, type: quota, metric: credits, limit: 1500, timeFrame: month}
+  features: [Database of 450M+ B2B leads, AI Sales Agent]
+  composed_of: [instantly-outreach-growth, instantly-credits-growth]
+- id: instantly-bundle-scale
+  family: Bundle
+  name: Scale
+  type: subscription
+  price: '194.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '175.00'
+  popular: true
+  entries:
+  - {label: Emails per month, name: emails_monthly, type: quota, metric: emails, limit: 100000, timeFrame: month}
+  - {label: Uploaded contacts, name: uploaded_contacts, type: quota, metric: contacts, limit: 25000}
+  - {label: Instantly credits, name: credits_monthly, type: quota, metric: credits, limit: 5000, timeFrame: month}
+  features: [Everything in Starter, AI Reply Agent, Unibox replies, Advanced deliverability features, Premium live support]
+- id: instantly-bundle-agency
+  family: Bundle
+  name: Agency
+  type: subscription
+  price: '555.00'
+  currency: USD
+  billingPeriod: month
+  annual_price: '500.00'
+  entries:
+  - {label: Emails per month, name: emails_monthly, type: quota, metric: emails, limit: 500000, timeFrame: month}
+  - {label: Uploaded contacts, name: uploaded_contacts, type: quota, metric: contacts, limit: 100000}
+  - {label: Instantly credits, name: credits_monthly, type: quota, metric: credits, limit: 10000, timeFrame: month}
+  features: [Everything in Scale, SISR system]
+- id: instantly-vip
+  family: VIP
+  name: VIP Service
+  type: custom
+  price: null
+  currency: USD
+  cta: Book A Call
+  features:
+  - AI Sales Agent setup
+  - AI Inbox Manager setup
+  - Domains and account setup
+  - Campaign setup and launch
+  - Ongoing support and scaling
+  - Dedicated GTM engineer and account manager
+- id: instantly-dfy-accounts
+  family: Add-on
+  name: Done-For-You email accounts and domains
+  type: usage
+  price: null
+  currency: USD
+  description: >-
+    Pre-warmed mailboxes and domains bought from Instantly. Orderable through the API
+    (DFYEmailAccountOrder — 7 operations, including a simulate-before-order step). Pricing is
+    quoted at order time rather than published on the pricing page.
+  api_operations: [listDfyEmailAccountOrder, generateSimilarAvailableDomains, checkDomainsAvailability]
 references:
-- name: Instantly API Documentation
-  url: https://raw.githubusercontent.com/api-evangelist/instantly-ai/refs/heads/main/apis.yml
+- {name: Pricing page, url: 'https://instantly.ai/pricing'}
+- {name: Rate limits, url: 'rate-limits/instantly-ai-rate-limits.yml'}

@@ -1,0 +1,125 @@
+generated: '2026-08-13'
+method: searched
+source: https://github.com/Instantly-ai/instantly-starter-kit/blob/main/docs/conventions.md
+also:
+- https://developer.instantly.ai/getting-started/authorization
+- https://developer.instantly.ai/getting-started/rate-limit
+- https://developer.instantly.ai/guides/webhook-events
+- openapi/instantly-ai-api-v2-openapi.yml
+note: >-
+  Instantly publishes its cross-cutting semantics in a first-party document — docs/conventions.md
+  in the Instantly-ai/instantly-starter-kit repository — which is unusually complete for this
+  catalog. The values below are taken from that document and from the API reference, and are
+  cross-checked against the published OpenAPI where the spec covers them.
+base_url: https://api.instantly.ai
+path_prefix: /api/v2
+authentication:
+  style: bearer
+  header: Authorization
+  value: Bearer <api_key>
+  scopes: scopes/instantly-ai-scopes.yml
+  detail: authentication/instantly-ai-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  detail: >-
+    Instantly's own conventions document states plainly: "There is no idempotency-key mechanism.
+    Don't assume retries are safe on writes." No Idempotency-Key parameter appears anywhere in the
+    173-operation OpenAPI. This is a recorded absence, not an omission — no Idempotency pointer is
+    emitted in apis.yml.
+  safeguards_instead:
+  - skip_if_in_workspace
+  - skip_if_in_campaign
+  - skip_if_in_list
+  - blocklist_id
+  - allow_risky_contacts
+  safeguard_note: >-
+    Lead-import dedupe flags and blocklist checks are the provider's substitute for idempotent
+    writes; the first-party SDKs only auto-retry 429 and 5xx.
+pagination:
+  style: cursor
+  request_params:
+  - {name: limit, in: query, max: 100}
+  - {name: starting_after, in: query}
+  response_fields:
+  - items
+  - next_starting_after
+  cursor_type: opaque — may be a UUID, a timestamp, or an email address depending on the endpoint
+  gotchas:
+  - >-
+    A page can return a next_starting_after even when it is the last page with data; stop on an
+    empty items array rather than on a null cursor, or you spend one extra request per traversal.
+  - >-
+    listLeads is a POST to /api/v2/leads/list — a deliberate deviation for complex filters — and
+    its limit / starting_after go in the request BODY, not the query string.
+  - >-
+    Lead ordering is chronological only for leads created on or after 2025-10-15.
+field_expansion:
+  supported: false
+  note: No expand / sparse-fieldset mechanism is documented.
+naming:
+  case: snake_case
+  note: API v2 follows strict snake_case for fields and entity names; the v1 API did not.
+async_operations:
+  patterns:
+  - kind: background-job
+    detail: >-
+      The response is a job object; poll GET /api/v2/background-jobs/{id} until status is one of
+      completed, success, failed, error. Job-returning operations include enableWarmupForAccounts,
+      disableWarmupForAccounts, moveLeads, and bulkAddLeads with verify_leads_on_import true.
+    operations: [getBackgroundJob, listBackgroundJob]
+  - kind: http-202
+    detail: 202 Accepted means accepted, not done.
+    operations: [updateLeadInterestStatus, bulkAssignLeads]
+  - kind: poll-by-status
+    detail: >-
+      createEmailVerification returns verification_status "pending" when it takes longer than 10s,
+      then poll checkVerificationStatus. The Google/Microsoft OAuth connect flow returns auth_url +
+      session_id, then poll getOAuthSessionStatus. SuperSearch enrichments run after creation —
+      poll getEnrichmentForResource.
+  warning: >-
+    The provider's own note: the OpenAPI/manifest async_behavior field flags EVERY operation as a
+    background job and should be ignored; the list above is the real one.
+error_envelope:
+  format: custom-json
+  rfc9457: false
+  shape:
+    statusCode: number
+    error: string
+    message: string
+  media_type: application/json
+  detail: errors/instantly-ai-problem-types.yml
+  gotcha: >-
+    A few endpoints (sendTestEmail among them) can return HTTP 200 with an error described in the
+    body — check the body, not just the status line.
+rate_limits:
+  signalled_by: HTTP 429 plus Retry-After (seconds) on the OAuth-init endpoints
+  detail: rate-limits/instantly-ai-rate-limits.yml
+request_tracing:
+  request_id_header: null
+  note: No request-id / correlation-id header is documented.
+versioning:
+  scheme: uri-path
+  current: v2
+  detail: lifecycle/instantly-ai-lifecycle.yml
+multi_tenancy:
+  header: x-as-workspace
+  detail: >-
+    An admin-workspace key can act on a sub-workspace by sending x-as-workspace with the sub
+    workspace id. Required for cross-workspace admin flows such as moveAccounts.
+  docs: https://developer.instantly.ai/guides/workspace-group
+webhooks:
+  detail: asyncapi/instantly-ai-webhooks.yml
+  signature: none
+  signature_note: >-
+    No HMAC or signature is provided on webhook deliveries. The only delivery authentication is an
+    optional `headers` object set on the webhook subscription and verified by the receiver.
+domain_rules:
+- >-
+  Campaign creation never sends. createCampaign returns a Draft (status 0); activateCampaign is a
+  separate explicit step and pauseCampaign stops it. Campaign status: 0 Draft, 1 Active, 2 Paused,
+  3 Completed, 4 Running Subsequences; negative values are suspended / unhealthy / bounce-protect.
+- >-
+  Account health is read-only: status 1 Active, 2 Paused, 3 maintenance-auto-resume, -1 Connection
+  Error, -2 Soft Bounce, -3 Sending Error; warmup_status 0 Paused, 1 Active, -1 Banned, -2
+  Spam-folder, -3 Suspension.
