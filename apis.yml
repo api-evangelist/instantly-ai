@@ -39,6 +39,14 @@ tags:
 - Deliverability
 - Lead Database
 - Email Verification
+- Webhook
+tags_raw:
+- Cold Email
+- Outbound
+- Sales
+- Deliverability
+- Lead Database
+- Email Verification
 - Webhooks
 created: '2026-05-23'
 modified: '2026-08-13'
@@ -53,6 +61,15 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - Campaigns
+  - Leads
+  - Account
+  - Email Verification
+  - Deliverability
+  - Analytics
+  - Webhook
+  - Workspaces
+  tags_raw:
   - Campaigns
   - Leads
   - Accounts
