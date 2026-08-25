@@ -5,7 +5,7 @@
       "source": "https://instantly.ai/blog/feed/",
       "feed_url": "https://instantly.ai/blog/feed/",
       "title": "",
-      "saved": 9,
+      "saved": 0,
       "method": "feed"
     },
     {
@@ -13,10 +13,9 @@
       "feed_url": "https://instantly.ai/pricing",
       "title": "",
       "saved": 0,
-      "method": "none",
-      "error": "parse_failed"
+      "method": "none"
     }
   ],
-  "post_count": 77,
-  "fetched": "2026-08-15T12:11:08Z"
+  "post_count": 84,
+  "fetched": "2026-08-22T20:20:02Z"
 }
