@@ -52,41 +52,6 @@ created: '2026-05-23'
 modified: '2026-08-13'
 specificationVersion: '0.23'
 apis:
-- aid: instantly-ai:instantly-ai-api-v2
-  name: Instantly API v2
-  description: The full Instantly REST API v2 — 129 paths, 173 operations across 28 resource
-    groups, published as OpenAPI 3.1.0 by Instantly at api.instantly.ai/openapi/api_v2.json.
-    Every operation carries a unique operationId, a summary and documented 401/402/404/429
-    responses.
-  humanURL: https://developer.instantly.ai/api-reference
-  baseURL: https://api.instantly.ai/api/v2
-  tags:
-  - Campaigns
-  - Leads
-  - Account
-  - Email Verification
-  - Deliverability
-  - Analytics
-  - Webhook
-  - Workspaces
-  tags_raw:
-  - Campaigns
-  - Leads
-  - Accounts
-  - Email Verification
-  - Deliverability
-  - Analytics
-  - Webhooks
-  - Workspaces
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-api-v2-openapi.yml
-  - type: Overlay
-    url: overlays/instantly-ai-api-v2-overlay.yaml
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: Documentation
-    url: https://developer.instantly.ai
 - aid: instantly-ai:instantly-ai-campaigns-api
   name: Instantly Campaigns API
   description: The Campaigns API from Instantly — 10 operation(s) for campaigns.
@@ -115,6 +80,424 @@ apis:
     url: https://developer.instantly.ai/api-reference/groups/api-key
   - type: Documentation
     url: https://developer.instantly.ai/api-reference/groups/workspace
+- aid: instantly-ai:instantly-ai-account-api
+  name: Instantly Account API
+  description: An email account that can be used to send campaigns
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Account
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-account-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-accountcampaignmapping-api
+  name: Instantly Account Campaign Mapping API
+  description: Account Campaign Mapping
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - AccountCampaignMapping
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-accountcampaignmapping-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-analytics-api
+  name: Instantly Analytics API
+  description: Endpoints related to analytics
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Analytics
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-analytics-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-apikey-api
+  name: Instantly API Key API
+  description: API Key
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - APIKey
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-apikey-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-auditlog-api
+  name: Instantly Audit Log API
+  description: Audit log records for tracking system activities
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - AuditLog
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-auditlog-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-backgroundjob-api
+  name: Instantly Background Job API
+  description: A background job that can be used to perform long-running tasks
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - BackgroundJob
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-backgroundjob-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-blocklistentry-api
+  name: Instantly Block List Entry API
+  description: A blocked email or domain
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - BlockListEntry
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-blocklistentry-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-campaign-api
+  name: Instantly Campaign API
+  description: A campaign that can be sent to a list of recipients
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Campaign
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-campaign-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-campaignsubsequence-api
+  name: Instantly Campaign Subsequence API
+  description: A subsequence entity representing a follow-up sequence
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - CampaignSubsequence
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-campaignsubsequence-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-crmactions-api
+  name: Instantly CRM Actions API
+  description: CRM related actions
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - CRMActions
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-crmactions-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-customtag-api
+  name: Instantly Custom Tag API
+  description: >-
+    A custom tag for organizing and categorizing accounts and campaigns. You can use them as filters in
+    apis that list accounts and campaigns.
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - CustomTag
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-customtag-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-customtagmapping-api
+  name: Instantly Custom Tag Mapping API
+  description: >-
+    This entity represents a tag being assigned to a specific campaign or email account. When an email
+    account is assigned a tag, a new custom tag mapping entry is created, which connects the tag (`tag_id`
+    field) with the email account (`resource_id` field). You can use it to see which tag si connected
+    to which resource.
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - CustomTagMapping
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-customtagmapping-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-dfyemailaccountorder-api
+  name: Instantly DFY Email Account Order API
+  description: A Done-For-You email account order
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - DFYEmailAccountOrder
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-dfyemailaccountorder-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-email-api
+  name: Instantly Email API
+  description: >-
+    A campaign email, a reply, a manually sent email, or any other email that's visible in the Unibox
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Email
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-email-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-emailverification-api
+  name: Instantly Email Verification API
+  description: A single email verification
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - EmailVerification
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-emailverification-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-inboxplacementanalytics-api
+  name: Instantly Inbox Placement Analytics API
+  description: Analytics data for individual emails in inbox placement tests
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - InboxPlacementAnalytics
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-inboxplacementanalytics-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-inboxplacementblacklistandspamassassinreport-api
+  name: Instantly Inbox Placement Blacklist And Spam Assassin Report API
+  description: Report data for an inbox placement test
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - InboxPlacementBlacklistAndSpamAssassinReport
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-inboxplacementblacklistandspamassassinreport-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-inboxplacementtest-api
+  name: Instantly Inbox Placement Test API
+  description: An inbox placement test
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - InboxPlacementTest
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-inboxplacementtest-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-lead-api
+  name: Instantly Lead API
+  description: A lead entity representing an individual lead
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Lead
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-lead-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-leadlabel-api
+  name: Instantly Lead Label API
+  description: A custom label for categorizing and managing leads
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - LeadLabel
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-leadlabel-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-leadlist-api
+  name: Instantly Lead List API
+  description: A list used to store leads
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - LeadList
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-leadlist-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-oauth-api
+  name: Instantly O Auth API
+  description: OAuth authentication endpoints for connecting Google and Microsoft email accounts
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-oauth-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-supersearchenrichment-api
+  name: Instantly Super Search Enrichment API
+  description: >-
+    An enrichment can take different forms, such as email enrichment or LinkedIn enrichment. Leads may
+    be imported from SuperSearch using the dedicated endpoint, or enriched directly within a list or campaign
+    by attaching an enrichment to it.
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - SuperSearchEnrichment
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-supersearchenrichment-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-webhook-api
+  name: Instantly Webhook API
+  description: A webhook subscription for receiving event notifications
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Webhook
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-webhook-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-webhookevent-api
+  name: Instantly Webhook Event API
+  description: A webhook event that was sent or attempted to be sent
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - WebhookEvent
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-webhookevent-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-workspace-api
+  name: Instantly Workspace API
+  description: A workspace entity representing a workspace
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Workspace
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-workspace-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-workspacebilling-api
+  name: Instantly Workspace Billing API
+  description: Workspace Billing
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - WorkspaceBilling
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-workspacebilling-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-workspacegroupmember-api
+  name: Instantly Workspace Group Member API
+  description: >-
+    A member of a workspace group. You can use the endpoints within this entity to manage the members
+    of a workspace group.
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - WorkspaceGroupMember
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-workspacegroupmember-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-workspacemember-api
+  name: Instantly Workspace Member API
+  description: A member of a workspace with associated user details
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - WorkspaceMember
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-workspacemember-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
 common:
 - type: AgenticAccess
   url: agentic-access/instantly-ai-agentic-access.yml
