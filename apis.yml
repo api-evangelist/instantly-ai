@@ -12,6 +12,18 @@ description: Instantly is a cold email outbound platform that combines mailbox s
   backed by a full OAuth 2.0 authorization server with 178 published scopes, PKCE and
   dynamic client registration. Instantly also runs a hosted remote MCP server, publishes
   an A2A agent card, an llms.txt and first-party Agent Skills.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: paid
   onboarding: self-serve
