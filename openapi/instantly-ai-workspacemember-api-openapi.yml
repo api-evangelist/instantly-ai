@@ -1,0 +1,1135 @@
+openapi: 3.2.0
+info:
+  title: Explorer Workspace Member API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: WorkspaceMember
+  description: A member of a workspace with associated user details
+  x-group: Workspace Member
+paths:
+  /api/v2/workspace-members:
+    post:
+      operationId: createWorkspaceMember
+      summary: Create workspace member
+      tags:
+      - WorkspaceMember
+      description: 'Requires one of the following scopes: `workspace_members:create`, `workspace_members:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateWorkspace Member
+              description: The Workspace Member to create
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email address of the workspace member
+                  format: email
+                  example: user@example.com
+                user_email:
+                  type:
+                  - string
+                  - 'null'
+                  description: Email address of the user
+                  format: email
+                  example: user@example.com
+                nickname:
+                  type:
+                  - string
+                  - 'null'
+                  description: Private workspace member nickname visible only to the workspace owner
+                  maxLength: 80
+                  example: Finance lead
+                role:
+                  type: string
+                  description: THe role of the workspace member defining their access level. While the "owner" role is listed in the enum, it cannot be created via the API, and is only assigned to the user who creates the workspace.
+                  enum:
+                  - owner
+                  - admin
+                  - editor
+                  - view
+                  - client
+                  x-enumDescriptions:
+                    owner: Owner - Full access and workspace management
+                    admin: Admin - Full access except workspace deletion
+                    editor: Editor - Can edit but not manage workspace settings
+                    view: View - Read-only access
+                    client: This is a special role for users in the whitelabel (agency) view. It is not available in the API.
+                  example: editor
+                permissions:
+                  type:
+                  - array
+                  - 'null'
+                  description: The permissions for this workspace member. Used in the app to restrict access to certain sections
+                  items:
+                    type: string
+                    enum:
+                    - dashboard.view
+                    - campaigns.view
+                    - campaigns.create
+                    - campaigns.edit
+                    - campaigns.delete
+                    - organization.manage
+                    - organization.integrations
+                    - organization.billing
+                    - organization.users.manage
+                    - leadFinder.view
+                    - customLeadLabels.create
+                    - customLeadLabels.edit
+                    - customLeadLabels.delete
+                    - unibox.all
+                    - analytics.view
+                    - websiteChat.view
+                    - websiteChat.manage
+                    - agency.manage
+                    - accounts.view
+                    - accounts.manage
+                    - leadManagement.view
+                    - leads.move
+                    - crm.view
+                    - websiteVisitors.view
+                    - blocklist.manage
+                    - preferences.manage
+                    - inboxPlacement.view
+                    - aiAgents.manage
+                    - workspaceGroupMembers.invite
+                    - workspaceGroupMembers.remove
+                    - workspaceGroupMembers.leave
+                    examples:
+                    - unibox.all
+                    x-enumDescriptions:
+                      dashboard.view: View the dashboard
+                      campaigns.view: View campaigns
+                      campaigns.create: Create campaigns
+                      campaigns.edit: Edit campaigns
+                      campaigns.delete: Delete campaigns
+                      organization.manage: Manage organization
+                      organization.integrations: Manage organization integrations
+                      organization.billing: Manage organization billing
+                      organization.users.manage: Manage organization users
+                      leadFinder.view: View lead finder
+                      customLeadLabels.create: Create custom lead labels
+                      customLeadLabels.edit: Edit custom lead labels
+                      customLeadLabels.delete: Delete custom lead labels
+                      unibox.all: View all unibox
+                      analytics.view: View analytics
+                      websiteChat.view: View Website Chat configuration
+                      websiteChat.manage: Manage Website Chat configuration
+                      agency.manage: Manage agency
+                      accounts.view: View accounts
+                      accounts.manage: Manage accounts
+                      leadManagement.view: View lead management
+                      leads.move: Move leads
+                      crm.view: View CRM
+                      websiteVisitors.view: View website visitors
+                      blocklist.manage: Manage blocklist
+                      preferences.manage: Manage preferences
+                      inboxPlacement.view: Manage inbox placement
+                      aiAgents.manage: Manage AI agents
+                      workspaceGroupMembers.invite: Invite workspace group members
+                      workspaceGroupMembers.remove: Remove workspace group members
+                      workspaceGroupMembers.leave: Leave workspace group
+                    example: unibox.all
+              required:
+              - email
+              - role
+              additionalProperties: false
+        required: true
+        description: The Workspace Member to create
+      responses:
+        '200':
+          description: The Workspace Member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceMember'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listWorkspaceMember
+      summary: List workspace member
+      tags:
+      - WorkspaceMember
+      description: 'Requires one of the following scopes: `workspace_members:read`, `workspace_members:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: boolean
+          example: true
+        example: true
+        in: query
+        name: accepted
+        required: false
+        description: Filter workspace members by invitation acceptance status
+      - schema:
+          type: string
+          example: John
+        example: John
+        in: query
+        name: search
+        required: false
+        description: Search by name or email
+      responses:
+        '200':
+          description: The list of Workspace Member
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Workspace Member
+                    items:
+                      $ref: '#/components/schemas/WorkspaceMember'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9d08-7e1e-b9f5-6ca13d5d4312
+                    - '2026-08-13T11:12:14.600Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9d08-7e1e-b9f5-6ca13d5d4312
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/workspace-members/{id}:
+    get:
+      operationId: getWorkspaceMember
+      summary: Get workspace member
+      tags:
+      - WorkspaceMember
+      description: 'Requires one of the following scopes: `workspace_members:read`, `workspace_members:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9d0a-7a1c-bc64-81a346e4de0f
+        example: 019ffad2-9d0a-7a1c-bc64-81a346e4de0f
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Workspace Member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceMember'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchWorkspaceMember
+      summary: Patch workspace member
+      tags:
+      - WorkspaceMember
+      description: 'Requires one of the following scopes: `workspace_members:update`, `workspace_members:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type:
+                  - string
+                  - 'null'
+                  description: Private workspace member nickname visible only to the workspace owner
+                  maxLength: 80
+                  example: Finance lead
+                role:
+                  type: string
+                  description: THe role of the workspace member defining their access level. While the "owner" role is listed in the enum, it cannot be created via the API, and is only assigned to the user who creates the workspace.
+                  enum:
+                  - owner
+                  - admin
+                  - editor
+                  - view
+                  - client
+                  x-enumDescriptions:
+                    owner: Owner - Full access and workspace management
+                    admin: Admin - Full access except workspace deletion
+                    editor: Editor - Can edit but not manage workspace settings
+                    view: View - Read-only access
+                    client: This is a special role for users in the whitelabel (agency) view. It is not available in the API.
+                  example: editor
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9d0b-756e-98f8-8705778080af
+        example: 019ffad2-9d0b-756e-98f8-8705778080af
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to update
+      responses:
+        '200':
+          description: The updated Workspace Member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceMember'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteWorkspaceMember
+      summary: Delete workspace member
+      tags:
+      - WorkspaceMember
+      description: 'Requires one of the following scopes: `workspace_members:delete`, `workspace_members:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9d0b-756e-98f8-87065b662457
+        example: 019ffad2-9d0b-756e-98f8-87065b662457
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted Workspace Member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceMember'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    WorkspaceMember:
+      title: Workspace Member
+      description: A member of a workspace with associated user details
+      x-tags:
+      - Schemas
+      - WorkspaceMember
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the workspace member
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5cbe-7e77-99c9-572e4c014d26
+        email:
+          type: string
+          description: Email address of the workspace member
+          format: email
+          example: user@example.com
+        user_id:
+          type: string
+          description: User ID of the workspace member
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5cbe-7e77-99c9-572f77591cee
+        user_email:
+          type:
+          - 'null'
+          - string
+          description: Email address of the user
+          format: email
+          example: user@example.com
+        nickname:
+          type:
+          - 'null'
+          - string
+          description: Private workspace member nickname visible only to the workspace owner
+          maxLength: 80
+          example: Finance lead
+        name:
+          type: object
+          readOnly: true
+          properties:
+            first:
+              type: string
+              description: Workspace member first name
+              example: John
+            last:
+              type: string
+              description: Workspace member last name
+              example: Smith
+        role:
+          type: string
+          description: THe role of the workspace member defining their access level. While the "owner" role is listed in the enum, it cannot be created via the API, and is only assigned to the user who creates the workspace.
+          enum:
+          - owner
+          - admin
+          - editor
+          - view
+          - client
+          x-enumDescriptions:
+            owner: Owner - Full access and workspace management
+            admin: Admin - Full access except workspace deletion
+            editor: Editor - Can edit but not manage workspace settings
+            view: View - Read-only access
+            client: This is a special role for users in the whitelabel (agency) view. It is not available in the API.
+          example: editor
+        timestamp_created:
+          type: string
+          description: Timestamp when the workspace member was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.142Z'
+        workspace_id:
+          type: string
+          description: ID of the workspace this member belongs to
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5cbe-7e77-99c9-57309a0d4904
+        accepted:
+          type: boolean
+          description: Whether the member has accepted the workspace invitation
+          readOnly: true
+          example: false
+        issuer_id:
+          type:
+          - 'null'
+          - string
+          description: ID of the user who added this member to the workspace
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5cbe-7e77-99c9-57317b39276f
+        permissions:
+          type:
+          - 'null'
+          - array
+          description: The permissions for this workspace member. Used in the app to restrict access to certain sections
+          items:
+            type: string
+            enum:
+            - dashboard.view
+            - campaigns.view
+            - campaigns.create
+            - campaigns.edit
+            - campaigns.delete
+            - organization.manage
+            - organization.integrations
+            - organization.billing
+            - organization.users.manage
+            - leadFinder.view
+            - customLeadLabels.create
+            - customLeadLabels.edit
+            - customLeadLabels.delete
+            - unibox.all
+            - analytics.view
+            - websiteChat.view
+            - websiteChat.manage
+            - agency.manage
+            - accounts.view
+            - accounts.manage
+            - leadManagement.view
+            - leads.move
+            - crm.view
+            - websiteVisitors.view
+            - blocklist.manage
+            - preferences.manage
+            - inboxPlacement.view
+            - aiAgents.manage
+            - workspaceGroupMembers.invite
+            - workspaceGroupMembers.remove
+            - workspaceGroupMembers.leave
+            examples:
+            - unibox.all
+            x-enumDescriptions:
+              dashboard.view: View the dashboard
+              campaigns.view: View campaigns
+              campaigns.create: Create campaigns
+              campaigns.edit: Edit campaigns
+              campaigns.delete: Delete campaigns
+              organization.manage: Manage organization
+              organization.integrations: Manage organization integrations
+              organization.billing: Manage organization billing
+              organization.users.manage: Manage organization users
+              leadFinder.view: View lead finder
+              customLeadLabels.create: Create custom lead labels
+              customLeadLabels.edit: Edit custom lead labels
+              customLeadLabels.delete: Delete custom lead labels
+              unibox.all: View all unibox
+              analytics.view: View analytics
+              websiteChat.view: View Website Chat configuration
+              websiteChat.manage: Manage Website Chat configuration
+              agency.manage: Manage agency
+              accounts.view: View accounts
+              accounts.manage: Manage accounts
+              leadManagement.view: View lead management
+              leads.move: Move leads
+              crm.view: View CRM
+              websiteVisitors.view: View website visitors
+              blocklist.manage: Manage blocklist
+              preferences.manage: Manage preferences
+              inboxPlacement.view: Manage inbox placement
+              aiAgents.manage: Manage AI agents
+              workspaceGroupMembers.invite: Invite workspace group members
+              workspaceGroupMembers.remove: Remove workspace group members
+              workspaceGroupMembers.leave: Leave workspace group
+            example: unibox.all
+      required:
+      - id
+      - email
+      - user_id
+      - role
+      - timestamp_created
+      - workspace_id
+      - accepted
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

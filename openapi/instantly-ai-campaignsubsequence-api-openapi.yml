@@ -1,0 +1,3357 @@
+openapi: 3.2.0
+info:
+  title: Explorer Campaign Subsequence API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: CampaignSubsequence
+  description: A subsequence entity representing a follow-up sequence
+  x-group: Campaign Subsequence
+paths:
+  /api/v2/subsequences:
+    post:
+      operationId: createCampaignSubsequence
+      summary: Create campaign subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Requires one of the following scopes: `subsequences:create`, `subsequences:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateCampaign Subsequence
+              description: The Campaign Subsequence to create
+              type: object
+              properties:
+                parent_campaign:
+                  type: string
+                  description: ID of the parent campaign
+                  format: uuid
+                  example: 019ffad2-5cc7-76f5-9fd3-25f990e43646
+                name:
+                  type: string
+                  description: Name of the subsequence
+                  example: Follow-up sequence
+                conditions:
+                  type: object
+                  description: Conditions that trigger the subsequence
+                  properties:
+                    crm_status:
+                      type: array
+                      description: Lead CRM statuses that trigger the subsequence. Accepts the built-in statuses listed below, or the interest status of a custom lead label.
+                      items:
+                        type: number
+                        minimum: -30000
+                        maximum: 30000
+                        x-enumDescriptions:
+                          '0': Out of Office
+                          '1': Interested
+                          '2': Meeting Booked
+                          '3': Meeting Completed
+                          '4': Won
+                          '-1': Not Interested
+                          '-2': Wrong Person
+                          '-3': Lost
+                          '-4': No Show
+                        example: 1
+                    lead_activity:
+                      type: array
+                      description: Lead activities that trigger the subsequence.
+                      items:
+                        type: number
+                        enum:
+                        - 4
+                        - 91
+                        - 2
+                        x-enumDescriptions:
+                          '2': Email Opened - Triggered when a lead opens an email
+                          '4': Email Link Clicked - Triggered when a lead clicks a link in an email
+                          '91': Campaign Completed Without Reply - Triggered when a campaign completes for a lead without receiving a reply
+                        example: 4
+                    reply_contains:
+                      type: string
+                      example: 'yes'
+                subsequence_schedule:
+                  type: object
+                  description: Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.
+                  properties:
+                    start_date:
+                      type:
+                      - string
+                      - 'null'
+                      format: date
+                      description: Start date in YYYY-MM-DD format. Uses the campaign's timezone.
+                      example: '2025-09-25'
+                    end_date:
+                      type:
+                      - string
+                      - 'null'
+                      format: date
+                      description: End date in YYYY-MM-DD format. Uses the campaign's timezone.
+                      example: '2025-09-25'
+                    schedules:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: My Schedule
+                          timing:
+                            type: object
+                            properties:
+                              from:
+                                type: string
+                                pattern: ^([01][0-9]|2[0-3]):([0-5][0-9])$
+                                example: 09:00
+                              to:
+                                type: string
+                                pattern: ^([01][0-9]|2[0-3]):([0-5][0-9])$
+                                example: '17:00'
+                            required:
+                            - from
+                            - to
+                          days:
+                            type: object
+                            minProperties: 1
+                            properties:
+                              '0':
+                                type: boolean
+                                example: true
+                              '1':
+                                type: boolean
+                                example: true
+                              '2':
+                                type: boolean
+                                example: true
+                              '3':
+                                type: boolean
+                                example: true
+                              '4':
+                                type: boolean
+                                example: true
+                              '5':
+                                type: boolean
+                                example: false
+                              '6':
+                                type: boolean
+                                example: false
+                          timezone:
+                            type: string
+                            enum:
+                            - Etc/GMT+12
+                            - Etc/GMT+11
+                            - Etc/GMT+10
+                            - America/Anchorage
+                            - America/Dawson
+                            - America/Creston
+                            - America/Chihuahua
+                            - America/Boise
+                            - America/Belize
+                            - America/Chicago
+                            - America/Bahia_Banderas
+                            - America/Regina
+                            - America/Bogota
+                            - America/Detroit
+                            - America/Indiana/Marengo
+                            - America/Caracas
+                            - America/Asuncion
+                            - America/Glace_Bay
+                            - America/Campo_Grande
+                            - America/Anguilla
+                            - America/Santiago
+                            - America/St_Johns
+                            - America/Sao_Paulo
+                            - America/Argentina/La_Rioja
+                            - America/Araguaina
+                            - America/Godthab
+                            - America/Montevideo
+                            - America/Bahia
+                            - America/Noronha
+                            - America/Scoresbysund
+                            - Atlantic/Cape_Verde
+                            - Africa/Casablanca
+                            - America/Danmarkshavn
+                            - Europe/Isle_of_Man
+                            - Atlantic/Canary
+                            - Africa/Abidjan
+                            - Arctic/Longyearbyen
+                            - Europe/Belgrade
+                            - Africa/Ceuta
+                            - Europe/Sarajevo
+                            - Africa/Algiers
+                            - Africa/Windhoek
+                            - Asia/Nicosia
+                            - Asia/Beirut
+                            - Africa/Cairo
+                            - Asia/Damascus
+                            - Europe/Bucharest
+                            - Africa/Blantyre
+                            - Europe/Helsinki
+                            - Europe/Istanbul
+                            - Asia/Jerusalem
+                            - Africa/Tripoli
+                            - Asia/Amman
+                            - Asia/Baghdad
+                            - Europe/Kaliningrad
+                            - Asia/Aden
+                            - Africa/Addis_Ababa
+                            - Europe/Kirov
+                            - Europe/Astrakhan
+                            - Asia/Tehran
+                            - Asia/Dubai
+                            - Asia/Baku
+                            - Indian/Mahe
+                            - Asia/Tbilisi
+                            - Asia/Yerevan
+                            - Asia/Kabul
+                            - Antarctica/Mawson
+                            - Asia/Yekaterinburg
+                            - Asia/Karachi
+                            - Asia/Kolkata
+                            - Asia/Colombo
+                            - Asia/Kathmandu
+                            - Antarctica/Vostok
+                            - Asia/Dhaka
+                            - Asia/Rangoon
+                            - Antarctica/Davis
+                            - Asia/Novokuznetsk
+                            - Asia/Hong_Kong
+                            - Asia/Krasnoyarsk
+                            - Asia/Brunei
+                            - Australia/Perth
+                            - Asia/Taipei
+                            - Asia/Choibalsan
+                            - Asia/Irkutsk
+                            - Asia/Dili
+                            - Asia/Pyongyang
+                            - Australia/Adelaide
+                            - Australia/Darwin
+                            - Australia/Brisbane
+                            - Australia/Melbourne
+                            - Antarctica/DumontDUrville
+                            - Australia/Currie
+                            - Asia/Chita
+                            - Antarctica/Macquarie
+                            - Asia/Sakhalin
+                            - Pacific/Auckland
+                            - Etc/GMT-12
+                            - Pacific/Fiji
+                            - Asia/Anadyr
+                            - Asia/Kamchatka
+                            - Etc/GMT-13
+                            - Pacific/Apia
+                            example: Etc/GMT+12
+                        required:
+                        - name
+                        - timing
+                        - days
+                        - timezone
+                      minItems: 1
+                  required:
+                  - schedules
+                sequences:
+                  type: array
+                  description: List of sequences (the actual email copy). Even though this field is an array, only the first element is used, so please provide only one array item, and add the steps to that array
+                  items:
+                    type: object
+                    properties:
+                      steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                              - email
+                              x-enumDescriptions:
+                                email: This steps represents an email
+                              description: Type of step. This has to be 'email' always - it's the only supported type for now
+                              example: email
+                            delay:
+                              type: number
+                              description: The delay value before sending the NEXT email. The unit is determined by the delay_unit field (defaults to days).
+                              example: 2
+                            delay_unit:
+                              type: string
+                              enum:
+                              - minutes
+                              - hours
+                              - days
+                              default: days
+                              description: The unit of time for the delay value (minutes, hours, or days). Defaults to days for backward compatibility.
+                              example: days
+                            pre_delay:
+                              type: number
+                              description: The delay value before sending the FIRST email in a subsequence. **Only applicable to subsequences** - this field is ignored for regular campaigns. The unit is determined by the pre_delay_unit field (defaults to days).
+                              example: 2
+                            pre_delay_unit:
+                              type: string
+                              enum:
+                              - minutes
+                              - hours
+                              - days
+                              default: days
+                              description: The unit of time for the pre_delay value (minutes, hours, or days). **Only applicable to subsequences** - this field is ignored for regular campaigns. Defaults to days for backward compatibility.
+                              example: days
+                            variants:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  subject:
+                                    type: string
+                                    example: Hello {{firstName}}
+                                  body:
+                                    type: string
+                                    description: Email body HTML. Use `<br/>` tags for delivered email line breaks.
+                                    example: Hey {{firstName}},<br/><br/>I hope you are doing well.
+                                  v_disabled:
+                                    type: boolean
+                                    description: Whether this variant is disabled. By default, all the variants are enabled. Please set this to true if you want to disable this variant
+                                    example: true
+                                required:
+                                - subject
+                                - body
+                              minItems: 1
+                              maxItems: 26
+                              contains:
+                                type: object
+                                not:
+                                  properties:
+                                    v_disabled:
+                                      enum:
+                                      - true
+                                  required:
+                                  - v_disabled
+                          required:
+                          - type
+                          - delay
+                          - variants
+                    required:
+                    - steps
+                auto_variant_select:
+                  type:
+                  - object
+                  - 'null'
+                  description: Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.
+                  properties:
+                    trigger:
+                      type: string
+                      enum:
+                      - reply_rate
+                      - click_rate
+                      - open_rate
+                      examples:
+                      - click_rate
+                      example: click_rate
+                  required:
+                  - trigger
+                daily_limit_mode:
+                  type: string
+                  description: Daily limit mode for the subsequence. "inherit" uses the parent campaign limit, "custom" uses a subsequence-specific limit, "unlimited" bypasses the campaign-level daily limit.
+                  enum:
+                  - inherit
+                  - custom
+                  - unlimited
+                  example: inherit
+                daily_limit:
+                  type:
+                  - number
+                  - 'null'
+                  description: Custom daily limit for the subsequence. Only used when `daily_limit_mode` is "custom".
+                  example: 50
+                ignore_account_daily_limit:
+                  type: boolean
+                  description: When enabled, the subsequence will send even when sending accounts have reached their daily limit.
+                  example: false
+              required:
+              - parent_campaign
+              - name
+              - conditions
+              additionalProperties: false
+        required: true
+        description: The Campaign Subsequence to create
+      responses:
+        '200':
+          description: The Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignSubsequence'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listCampaignSubsequence
+      summary: List campaign subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Requires one of the following scopes: `subsequences:read`, `subsequences:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: query
+        name: parent_campaign
+        required: false
+        description: The ID of the campaign to list the subsequences of.
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: query
+        name: parent_campaign_not
+        required: false
+        description: The ID of a campaign to exclude subsequences of, returning reusable subsequences from the workspace's other campaigns instead.
+      - schema:
+          type: string
+          example: test
+        example: test
+        in: query
+        name: search
+        required: false
+        description: The search query to filter the subsequences by.
+      responses:
+        '200':
+          description: The list of Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Campaign Subsequence
+                    items:
+                      $ref: '#/components/schemas/CampaignSubsequence'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9c89-793f-9322-7fbe7cac60bb
+                    - '2026-08-13T11:12:14.473Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9c89-793f-9322-7fbe7cac60bb
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/{id}/duplicate:
+    post:
+      operationId: duplicateSubsequence
+      summary: Duplicate a subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Duplicate a subsequence with the same trigger conditions
+
+
+
+        Requires one of the following scopes: `subsequences:create`, `subsequences:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parent_campaign:
+                  type: string
+                  format: uuid
+                  description: The ID of the campaign to duplicate the subsequence to.
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                name:
+                  type: string
+                  description: The name of the duplicate subsequence. Defaults to the source subsequence name when omitted.
+                  example: My Duplicate Subsequence
+              required:
+              - parent_campaign
+        required: true
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: path
+        name: id
+        required: true
+        description: The ID of the subsequence to duplicate.
+      responses:
+        '200':
+          description: The requested Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignSubsequence'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/{id}/pause:
+    post:
+      operationId: pauseSubsequence
+      summary: Pause a subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Pause a subsequence
+
+
+
+        Requires one of the following scopes: `subsequences:update`, `subsequences:all`, `all:update`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: path
+        name: id
+        required: true
+        description: Subsequence ID
+      responses:
+        '200':
+          description: The requested Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignSubsequence'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/{id}/resume:
+    post:
+      operationId: resumeSubsequence
+      summary: Resume a paused subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Resume a paused subsequence
+
+
+
+        Requires one of the following scopes: `subsequences:update`, `subsequences:all`, `all:update`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: path
+        name: id
+        required: true
+        description: The ID of the subsequence to resume.
+      responses:
+        '200':
+          description: The requested Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignSubsequence'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/analytics:
+    get:
+      operationId: getSubsequenceAnalytics
+      summary: Get subsequence analytics summary
+      tags:
+      - CampaignSubsequence
+      description: 'Returns per-subsequence engagement totals (emails sent, unique opens, unique replies) for the subsequences of a campaign.
+
+
+
+        Requires one of the following scopes: `subsequences:read`, `subsequences:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: query
+        name: campaign_id
+        required: true
+        description: The ID of the campaign to fetch subsequence analytics for.
+      responses:
+        '200':
+          description: Per-subsequence analytics totals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subsequence_id:
+                      type: string
+                      format: uuid
+                      examples:
+                      - 123e4567-e89b-12d3-a456-426614174000
+                      example: 123e4567-e89b-12d3-a456-426614174000
+                    emails_sent:
+                      type: number
+                      examples:
+                      - 100
+                      example: 100
+                    unique_opens:
+                      type: number
+                      examples:
+                      - 50
+                      example: 50
+                    unique_replies:
+                      type: number
+                      examples:
+                      - 10
+                      example: 10
+                  required:
+                  - subsequence_id
+                  - emails_sent
+                  - unique_opens
+                  - unique_replies
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/{id}:
+    get:
+      operationId: getCampaignSubsequence
+      summary: Get campaign subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Requires one of the following scopes: `subsequences:read`, `subsequences:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c8b-7899-a0d0-1b19c0d82861
+        example: 019ffad2-9c8b-7899-a0d0-1b19c0d82861
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignSubsequence'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchCampaignSubsequence
+      summary: Patch campaign subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Requires one of the following scopes: `subsequences:update`, `subsequences:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the subsequence
+                  example: Follow-up sequence
+                conditions:
+                  type: object
+                  description: Conditions that trigger the subsequence
+                  properties:
+                    crm_status:
+                      type: array
+                      description: Lead CRM statuses that trigger the subsequence. Accepts the built-in statuses listed below, or the interest status of a custom lead label.
+                      items:
+                        type: number
+                        minimum: -30000
+                        maximum: 30000
+                        x-enumDescriptions:
+                          '0': Out of Office
+                          '1': Interested
+                          '2': Meeting Booked
+                          '3': Meeting Completed
+                          '4': Won
+                          '-1': Not Interested
+                          '-2': Wrong Person
+                          '-3': Lost
+                          '-4': No Show
+                        example: 1
+                    lead_activity:
+                      type: array
+                      description: Lead activities that trigger the subsequence.
+                      items:
+                        type: number
+                        enum:
+                        - 4
+                        - 91
+                        - 2
+                        x-enumDescriptions:
+                          '2': Email Opened - Triggered when a lead opens an email
+                          '4': Email Link Clicked - Triggered when a lead clicks a link in an email
+                          '91': Campaign Completed Without Reply - Triggered when a campaign completes for a lead without receiving a reply
+                        example: 4
+                    reply_contains:
+                      type: string
+                      example: 'yes'
+                subsequence_schedule:
+                  type: object
+                  description: Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.
+                  properties:
+                    start_date:
+                      type:
+                      - string
+                      - 'null'
+                      format: date
+                      description: Start date in YYYY-MM-DD format. Uses the campaign's timezone.
+                      example: '2025-09-25'
+                    end_date:
+                      type:
+                      - string
+                      - 'null'
+                      format: date
+                      description: End date in YYYY-MM-DD format. Uses the campaign's timezone.
+                      example: '2025-09-25'
+                    schedules:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: My Schedule
+                          timing:
+                            type: object
+                            properties:
+                              from:
+                                type: string
+                                pattern: ^([01][0-9]|2[0-3]):([0-5][0-9])$
+                                example: 09:00
+                              to:
+                                type: string
+                                pattern: ^([01][0-9]|2[0-3]):([0-5][0-9])$
+                                example: '17:00'
+                            required:
+                            - from
+                            - to
+                          days:
+                            type: object
+                            minProperties: 1
+                            properties:
+                              '0':
+                                type: boolean
+                                example: true
+                              '1':
+                                type: boolean
+                                example: true
+                              '2':
+                                type: boolean
+                                example: true
+                              '3':
+                                type: boolean
+                                example: true
+                              '4':
+                                type: boolean
+                                example: true
+                              '5':
+                                type: boolean
+                                example: false
+                              '6':
+                                type: boolean
+                                example: false
+                          timezone:
+                            type: string
+                            enum:
+                            - Etc/GMT+12
+                            - Etc/GMT+11
+                            - Etc/GMT+10
+                            - America/Anchorage
+                            - America/Dawson
+                            - America/Creston
+                            - America/Chihuahua
+                            - America/Boise
+                            - America/Belize
+                            - America/Chicago
+                            - America/Bahia_Banderas
+                            - America/Regina
+                            - America/Bogota
+                            - America/Detroit
+                            - America/Indiana/Marengo
+                            - America/Caracas
+                            - America/Asuncion
+                            - America/Glace_Bay
+                            - America/Campo_Grande
+                            - America/Anguilla
+                            - America/Santiago
+                            - America/St_Johns
+                            - America/Sao_Paulo
+                            - America/Argentina/La_Rioja
+                            - America/Araguaina
+                            - America/Godthab
+                            - America/Montevideo
+                            - America/Bahia
+                            - America/Noronha
+                            - America/Scoresbysund
+                            - Atlantic/Cape_Verde
+                            - Africa/Casablanca
+                            - America/Danmarkshavn
+                            - Europe/Isle_of_Man
+                            - Atlantic/Canary
+                            - Africa/Abidjan
+                            - Arctic/Longyearbyen
+                            - Europe/Belgrade
+                            - Africa/Ceuta
+                            - Europe/Sarajevo
+                            - Africa/Algiers
+                            - Africa/Windhoek
+                            - Asia/Nicosia
+                            - Asia/Beirut
+                            - Africa/Cairo
+                            - Asia/Damascus
+                            - Europe/Bucharest
+                            - Africa/Blantyre
+                            - Europe/Helsinki
+                            - Europe/Istanbul
+                            - Asia/Jerusalem
+                            - Africa/Tripoli
+                            - Asia/Amman
+                            - Asia/Baghdad
+                            - Europe/Kaliningrad
+                            - Asia/Aden
+                            - Africa/Addis_Ababa
+                            - Europe/Kirov
+                            - Europe/Astrakhan
+                            - Asia/Tehran
+                            - Asia/Dubai
+                            - Asia/Baku
+                            - Indian/Mahe
+                            - Asia/Tbilisi
+                            - Asia/Yerevan
+                            - Asia/Kabul
+                            - Antarctica/Mawson
+                            - Asia/Yekaterinburg
+                            - Asia/Karachi
+                            - Asia/Kolkata
+                            - Asia/Colombo
+                            - Asia/Kathmandu
+                            - Antarctica/Vostok
+                            - Asia/Dhaka
+                            - Asia/Rangoon
+                            - Antarctica/Davis
+                            - Asia/Novokuznetsk
+                            - Asia/Hong_Kong
+                            - Asia/Krasnoyarsk
+                            - Asia/Brunei
+                            - Australia/Perth
+                            - Asia/Taipei
+                            - Asia/Choibalsan
+                            - Asia/Irkutsk
+                            - Asia/Dili
+                            - Asia/Pyongyang
+                            - Australia/Adelaide
+                            - Australia/Darwin
+                            - Australia/Brisbane
+                            - Australia/Melbourne
+                            - Antarctica/DumontDUrville
+                            - Australia/Currie
+                            - Asia/Chita
+                            - Antarctica/Macquarie
+                            - Asia/Sakhalin
+                            - Pacific/Auckland
+                            - Etc/GMT-12
+                            - Pacific/Fiji
+                            - Asia/Anadyr
+                            - Asia/Kamchatka
+                            - Etc/GMT-13
+                            - Pacific/Apia
+                            example: Etc/GMT+12
+                        required:
+                        - name
+                        - timing
+                        - days
+                        - timezone
+                      minItems: 1
+                  required:
+                  - schedules
+                sequences:
+                  type: array
+                  description: List of sequences (the actual email copy). Even though this field is an array, only the first element is used, so please provide only one array item, and add the steps to that array
+                  items:
+                    type: object
+                    properties:
+                      steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                              - email
+                              x-enumDescriptions:
+                                email: This steps represents an email
+                              description: Type of step. This has to be 'email' always - it's the only supported type for now
+                              example: email
+                            delay:
+                              type: number
+                              description: The delay value before sending the NEXT email. The unit is determined by the delay_unit field (defaults to days).
+                              example: 2
+                            delay_unit:
+                              type: string
+                              enum:
+                              - minutes
+                              - hours
+                              - days
+                              default: days
+                              description: The unit of time for the delay value (minutes, hours, or days). Defaults to days for backward compatibility.
+                              example: days
+                            pre_delay:
+                              type: number
+                              description: The delay value before sending the FIRST email in a subsequence. **Only applicable to subsequences** - this field is ignored for regular campaigns. The unit is determined by the pre_delay_unit field (defaults to days).
+                              example: 2
+                            pre_delay_unit:
+                              type: string
+                              enum:
+                              - minutes
+                              - hours
+                              - days
+                              default: days
+                              description: The unit of time for the pre_delay value (minutes, hours, or days). **Only applicable to subsequences** - this field is ignored for regular campaigns. Defaults to days for backward compatibility.
+                              example: days
+                            variants:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  subject:
+                                    type: string
+                                    example: Hello {{firstName}}
+                                  body:
+                                    type: string
+                                    description: Email body HTML. Use `<br/>` tags for delivered email line breaks.
+                                    example: Hey {{firstName}},<br/><br/>I hope you are doing well.
+                                  v_disabled:
+                                    type: boolean
+                                    description: Whether this variant is disabled. By default, all the variants are enabled. Please set this to true if you want to disable this variant
+                                    example: true
+                                required:
+                                - subject
+                                - body
+                              minItems: 1
+                              maxItems: 26
+                              contains:
+                                type: object
+                                not:
+                                  properties:
+                                    v_disabled:
+                                      enum:
+                                      - true
+                                  required:
+                                  - v_disabled
+                          required:
+                          - type
+                          - delay
+                          - variants
+                    required:
+                    - steps
+                auto_variant_select:
+                  type:
+                  - object
+                  - 'null'
+                  description: Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.
+                  properties:
+                    trigger:
+                      type: string
+                      enum:
+                      - reply_rate
+                      - click_rate
+                      - open_rate
+                      examples:
+                      - click_rate
+                      example: click_rate
+                  required:
+                  - trigger
+                daily_limit_mode:
+                  type: string
+                  description: Daily limit mode for the subsequence. "inherit" uses the parent campaign limit, "custom" uses a subsequence-specific limit, "unlimited" bypasses the campaign-level daily limit.
+                  enum:
+                  - inherit
+                  - custom
+                  - unlimited
+                  example: inherit
+                daily_limit:
+                  type:
+                  - number
+                  - 'null'
+                  description: Custom daily limit for the subsequence. Only used when `daily_limit_mode` is "custom".
+                  example: 50
+                ignore_account_daily_limit:
+                  type: boolean
+                  description: When enabled, the subsequence will send even when sending accounts have reached their daily limit.
+                  example: false
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c8c-7d69-9bc1-9209e81446e8
+        example: 019ffad2-9c8c-7d69-9bc1-9209e81446e8
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to update
+      responses:
+        '200':
+          description: The updated Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignSubsequence'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteCampaignSubsequence
+      summary: Delete campaign subsequence
+      tags:
+      - CampaignSubsequence
+      description: 'Requires one of the following scopes: `subsequences:delete`, `subsequences:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c8c-7d69-9bc1-920a739b3101
+        example: 019ffad2-9c8c-7d69-9bc1-920a739b3101
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted Campaign Subsequence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignSubsequence'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/{id}/analytics/steps:
+    get:
+      operationId: getSubsequenceStepsAnalytics
+      summary: Get subsequence step and variant analytics
+      tags:
+      - CampaignSubsequence
+      description: 'Returns engagement metrics grouped by zero-based step and variant for one subsequence. Results include only activity from the requested subsequence, excluding its parent campaign and sibling subsequences.
+
+
+
+        Requires one of the following scopes: `subsequences:read`, `subsequences:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T12:00:00.000Z':
+            value: '2024-01-01T12:00:00.000Z'
+        in: query
+        name: start_date
+        required: false
+        description: Inclusive start of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or an ISO 8601 timestamp. Timestamps are normalized to their UTC calendar date.
+      - schema:
+          type: string
+          example: '2024-01-31'
+        examples:
+          '2024-01-31':
+            value: '2024-01-31'
+          '2024-01-31T23:59:59.999Z':
+            value: '2024-01-31T23:59:59.999Z'
+        in: query
+        name: end_date
+        required: false
+        description: Inclusive end of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or an ISO 8601 timestamp. Timestamps are normalized to their UTC calendar date.
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c8b-7899-a0d0-1b1ac5dedeb4
+        example: 019ffad2-9c8b-7899-a0d0-1b1ac5dedeb4
+        in: path
+        name: id
+        required: true
+        description: The ID of the subsequence to analyze.
+      responses:
+        '200':
+          description: Engagement metrics grouped by subsequence step and variant.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Engagement metrics grouped by subsequence step and variant.
+                items:
+                  type: object
+                  properties:
+                    step:
+                      type:
+                      - 'null'
+                      - string
+                      description: Zero-based step index. `0` is the first step. Null when the event could not be attributed to a step.
+                      example: '0'
+                    variant:
+                      type:
+                      - 'null'
+                      - string
+                      description: Zero-based variant index. `0` is variant A, `1` is variant B, and so on. Null when the event could not be attributed to a variant.
+                      example: '0'
+                    sent:
+                      type: integer
+                      description: Total emails sent from this step and variant.
+                      example: 100
+                    opened:
+                      type: integer
+                      description: Total open events attributed to this step and variant.
+                      example: 45
+                    unique_opened:
+                      type: integer
+                      description: Number of unique leads that opened an email from this step and variant.
+                      example: 40
+                    replies:
+                      type: integer
+                      description: Total replies attributed to this step and variant.
+                      example: 12
+                    unique_replies:
+                      type: integer
+                      description: Number of unique leads that replied to this step and variant.
+                      example: 11
+                    replies_automatic:
+                      type: integer
+                      description: Total automatic replies attributed to this step and variant.
+                      example: 2
+                    unique_replies_automatic:
+                      type: integer
+                      description: Number of unique leads that sent an automatic reply to this step and variant.
+                      example: 2
+                    clicks:
+                      type: integer
+                      description: Total link click events attributed to this step and variant.
+                      example: 18
+                    unique_clicks:
+                      type: integer
+                      description: Number of unique leads that clicked a link in this step and variant.
+                      example: 15
+                  required:
+                  - step
+                  - variant
+                  - sent
+                  - opened
+                  - unique_opened
+                  - replies
+                  - unique_replies
+                  - replies_automatic
+                  - unique_replies_automatic
+                  - clicks
+                  - unique_clicks
+        '400':
+          description: The request is invalid (e.g. missing required fields, invalid field values, or an invalid state for the operation)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '403':
+          description: This request is forbidden (the API key scope or workspace plan does not allow this action)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 403
+                    examples:
+                    - 403
+                    example: 403
+                  error:
+                    type: string
+                    enum:
+                    - Forbidden
+                    examples:
+                    - Forbidden
+                    example: Forbidden
+                  message:
+                    type: string
+                    examples:
+                    - Forbidden
+                    example: Forbidden
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/{id}/sending-status:
+    get:
+      operationId: getSubsequenceSendingStatus
+      summary: Get subsequence sending status
+      tags:
+      - CampaignSubsequence
+      description: 'Returns sending status data explaining why a subsequence may not be sending emails or is sending slower than expected. Note: Some fields may be missing when the campaign is out of schedule. Always-present fields: campaign_id, subsequence_id, last_updated, status, issue_tracking.
+
+
+
+        Requires one of the following scopes: `subsequences:read`, `subsequences:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: boolean
+          default: false
+          example: false
+        example: false
+        in: query
+        name: with_ai_summary
+        required: false
+        description: Include AI-generated summary
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c8d-75ac-a328-bf7520115109
+        example: 019ffad2-9c8d-75ac-a328-bf7520115109
+        in: path
+        name: id
+        required: true
+        description: Subsequence ID
+      responses:
+        '200':
+          description: Sending status data with human-readable summary. Returns null for both fields if no data is available.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Sending status data with human-readable summary. Returns null for both fields if no data is available.
+                properties:
+                  diagnostics:
+                    type:
+                    - 'null'
+                    - object
+                    additionalProperties: true
+                    description: Raw sending status data. Some fields may be missing when campaign is out of schedule.
+                    properties:
+                      campaign_id:
+                        type: string
+                        description: The campaign ID
+                        examples:
+                        - 019ffad2-8d52-7649-baa5-1601894e64fd
+                        example: 019ffad2-8d52-7649-baa5-1601894e64fd
+                      subsequence_id:
+                        type: string
+                        description: The subsequence ID (only present for subsequence endpoints)
+                        examples:
+                        - 019ffad2-8d52-7649-baa5-16026b2682a3
+                        example: 019ffad2-8d52-7649-baa5-16026b2682a3
+                      last_updated:
+                        type: string
+                        description: ISO timestamp of when this data was last updated
+                        examples:
+                        - '2026-08-13T11:12:10.578Z'
+                        example: '2026-08-13T11:12:10.578Z'
+                      status:
+                        type:
+                        - 'null'
+                        - string
+                        description: Status code explaining why the campaign is not sending or sending slower
+                        enum:
+                        - campaign_paused
+                        - campaign_draft
+                        - campaign_completed
+                        - campaign_running_subsequences
+                        - campaign_bounce_protect
+                        - campaign_accounts_unhealthy
+                        - campaign_account_suspended
+                        - out_of_schedule
+                        - waiting_for_leads
+                        - daily_limit_met
+                        - account_daily_limit_met
+                        - new_lead_limit_met
+                        - all_accounts_unhealthy
+                        - waiting_for_esp_match
+                        - domain_limit_reached
+                        - follow_up_delay_not_met
+                        - no_accounts_available
+                        - healthy
+                        examples:
+                        - healthy
+                        example: healthy
+                      issue_tracking:
+                        type: object
+                        description: Tracks persistence of the current issue
+                        properties:
+                          current_status_code:
+                            type:
+                            - 'null'
+                            - string
+                            description: Current status code
+                            examples:
+                            - healthy
+                            example: healthy
+                          issue_first_seen_at:
+                            type:
+                            - 'null'
+                            - string
+                            description: ISO timestamp when the issue was first detected
+                            examples:
+                            - '2026-08-13T11:12:10.578Z'
+                            example: '2026-08-13T11:12:10.578Z'
+                          consecutive_loops_with_issue:
+                            type: number
+                            description: Number of consecutive processing loops with this issue
+                            examples:
+                            - 0
+                            example: 0
+                          last_healthy_send_at:
+                            type:
+                            - 'null'
+                            - string
+                            description: ISO timestamp of last successful send
+                            examples:
+                            - '2026-08-13T11:12:10.578Z'
+                            example: '2026-08-13T11:12:10.578Z'
+                      accounts_summary:
+                        type: object
+                        description: Summary of sending account availability. May be missing when campaign is out of schedule.
+                        properties:
+                          total_connected:
+                            type: number
+                            description: Total number of connected sending accounts
+                            examples:
+                            - 5
+                            example: 5
+                          available:
+                            type: number
+                            description: Number of accounts available to send
+                            examples:
+                            - 3
+                            example: 3
+                          unavailable:
+                            type: object
+                            description: Breakdown of unavailable accounts by reason
+                            properties:
+                              daily_limit_hit:
+                                type: number
+                                description: Accounts that hit their configured daily sending limit
+                                examples:
+                                - 1
+                                example: 1
+                              slow_ramp_limit_hit:
+                                type: number
+                                description: Accounts that hit the dynamic slow ramp limit (warmup feature)
+                                examples:
+                                - 0
+                                example: 0
+                              disconnected:
+                                type: number
+                                description: Accounts that are disconnected
+                                examples:
+                                - 1
+                                example: 1
+                              global_gap_not_met:
+                                type: number
+                                description: Accounts waiting for global sending gap
+                                examples:
+                                - 0
+                                example: 0
+                      campaign_daily_limit:
+                        type: object
+                        description: Campaign daily sending limit status. May be missing when campaign is out of schedule.
+                        properties:
+                          limit:
+                            type: number
+                            description: Configured daily sending limit
+                            examples:
+                            - 100
+                            example: 100
+                          sent:
+                            type: number
+                            description: Number of emails sent today
+                            examples:
+                            - 50
+                            example: 50
+                          limit_hit:
+                            type: boolean
+                            description: Whether the daily limit has been reached
+                            examples:
+                            - false
+                            example: false
+                      new_lead_limit:
+                        type: object
+                        description: New lead daily limit status. May be missing when campaign is out of schedule.
+                        properties:
+                          enabled:
+                            type: boolean
+                            description: Whether new lead limiting is enabled
+                            examples:
+                            - true
+                            example: true
+                          limit:
+                            type:
+                            - 'null'
+                            - number
+                            description: Configured new lead limit per day
+                            examples:
+                            - 50
+                            example: 50
+                          contacted:
+                            type: number
+                            description: Number of new leads contacted today
+                            examples:
+                            - 25
+                            example: 25
+                          limit_hit:
+                            type: boolean
+                            description: Whether the new lead limit has been reached
+                            examples:
+                            - false
+                            example: false
+                      schedule_status:
+                        type: object
+                        description: Campaign schedule status
+                        properties:
+                          in_schedule:
+                            type: boolean
+                            description: Whether the campaign is currently within scheduled sending hours
+                            examples:
+                            - true
+                            example: true
+                      send_one_by_one:
+                        type: object
+                        description: Send one-by-one settings. May be missing when campaign is out of schedule.
+                        properties:
+                          enabled:
+                            type: boolean
+                            description: Whether send one-by-one mode is enabled
+                            examples:
+                            - false
+                            example: false
+                          single_account_per_wait_gap:
+                            type: boolean
+                            description: Whether to use single account per wait gap
+                            examples:
+                            - false
+                            example: false
+                      follow_ups_waiting:
+                        type: object
+                        description: Follow-up emails waiting status. May be missing when campaign is out of schedule.
+                        properties:
+                          count:
+                            type: number
+                            description: Number of follow-ups waiting to be sent
+                            examples:
+                            - 10
+                            example: 10
+                          earliest_wait_time_seconds:
+                            type:
+                            - 'null'
+                            - number
+                            description: Seconds until the earliest follow-up can be sent
+                            examples:
+                            - 3600
+                            example: 3600
+                      esp_routing_status:
+                        type: object
+                        description: ESP routing status. May be missing when campaign is out of schedule.
+                        properties:
+                          enabled:
+                            type: boolean
+                            description: Whether ESP routing is enabled
+                            examples:
+                            - false
+                            example: false
+                          waiting_for_match:
+                            type: boolean
+                            description: Whether waiting for an ESP-matched account
+                            examples:
+                            - false
+                            example: false
+                          connected_esps:
+                            type: array
+                            items:
+                              type: number
+                              examples:
+                              - 1
+                              example: 1
+                            description: List of connected ESP IDs
+                      domain_limiter:
+                        type: object
+                        description: Per-domain sending limit status. May be missing when campaign is out of schedule.
+                        properties:
+                          active:
+                            type: boolean
+                            description: Whether domain limiting is active
+                            examples:
+                            - false
+                            example: false
+                          domains_at_limit:
+                            type: number
+                            description: Number of domains that have reached their limit
+                            examples:
+                            - 0
+                            example: 0
+                      leads_status:
+                        type: object
+                        description: Lead availability status. May be missing when campaign is out of schedule.
+                        properties:
+                          no_leads_ready:
+                            type: boolean
+                            description: Whether there are no leads ready to receive emails
+                            examples:
+                            - false
+                            example: false
+                          account_unavailable_skips:
+                            type: number
+                            description: Number of leads skipped due to account unavailability
+                            examples:
+                            - 0
+                            example: 0
+                          delay_not_met_skips:
+                            type: number
+                            description: Number of leads skipped due to delay requirements not met
+                            examples:
+                            - 0
+                            example: 0
+                  summary:
+                    type:
+                    - 'null'
+                    - object
+                    additionalProperties: true
+                    description: Human-readable summary of the sending status
+                    properties:
+                      status:
+                        type:
+                        - 'null'
+                        - string
+                        description: The status code
+                        examples:
+                        - healthy
+                        example: healthy
+                      status_message:
+                        type:
+                        - 'null'
+                        - string
+                        description: Human-readable message explaining the status
+                        examples:
+                        - Campaign is sending normally
+                        example: Campaign is sending normally
+                      issue_started_at:
+                        type:
+                        - 'null'
+                        - string
+                        description: ISO timestamp when the issue was first detected
+                        examples:
+                        - '2026-08-13T11:12:10.578Z'
+                        example: '2026-08-13T11:12:10.578Z'
+                      last_healthy_send_at:
+                        type:
+                        - 'null'
+                        - string
+                        description: ISO timestamp of last successful send
+                        examples:
+                        - '2026-08-13T11:12:10.578Z'
+                        example: '2026-08-13T11:12:10.578Z'
+                      ai_summary:
+                        type:
+                        - 'null'
+                        - string
+                        description: AI-generated plain-English summary (only when with_ai_summary=true)
+                        examples:
+                        - Your campaign is sending emails normally.
+                        example: Your campaign is sending emails normally.
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    CampaignSubsequence:
+      title: Campaign Subsequence
+      description: A subsequence entity representing a follow-up sequence
+      x-tags:
+      - Schemas
+      - CampaignSubsequence
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the subsequence
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5cc7-76f5-9fd3-25f814e7aa6b
+        timestamp_created:
+          type: string
+          description: Timestamp when the subsequence was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.151Z'
+        parent_campaign:
+          type: string
+          description: ID of the parent campaign
+          format: uuid
+          example: 019ffad2-5cc7-76f5-9fd3-25f990e43646
+        workspace:
+          type: string
+          description: ID of the workspace this subsequence belongs to
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5cc7-76f5-9fd3-25fa299a0c6f
+        status:
+          type: number
+          description: Status of the subsequence
+          readOnly: true
+          enum:
+          - -99
+          - -1
+          - -2
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          x-enumDescriptions:
+            '0': Draft - The subsequence is in draft mode and not yet active
+            '1': Active - The subsequence is currently running
+            '2': Paused - The subsequence has been manually paused
+            '3': Completed - The subsequence has finished running
+            '4': Running Subsequences - The subsequence has active child sequences
+            '-99': Account Suspended - The subsequence is suspended due to account issues
+            '-1': Accounts Unhealthy - The subsequence is paused due to unhealthy sending accounts
+            '-2': Bounce Protection - The subsequence is paused due to high bounce rates
+          example: 0
+        timestamp_leads_updated:
+          type: string
+          description: Timestamp when the leads were last updated
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.151Z'
+        name:
+          type: string
+          description: Name of the subsequence
+          example: Follow-up sequence
+        conditions:
+          type: object
+          description: Conditions that trigger the subsequence
+          properties:
+            crm_status:
+              type: array
+              description: Lead CRM statuses that trigger the subsequence. Accepts the built-in statuses listed below, or the interest status of a custom lead label.
+              items:
+                type: number
+                minimum: -30000
+                maximum: 30000
+                x-enumDescriptions:
+                  '0': Out of Office
+                  '1': Interested
+                  '2': Meeting Booked
+                  '3': Meeting Completed
+                  '4': Won
+                  '-1': Not Interested
+                  '-2': Wrong Person
+                  '-3': Lost
+                  '-4': No Show
+                example: 1
+            lead_activity:
+              type: array
+              description: Lead activities that trigger the subsequence.
+              items:
+                type: number
+                enum:
+                - 4
+                - 91
+                - 2
+                x-enumDescriptions:
+                  '2': Email Opened - Triggered when a lead opens an email
+                  '4': Email Link Clicked - Triggered when a lead clicks a link in an email
+                  '91': Campaign Completed Without Reply - Triggered when a campaign completes for a lead without receiving a reply
+                example: 4
+            reply_contains:
+              type: string
+              example: 'yes'
+        subsequence_schedule:
+          type: object
+          description: Schedule configuration for the subsequence. When omitted on create, inherits the parent campaign's schedule.
+          properties:
+            start_date:
+              type:
+              - 'null'
+              - string
+              format: date
+              description: Start date in YYYY-MM-DD format. Uses the campaign's timezone.
+              example: '2025-09-25'
+            end_date:
+              type:
+              - 'null'
+              - string
+              format: date
+              description: End date in YYYY-MM-DD format. Uses the campaign's timezone.
+              example: '2025-09-25'
+            schedules:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: My Schedule
+                  timing:
+                    type: object
+                    properties:
+                      from:
+                        type: string
+                        pattern: ^([01][0-9]|2[0-3]):([0-5][0-9])$
+                        example: 09:00
+                      to:
+                        type: string
+                        pattern: ^([01][0-9]|2[0-3]):([0-5][0-9])$
+                        example: '17:00'
+                    required:
+                    - from
+                    - to
+                  days:
+                    type: object
+                    minProperties: 1
+                    properties:
+                      '0':
+                        type: boolean
+                        example: true
+                      '1':
+                        type: boolean
+                        example: true
+                      '2':
+                        type: boolean
+                        example: true
+                      '3':
+                        type: boolean
+                        example: true
+                      '4':
+                        type: boolean
+                        example: true
+                      '5':
+                        type: boolean
+                        example: false
+                      '6':
+                        type: boolean
+                        example: false
+                  timezone:
+                    type: string
+                    enum:
+                    - Etc/GMT+12
+                    - Etc/GMT+11
+                    - Etc/GMT+10
+                    - America/Anchorage
+                    - America/Dawson
+                    - America/Creston
+                    - America/Chihuahua
+                    - America/Boise
+                    - America/Belize
+                    - America/Chicago
+                    - America/Bahia_Banderas
+                    - America/Regina
+                    - America/Bogota
+                    - America/Detroit
+                    - America/Indiana/Marengo
+                    - America/Caracas
+                    - America/Asuncion
+                    - America/Glace_Bay
+                    - America/Campo_Grande
+                    - America/Anguilla
+                    - America/Santiago
+                    - America/St_Johns
+                    - America/Sao_Paulo
+                    - America/Argentina/La_Rioja
+                    - America/Araguaina
+                    - America/Godthab
+                    - America/Montevideo
+                    - America/Bahia
+                    - America/Noronha
+                    - America/Scoresbysund
+                    - Atlantic/Cape_Verde
+                    - Africa/Casablanca
+                    - America/Danmarkshavn
+                    - Europe/Isle_of_Man
+                    - Atlantic/Canary
+                    - Africa/Abidjan
+                    - Arctic/Longyearbyen
+                    - Europe/Belgrade
+                    - Africa/Ceuta
+                    - Europe/Sarajevo
+                    - Africa/Algiers
+                    - Africa/Windhoek
+                    - Asia/Nicosia
+                    - Asia/Beirut
+                    - Africa/Cairo
+                    - Asia/Damascus
+                    - Europe/Bucharest
+                    - Africa/Blantyre
+                    - Europe/Helsinki
+                    - Europe/Istanbul
+                    - Asia/Jerusalem
+                    - Africa/Tripoli
+                    - Asia/Amman
+                    - Asia/Baghdad
+                    - Europe/Kaliningrad
+                    - Asia/Aden
+                    - Africa/Addis_Ababa
+                    - Europe/Kirov
+                    - Europe/Astrakhan
+                    - Asia/Tehran
+                    - Asia/Dubai
+                    - Asia/Baku
+                    - Indian/Mahe
+                    - Asia/Tbilisi
+                    - Asia/Yerevan
+                    - Asia/Kabul
+                    - Antarctica/Mawson
+                    - Asia/Yekaterinburg
+                    - Asia/Karachi
+                    - Asia/Kolkata
+                    - Asia/Colombo
+                    - Asia/Kathmandu
+                    - Antarctica/Vostok
+                    - Asia/Dhaka
+                    - Asia/Rangoon
+                    - Antarctica/Davis
+                    - Asia/Novokuznetsk
+                    - Asia/Hong_Kong
+                    - Asia/Krasnoyarsk
+                    - Asia/Brunei
+                    - Australia/Perth
+                    - Asia/Taipei
+                    - Asia/Choibalsan
+                    - Asia/Irkutsk
+                    - Asia/Dili
+                    - Asia/Pyongyang
+                    - Australia/Adelaide
+                    - Australia/Darwin
+                    - Australia/Brisbane
+                    - Australia/Melbourne
+                    - Antarctica/DumontDUrville
+                    - Australia/Currie
+                    - Asia/Chita
+                    - Antarctica/Macquarie
+                    - Asia/Sakhalin
+                    - Pacific/Auckland
+                    - Etc/GMT-12
+                    - Pacific/Fiji
+                    - Asia/Anadyr
+                    - Asia/Kamchatka
+                    - Etc/GMT-13
+                    - Pacific/Apia
+                    example: Etc/GMT+12
+                required:
+                - name
+                - timing
+                - days
+                - timezone
+              minItems: 1
+          required:
+          - schedules
+        sequences:
+          type: array
+          description: List of sequences (the actual email copy). Even though this field is an array, only the first element is used, so please provide only one array item, and add the steps to that array
+          items:
+            type: object
+            properties:
+              steps:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                      - email
+                      x-enumDescriptions:
+                        email: This steps represents an email
+                      description: Type of step. This has to be 'email' always - it's the only supported type for now
+                      example: email
+                    delay:
+                      type: number
+                      description: The delay value before sending the NEXT email. The unit is determined by the delay_unit field (defaults to days).
+                      example: 2
+                    delay_unit:
+                      type: string
+                      enum:
+                      - minutes
+                      - hours
+                      - days
+                      default: days
+                      description: The unit of time for the delay value (minutes, hours, or days). Defaults to days for backward compatibility.
+                      example: days
+                    pre_delay:
+                      type: number
+                      description: The delay value before sending the FIRST email in a subsequence. **Only applicable to subsequences** - this field is ignored for regular campaigns. The unit is determined by the pre_delay_unit field (defaults to days).
+                      example: 2
+                    pre_delay_unit:
+                      type: string
+                      enum:
+                      - minutes
+                      - hours
+                      - days
+                      default: days
+                      description: The unit of time for the pre_delay value (minutes, hours, or days). **Only applicable to subsequences** - this field is ignored for regular campaigns. Defaults to days for backward compatibility.
+                      example: days
+                    variants:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          subject:
+                            type: string
+                            example: Hello {{firstName}}
+                          body:
+                            type: string
+                            description: Email body HTML. Use `<br/>` tags for delivered email line breaks.
+                            example: Hey {{firstName}},<br/><br/>I hope you are doing well.
+                          v_disabled:
+                            type: boolean
+                            description: Whether this variant is disabled. By default, all the variants are enabled. Please set this to true if you want to disable this variant
+                            example: true
+                        required:
+                        - subject
+                        - body
+                      minItems: 1
+                      maxItems: 26
+                      contains:
+                        type: object
+                        not:
+                          properties:
+                            v_disabled:
+                              enum:
+                              - true
+                          required:
+                          - v_disabled
+                  required:
+                  - type
+                  - delay
+                  - variants
+            required:
+            - steps
+        auto_variant_select:
+          type:
+          - 'null'
+          - object
+          description: Automatically select the winning variant for each step using open, click, or reply rate. Set to `null` to disable automatic selection.
+          properties:
+            trigger:
+              type: string
+              enum:
+              - reply_rate
+              - click_rate
+              - open_rate
+              examples:
+              - click_rate
+              example: click_rate
+          required:
+          - trigger
+        daily_limit_mode:
+          type: string
+          description: Daily limit mode for the subsequence. "inherit" uses the parent campaign limit, "custom" uses a subsequence-specific limit, "unlimited" bypasses the campaign-level daily limit.
+          enum:
+          - inherit
+          - custom
+          - unlimited
+          example: inherit
+        daily_limit:
+          type:
+          - 'null'
+          - number
+          description: Custom daily limit for the subsequence. Only used when `daily_limit_mode` is "custom".
+          example: 50
+        ignore_account_daily_limit:
+          type: boolean
+          description: When enabled, the subsequence will send even when sending accounts have reached their daily limit.
+          example: false
+      required:
+      - id
+      - timestamp_created
+      - parent_campaign
+      - workspace
+      - status
+      - timestamp_leads_updated
+      - name
+      - conditions
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

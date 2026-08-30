@@ -1,0 +1,412 @@
+openapi: 3.2.0
+info:
+  title: Explorer Audit Log API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: AuditLog
+  description: Audit log records for tracking system activities
+  x-group: Audit Log
+paths:
+  /api/v2/audit-logs:
+    get:
+      operationId: listAuditLog
+      summary: List audit log
+      tags:
+      - AuditLog
+      description: 'Requires one of the following scopes: `audit_logs:read`, `audit_logs:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: number
+          example: 1
+        example: 1
+        in: query
+        name: activity_type
+        required: false
+        description: Filter by activity type
+      - schema:
+          type: string
+          example: login
+        example: login
+        in: query
+        name: search
+        required: false
+        description: Search term to filter logs
+      - schema:
+          type: string
+          example: '2024-01-01'
+        example: '2024-01-01'
+        in: query
+        name: start_date
+        required: false
+        description: Start date to filter logs
+      - schema:
+          type: string
+          example: '2024-01-01'
+        example: '2024-01-01'
+        in: query
+        name: end_date
+        required: false
+        description: End date to filter logs
+      responses:
+        '200':
+          description: The list of Audit Log
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Audit Log
+                    items:
+                      $ref: '#/components/schemas/AuditLog'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9b83-7eb2-a5c2-72f6cc563775
+                    - '2026-08-13T11:12:14.211Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9b83-7eb2-a5c2-72f6cc563775
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    AuditLog:
+      title: Audit Log
+      description: Audit log records for tracking system activities
+      x-tags:
+      - Schemas
+      - AuditLog
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        timestamp:
+          type: string
+          description: When the activity occurred
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.168Z'
+        organization_id:
+          type: string
+          description: Organization ID associated with the activity
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        activity_type:
+          type: number
+          description: Type of activity performed
+          readOnly: true
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 18
+          - 19
+          - 20
+          - 21
+          - 22
+          - 23
+          - 24
+          - 25
+          - 26
+          - 27
+          - 28
+          - 29
+          - 30
+          - 31
+          - 32
+          - 33
+          - 34
+          - 35
+          - 36
+          - 37
+          - 38
+          x-enumDescriptions:
+            '1': User login
+            '2': Lead deletion
+            '3': Campaign deletion
+            '4': Campaign launch
+            '5': Campaign pause
+            '6': Account addition
+            '7': Account deletion
+            '8': Lead moved
+            '9': Lead added
+            '10': Lead merged
+            '11': Campaign update
+            '12': Subsequence update
+            '18': Webhook created
+            '19': Webhook updated
+            '20': Webhook marked as error
+            '21': Webhook resumed
+            '22': TOTP enrollment started
+            '23': TOTP enabled
+            '24': TOTP replacement started
+            '25': TOTP replaced
+            '26': TOTP disabled
+            '27': MFA recovery codes generated
+            '28': MFA recovery code used
+            '29': MFA login challenge failed
+            '30': MFA login challenge failed too many times
+            '31': MFA login succeeded
+            '32': Subscriber import started
+            '33': Subscriber import cancelled
+            '34': Lead exported
+            '35': SuperSearch enrichment created
+            '36': Account update
+            '37': API key created
+            '38': API key deleted
+          example: 1
+        user_agent:
+          type:
+          - 'null'
+          - string
+          description: User agent of the client that performed the activity
+          readOnly: true
+          example: Mozilla/5.0...
+        user_id:
+          type:
+          - 'null'
+          - string
+          description: ID of the user who performed the activity
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        ip_address:
+          type: string
+          description: IP address from which the activity was performed
+          readOnly: true
+          example: 127.0.0.1
+        from_api:
+          type: boolean
+          description: Whether the activity was performed via API
+          readOnly: true
+          example: false
+        api_key_id:
+          type:
+          - 'null'
+          - string
+          description: API key ID that performed the activity, when available
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        affected_count:
+          type:
+          - 'null'
+          - number
+          description: Number of items affected by the activity
+          readOnly: true
+          example: 1
+        campaign_id:
+          type:
+          - 'null'
+          - string
+          description: Associated campaign ID if applicable
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        webhook_id:
+          type:
+          - 'null'
+          - string
+          description: Associated webhook ID if applicable
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        subsequence_id:
+          type:
+          - 'null'
+          - string
+          description: Associated subsequence ID if applicable
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        list_id:
+          type:
+          - 'null'
+          - string
+          description: Associated list ID if applicable
+          readOnly: true
+          format: uuid
+          example: 01234567-89ab-cdef-0123-456789abcdef
+        audit_metadata:
+          type: object
+          description: Sanitized metadata about the audit log
+          readOnly: true
+          additionalProperties: true
+        user_name:
+          type:
+          - 'null'
+          - string
+          description: Name of the user who performed the activity
+          readOnly: true
+          example: John Doe
+      required:
+      - id
+      - timestamp
+      - organization_id
+      - activity_type
+      - ip_address
+      - from_api
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

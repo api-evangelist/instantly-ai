@@ -1,0 +1,1122 @@
+openapi: 3.2.0
+info:
+  title: Explorer Lead Label API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: LeadLabel
+  description: A custom label for categorizing and managing leads
+  x-group: Lead Label
+paths:
+  /api/v2/lead-labels:
+    post:
+      operationId: createLeadLabel
+      summary: Create lead label
+      tags:
+      - LeadLabel
+      description: 'Requires one of the following scopes: `lead-labels:create`, `lead-labels:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateLead Label
+              description: The Lead Label to create
+              type: object
+              properties:
+                label:
+                  type: string
+                  description: Display label for the custom lead label
+                  example: Hot Lead
+                interest_status_label:
+                  type: string
+                  description: Interest status label associated with this label
+                  enum:
+                  - positive
+                  - negative
+                  - neutral
+                  x-enumDescriptions:
+                    positive: Positive
+                    negative: Negative
+                    neutral: Neutral
+                  example: positive
+                description:
+                  type:
+                  - string
+                  - 'null'
+                  description: Detailed description of the custom lead label purpose
+                  example: Used for marking high-priority leads
+                use_with_ai:
+                  type:
+                  - boolean
+                  - 'null'
+                  description: Whether this label should be used with AI features
+                  example: false
+              required:
+              - label
+              - interest_status_label
+              additionalProperties: false
+        required: true
+        description: The Lead Label to create
+      responses:
+        '200':
+          description: The Lead Label
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadLabel'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listLeadLabel
+      summary: List lead label
+      tags:
+      - LeadLabel
+      description: 'Requires one of the following scopes: `lead-labels:read`, `lead-labels:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: '2025-03-07T00:00:00.000Z'
+        example: '2025-03-07T00:00:00.000Z'
+        in: query
+        name: starting_after
+        required: false
+        description: The starting after timestamp to filter lead labels by.
+      - schema:
+          type: string
+          example: Hot Lead
+        example: Hot Lead
+        in: query
+        name: search
+        required: false
+        description: The search query to filter lead labels.
+      - schema:
+          type: string
+          enum:
+          - positive
+          - neutral
+          - negative
+          example: positive
+        example: positive
+        in: query
+        name: interest_status
+        required: false
+        description: The interest status to filter lead labels by.
+      responses:
+        '200':
+          description: The list of Lead Label
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Lead Label
+                    items:
+                      $ref: '#/components/schemas/LeadLabel'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9c33-720b-b2c0-a2f792c0db40
+                    - '2026-08-13T11:12:14.387Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9c33-720b-b2c0-a2f792c0db40
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/lead-labels/{id}:
+    get:
+      operationId: getLeadLabel
+      summary: Get lead label
+      tags:
+      - LeadLabel
+      description: 'Requires one of the following scopes: `lead-labels:read`, `lead-labels:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c34-7f68-8145-ec292e79cfac
+        example: 019ffad2-9c34-7f68-8145-ec292e79cfac
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Lead Label
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadLabel'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchLeadLabel
+      summary: Patch lead label
+      tags:
+      - LeadLabel
+      description: 'Requires one of the following scopes: `lead-labels:update`, `lead-labels:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  type: string
+                  description: Display label for the custom lead label
+                  example: Hot Lead
+                interest_status_label:
+                  type: string
+                  description: Interest status label associated with this label
+                  enum:
+                  - positive
+                  - negative
+                  - neutral
+                  x-enumDescriptions:
+                    positive: Positive
+                    negative: Negative
+                    neutral: Neutral
+                  example: positive
+                description:
+                  type:
+                  - string
+                  - 'null'
+                  description: Detailed description of the custom lead label purpose
+                  example: Used for marking high-priority leads
+                use_with_ai:
+                  type:
+                  - boolean
+                  - 'null'
+                  description: Whether this label should be used with AI features
+                  example: false
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c34-7f68-8145-ec2a406f5831
+        example: 019ffad2-9c34-7f68-8145-ec2a406f5831
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to update
+      responses:
+        '200':
+          description: The updated Lead Label
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadLabel'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteLeadLabel
+      summary: Delete lead label
+      tags:
+      - LeadLabel
+      description: 'Requires one of the following scopes: `lead-labels:delete`, `lead-labels:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                reassigned_status:
+                  type: number
+                  examples:
+                  - 1
+                  description: The interest status to reassign leads and emails to.
+                  example: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c34-7f68-8145-ec2b40927309
+        example: 019ffad2-9c34-7f68-8145-ec2b40927309
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted Lead Label
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadLabel'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/lead-labels/ai-reply-label:
+    post:
+      operationId: testAiReplyLabelLeadLabels
+      summary: Test AI reply label prediction
+      tags:
+      - LeadLabel
+      description: 'Returns the AI-predicted lead label for a reply text. This simulates how AI auto-tagging would label an incoming reply for testing custom labels and descriptions. Rate limit: 500 requests per 30 days per workspace. This rate limit applies only to this testing endpoint; live reply processing does not use this limiter.
+
+
+
+        Requires one of the following scopes: `lead-labels:read`, `lead-labels:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reply_text:
+                  type: string
+                  description: The reply text to classify.
+                  example: Thanks for reaching out. I am interested in learning more.
+              required:
+              - reply_text
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    description: The predicted lead label.
+                    example: Hot Lead
+                  custom_labels_considered:
+                    type: array
+                    items:
+                      type: string
+                      example: Hot Lead
+                    description: AI-enabled custom labels considered during classification.
+                    example:
+                    - Hot Lead
+                    - Needs Follow-up
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Rate limit exceeded
+        '500':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Classification failed
+components:
+  schemas:
+    LeadLabel:
+      title: Lead Label
+      description: A custom label for categorizing and managing leads
+      x-tags:
+      - Schemas
+      - LeadLabel
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the custom lead label
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c9b-7ff3-9287-8976b56d4ef2
+        timestamp_created:
+          type: string
+          description: Timestamp when the custom lead label was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.107Z'
+        created_by:
+          type: string
+          description: User ID of the creator of this label
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c9b-7ff3-9287-897737ef85de
+        organization_id:
+          type: string
+          description: Organization ID that owns this custom lead label
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c9b-7ff3-9287-897806175ea0
+        label:
+          type: string
+          description: Display label for the custom lead label
+          example: Hot Lead
+        interest_status_label:
+          type: string
+          description: Interest status label associated with this label
+          enum:
+          - positive
+          - negative
+          - neutral
+          x-enumDescriptions:
+            positive: Positive
+            negative: Negative
+            neutral: Neutral
+          example: positive
+        interest_status:
+          type: number
+          description: Interest status associated with this label. This is generated automatically by us.
+          readOnly: true
+          example: 1
+        description:
+          type:
+          - 'null'
+          - string
+          description: Detailed description of the custom lead label purpose
+          example: Used for marking high-priority leads
+        use_with_ai:
+          type:
+          - 'null'
+          - boolean
+          description: Whether this label should be used with AI features
+          example: false
+      required:
+      - id
+      - timestamp_created
+      - created_by
+      - organization_id
+      - label
+      - interest_status_label
+      - interest_status
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

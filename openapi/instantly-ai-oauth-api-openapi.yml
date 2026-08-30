@@ -1,0 +1,244 @@
+openapi: 3.2.0
+info:
+  title: Explorer O Auth API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: OAuth
+  description: OAuth authentication endpoints for connecting Google and Microsoft email accounts
+  x-group: OAuth
+paths:
+  /api/v2/oauth/google/init:
+    post:
+      operationId: initGoogleOAuth
+      summary: Initialize google oauth
+      tags:
+      - OAuth
+      description: 'Creates an OAuth session and returns the Google authorization URL. The user should be redirected to auth_url to complete the OAuth flow. Poll the status endpoint to check for completion.
+
+
+        **Special rate limits (stricter than the standard API rate limit) to comply with upstream Google rate limits:**
+
+        - 75 requests per minute per workspace
+
+        - 150 requests per minute per IP
+
+
+        If Google''s upstream OAuth service is temporarily unavailable, requests may return 503.'
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    description: Session ID for polling status
+                    example: abc123def456
+                  auth_url:
+                    type: string
+                    description: Google authorization URL to redirect user to
+                    example: https://accounts.google.com/o/oauth2/auth?...
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: Session expiry time (10 minutes from creation)
+                    example: '2026-01-14T12:30:00.000Z'
+        '429':
+          description: Rate limit exceeded — 75 requests per minute per workspace or 150 requests per minute per IP
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Rate limit exceeded — 75 requests per minute per workspace or 150 requests per minute per IP
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded for OAuth session creation
+                required:
+                - statusCode
+                - error
+                - message
+        '503':
+          description: Upstream provider temporarily unavailable — the provider is rate-limiting Instantly. Retry after a short delay.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Upstream provider temporarily unavailable — the provider is rate-limiting Instantly. Retry after a short delay.
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 503
+                    example: 503
+                  error:
+                    type: string
+                    enum:
+                    - Service Unavailable
+                    example: Service Unavailable
+                  message:
+                    type: string
+                    example: OAuth is temporarily unavailable, please retry shortly
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/oauth/microsoft/init:
+    post:
+      operationId: initMicrosoftOAuth
+      summary: Initialize microsoft oauth
+      tags:
+      - OAuth
+      description: 'Creates an OAuth session and returns the Microsoft authorization URL. The user should be redirected to auth_url to complete the OAuth flow. Poll the status endpoint to check for completion.
+
+
+        **Special rate limits (stricter than the standard API rate limit) to comply with upstream Microsoft rate limits:**
+
+        - 75 requests per minute per workspace
+
+        - 150 requests per minute per IP
+
+
+        If Microsoft''s upstream OAuth service is temporarily unavailable, requests may return 503.'
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    description: Session ID for polling status
+                    example: abc123def456
+                  auth_url:
+                    type: string
+                    description: Microsoft authorization URL to redirect user to
+                    example: https://login.microsoftonline.com/common/oauth2/v2.0/authorize?...
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: Session expiry time (10 minutes from creation)
+                    example: '2026-01-14T12:30:00.000Z'
+        '429':
+          description: Rate limit exceeded — 75 requests per minute per workspace or 150 requests per minute per IP
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Rate limit exceeded — 75 requests per minute per workspace or 150 requests per minute per IP
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded for OAuth session creation
+                required:
+                - statusCode
+                - error
+                - message
+        '503':
+          description: Upstream provider temporarily unavailable — the provider is rate-limiting Instantly. Retry after a short delay.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Upstream provider temporarily unavailable — the provider is rate-limiting Instantly. Retry after a short delay.
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 503
+                    example: 503
+                  error:
+                    type: string
+                    enum:
+                    - Service Unavailable
+                    example: Service Unavailable
+                  message:
+                    type: string
+                    example: OAuth is temporarily unavailable, please retry shortly
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/oauth/session/status/{sessionId}:
+    get:
+      operationId: getOAuthSessionStatus
+      summary: Get oauth session status
+      tags:
+      - OAuth
+      description: Poll this endpoint to check the OAuth session result. Works for both Google and Microsoft OAuth sessions. Returns pending while waiting, success with account details when complete, or error if something went wrong. Sessions expire after 10 minutes.
+      parameters:
+      - schema:
+          type: string
+          example: abc123def456
+        in: path
+        name: sessionId
+        required: true
+        description: Session ID from init response
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - pending
+                    - success
+                    - error
+                    - expired
+                    description: Current status of the OAuth session
+                    example: success
+                  email:
+                    type: string
+                    description: Email of the connected account (on success)
+                    example: user@example.com
+                  name:
+                    type: string
+                    description: Name of the account owner (on success)
+                    example: John Doe
+                  error:
+                    type: string
+                    description: Error code (on error)
+                    example: access_denied
+                  error_description:
+                    type: string
+                    description: Human-readable error description (on error)
+                    example: User denied access to the application
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

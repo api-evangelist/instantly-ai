@@ -1,0 +1,2236 @@
+openapi: 3.2.0
+info:
+  title: Explorer Analytics API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Analytics
+  description: Endpoints related to analytics
+  x-group: Analytics
+paths:
+  /api/v2/accounts/warmup-analytics:
+    post:
+      operationId: getWarmupAnalytics
+      summary: Get warmup analytics
+      tags:
+      - Analytics
+      description: 'Requires one of the following scopes: `accounts:read`, `accounts:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+                  maxItems: 100
+                  minItems: 1
+                  description: List of emails to get warmup analytics for. The emails should be attached to accounts in your workspace.
+              required:
+              - emails
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email_date_data:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          sent:
+                            type: number
+                            example: 100
+                          landed_inbox:
+                            type: number
+                            example: 50
+                          landed_spam:
+                            type: number
+                            example: 10
+                          received:
+                            type: number
+                            example: 100
+                  aggregate_data:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        sent:
+                          type: number
+                          examples:
+                          - 100
+                          example: 100
+                        received:
+                          type: number
+                          examples:
+                          - 100
+                          example: 100
+                        landed_inbox:
+                          type: number
+                          examples:
+                          - 50
+                          example: 50
+                        landed_spam:
+                          type: number
+                          examples:
+                          - 10
+                          example: 10
+                        health_score_label:
+                          type: string
+                          examples:
+                          - Good
+                          example: Good
+                        health_score:
+                          type: number
+                          examples:
+                          - 90
+                          example: 90
+              example:
+                email_date_data:
+                  example1@example.com:
+                    '2023-10-01':
+                      sent: 10
+                      landed_inbox: 8
+                      landed_spam: 2
+                      received: 10
+                    '2023-10-02':
+                      sent: 5
+                      landed_inbox: 5
+                      received: 5
+                  example2@example.com:
+                    '2023-10-01':
+                      sent: 7
+                      landed_inbox: 7
+                      received: 7
+                aggregate_data:
+                  example1@example.com:
+                    sent: 15
+                    landed_inbox: 13
+                    landed_spam: 2
+                    received: 15
+                    health_score_label: 87%
+                    health_score: 87
+                  example2@example.com:
+                    sent: 7
+                    landed_inbox: 7
+                    health_score_label: 100%
+                    health_score: 100
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/analytics/daily:
+    get:
+      operationId: getDailyAccountAnalytics
+      summary: Get daily account analytics
+      tags:
+      - Analytics
+      description: Get daily account analytics showing the number of emails sent per day for each email account. Useful for tracking daily sending activity across your accounts.
+      parameters:
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: start_date
+        required: false
+        description: Start date for the analytics period. Defaults to a 30-day window ending at end_date. The maximum range is 31 days.
+      - schema:
+          type: string
+          example: '2024-01-31'
+        examples:
+          '2024-01-31':
+            value: '2024-01-31'
+          '2024-01-31T00:00:00.000Z':
+            value: '2024-01-31T00:00:00.000Z'
+        in: query
+        name: end_date
+        required: false
+        description: End date for the analytics period. Defaults to the current date.
+      - schema:
+          type: array
+          minItems: 1
+          maxItems: 200
+          items:
+            type: string
+            examples:
+            - user@example.com
+            example: user@example.com
+        in: query
+        name: emails
+        required: false
+        description: Email accounts to include. This filter is required and accepts at most 200 unique accounts.
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      description: The date of the analytics entry, in YYYY-MM-DD format
+                      example: '2024-01-15'
+                    email_account:
+                      type: string
+                      description: The email account that sent the emails
+                      example: user@example.com
+                    sent:
+                      type: integer
+                      description: The total number of campaign emails sent on this date by this account, including emails for subsequences
+                      example: 150
+                    bounced:
+                      type: integer
+                      description: The number of emails that bounced on this date for this account for campaigns - including subsequences
+                      example: 3
+                    contacted:
+                      type: integer
+                      description: The total number of unique contacts who received an email on this date from this account
+                      example: 120
+                    new_leads_contacted:
+                      type: integer
+                      description: The total number of new leads contacted on this date from this account
+                      example: 50
+                    opened:
+                      type: integer
+                      description: The total number of opened emails on this date for this account
+                      example: 99
+                    unique_opened:
+                      type: integer
+                      description: The total number of unique opened emails on this date for this account
+                      example: 60
+                    replies:
+                      type: integer
+                      description: The total number of replies received on this date for this account
+                      example: 8
+                    unique_replies:
+                      type: integer
+                      description: The total number of unique replies received on this date for this account
+                      example: 7
+                    replies_automatic:
+                      type: integer
+                      description: The total number of automatic replies detected on this date for this account
+                      example: 2
+                    unique_replies_automatic:
+                      type: integer
+                      description: The total number of unique automatic replies detected on this date for this account
+                      example: 1
+                    clicks:
+                      type: integer
+                      description: The total number of links clicked on this date for this account
+                      example: 30
+                    unique_clicks:
+                      type: integer
+                      description: The total number of unique links clicked on this date for this account. Unique meaning from unique leads, not unique links
+                      example: 20
+                  required:
+                  - date
+                  - email_account
+                  - sent
+                  - bounced
+                  - contacted
+                  - new_leads_contacted
+                  - opened
+                  - unique_opened
+                  - replies
+                  - unique_replies
+                  - replies_automatic
+                  - unique_replies_automatic
+                  - clicks
+                  - unique_clicks
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The error message
+                    example: Start Date must be earlier than End Date
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '413':
+          description: The analytics request is too large for the requested workspace or date range.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 413
+                    examples:
+                    - 413
+                    example: 413
+                  error:
+                    type: string
+                    enum:
+                    - Payload Too Large
+                    examples:
+                    - Payload Too Large
+                    example: Payload Too Large
+                  message:
+                    type: string
+                    examples:
+                    - Analytics request is too large for this workspace. Add an emails filter or request a smaller date range.
+                    example: Analytics request is too large for this workspace. Add an emails filter or request a smaller date range.
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/test/vitals:
+    post:
+      operationId: testAccountVitals
+      summary: Test account vitals
+      tags:
+      - Analytics
+      description: 'Requires one of the following scopes: `accounts:read`, `accounts:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accounts:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+              required: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  success_list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          example: example.com
+                        allPass:
+                          type: boolean
+                          example: true
+                        mx:
+                          type: boolean
+                          example: true
+                        spf:
+                          type: boolean
+                          example: true
+                        dkim:
+                          type: boolean
+                          example: true
+                        dmarc:
+                          type: boolean
+                          example: true
+                  failure_list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          example: example.com
+                        allPass:
+                          type: boolean
+                          example: false
+                        mx:
+                          type: boolean
+                          example: false
+                        spf:
+                          type: boolean
+                          example: false
+                        dkim:
+                          type: boolean
+                          example: false
+                        dmarc:
+                          type: boolean
+                          example: false
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad request - no emails sent
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/campaigns/analytics:
+    get:
+      operationId: getCampaignAnalytics
+      summary: Get campaign(s) analytics
+      tags:
+      - Analytics
+      description: Get analytics for one or multiple campaigns. Specify the `id` field to get the analytics for a single campaign, or leave it empty to get the analytics for all campaigns
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9ba1-7bc9-8d59-2dbf9cad03cd
+        example: 019ffad2-9ba1-7bc9-8d59-2dbf9cad03cd
+        in: query
+        name: id
+        required: false
+        description: A campaign ID to get the analytics for. Leave this field empty to get the analytics for all campaigns
+      - schema:
+          type: array
+          items:
+            type: string
+            description: 'A list of campaign IDs to get the analytics for. Leave this field empty to get the analytics for all campaigns. You can specify multiple IDs by adding the same parameter multiple times, for instance: `/campaigns/analytics?ids=123&ids=456`'
+            format: uuid
+            examples:
+            - 019ffad2-9ba1-7bc9-8d59-2dc06bc9bc75
+            example: 019ffad2-9ba1-7bc9-8d59-2dc06bc9bc75
+        in: query
+        name: ids
+        required: false
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: start_date
+        required: false
+        description: Start of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: end_date
+        required: false
+        description: End of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: boolean
+          default: false
+          example: true
+        example: true
+        in: query
+        name: exclude_total_leads_count
+        required: false
+        description: Exclude the total leads from the result. Setting this to true will considerably decrease the response time
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    campaign_name:
+                      type: string
+                      description: The name of the campaign
+                      example: My Test Campaign
+                    campaign_id:
+                      type: string
+                      description: The ID of the campaign
+                      format: uuid
+                      example: 019ffad2-9ba1-7bc9-8d59-2dc1d3f0cbdd
+                    campaign_status:
+                      type: number
+                      description: The campaign status
+                      x-enumDescriptions:
+                        '0': Draft
+                        '1': Active
+                        '2': Paused
+                        '3': Completed
+                        '4': Running Subsequences
+                        '-99': Account Suspended
+                        '-1': Accounts Unhealthy
+                        '-2': Bounce Protect
+                      example: 1
+                    campaign_is_evergreen:
+                      type: boolean
+                      description: Whether the campaign is evergreen
+                      example: true
+                    leads_count:
+                      type: integer
+                      description: The total number of leads
+                      example: 1500
+                    contacted_count:
+                      type: integer
+                      description: Number of leads for whom the sequence has started
+                      example: 1200
+                    emails_sent_count:
+                      type: integer
+                      description: The total number of sent emails
+                      example: 5000
+                    new_leads_contacted_count:
+                      type: integer
+                      description: The total number of new leads contacted
+                      example: 200
+                    open_count:
+                      type: integer
+                      description: The number of leads that opened at least one email
+                      example: 800
+                    open_count_unique:
+                      type: integer
+                      description: The number of unique email opens (first open per lead)
+                      example: 750
+                    open_count_unique_by_step:
+                      type: integer
+                      description: The number of unique email opens per step (first open per lead per step)
+                      example: 900
+                    reply_count:
+                      type: integer
+                      description: The total number of replies received (if a lead replies multiple times, each reply is counted)
+                      example: 300
+                    reply_count_unique:
+                      type: integer
+                      description: The number of unique replies (first reply per lead). Excludes automatic replies.
+                      example: 280
+                    reply_count_unique_by_step:
+                      type: integer
+                      description: The number of unique replies per step (first reply per lead per step). Excludes automatic replies.
+                      example: 350
+                    reply_count_automatic:
+                      type: integer
+                      description: The total number of automatic replies detected
+                      example: 15
+                    reply_count_automatic_unique:
+                      type: integer
+                      description: The number of unique automatic replies (first automatic reply per lead)
+                      example: 12
+                    reply_count_automatic_unique_by_step:
+                      type: integer
+                      description: The number of unique automatic replies per step
+                      example: 18
+                    link_click_count:
+                      type: integer
+                      description: The number of links that got clicked
+                      example: 800
+                    link_click_count_unique:
+                      type: integer
+                      description: The number of unique link clicks (first click per lead)
+                      example: 600
+                    link_click_count_unique_by_step:
+                      type: integer
+                      description: The number of unique link clicks per step (first click per lead per step)
+                      example: 720
+                    bounced_count:
+                      type: integer
+                      description: The number of bounced leads
+                      example: 50
+                    unsubscribed_count:
+                      type: integer
+                      description: The number of unsubscribed leads
+                      example: 20
+                    completed_count:
+                      type: integer
+                      description: The number of leads that the campaign was completed for
+                      example: 1100
+                    total_opportunities:
+                      type: integer
+                      description: The total number of unique opportunities created
+                      example: 10
+                    total_opportunity_value:
+                      type: number
+                      description: The total value of opportunities created
+                      example: 1000
+                  required:
+                  - campaign_name
+                  - campaign_id
+                  - campaign_status
+                  - campaign_is_evergreen
+                  - leads_count
+                  - contacted_count
+                  - open_count
+                  - reply_count
+                  - link_click_count
+                  - bounced_count
+                  - unsubscribed_count
+                  - completed_count
+                  - emails_sent_count
+                  - new_leads_contacted_count
+                  - total_opportunities
+                  - total_opportunity_value
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The error message
+                    example: Start Date must be earlier than End Date
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/campaigns/analytics/overview:
+    get:
+      operationId: getCampaignAnalyticsOverview
+      summary: Get campaign(s) analytics overview
+      tags:
+      - Analytics
+      description: 'Get analytics overview for one or multiple campaigns. Specify the `id` field to get the analytics overview for a single campaign, or leave it empty to get the analytics overview for all campaigns.
+
+
+        Note regarding the interest status totals (interested, meeting booked, meeting completed, closed): these are calculated based on the first occurrence of each event per contact by default. To change this behavior and calculate the totals based on all occurrences of the events, set the `expand_crm_events` parameter to `true`. Additionally, there is a 10 minute time window after you change a lead status in which the subsequent updates will NOT insert new analytics events to avoid duplicates from rapid status changes and avoid false inflation of the analytics numbers.'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9ba2-7890-9f7c-574e4193fe4e
+        example: 019ffad2-9ba2-7890-9f7c-574e4193fe4e
+        in: query
+        name: id
+        required: false
+        description: A campaign ID to get the analytics overview for. Leave this field empty to get the analytics overview for all campaigns
+      - schema:
+          type: array
+          items:
+            type: string
+            description: 'A list of campaign IDs to get the analytics overview for. Leave this field empty to get the analytics overview for all campaigns. You can specify multiple IDs by adding the same parameter multiple times, for instance: `/campaigns/analytics/overview?ids=123&ids=456`'
+            format: uuid
+            examples:
+            - 019ffad2-9ba2-7890-9f7c-574f7d9cc984
+            example: 019ffad2-9ba2-7890-9f7c-574f7d9cc984
+        in: query
+        name: ids
+        required: false
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: start_date
+        required: false
+        description: Start of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: end_date
+        required: false
+        description: End of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: number
+          enum:
+          - -99
+          - -1
+          - -2
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          x-enumDescriptions:
+            '0': Draft
+            '1': Active
+            '2': Paused
+            '3': Completed
+            '4': Running Subsequences
+            '-99': Account Suspended
+            '-1': Accounts Unhealthy
+            '-2': Bounce Protect
+          example: 1
+        examples:
+          '1':
+            value: 1
+          '2':
+            value: 2
+          '3':
+            value: 3
+        in: query
+        name: campaign_status
+        required: false
+        description: Filter by campaign status (only the analytics for the campaigns with the specified status will be returned)
+      - schema:
+          type: boolean
+          default: false
+          example: true
+        example: true
+        in: query
+        name: expand_crm_events
+        required: false
+        description: 'When `true`, calculates the total of all the lead interest status update events instead of only the first occurrence for each contact. This will affect the following fields: `total_opportunities`, `total_interested`, `total_meeting_booked`, `total_meeting_completed`, and `total_closed`. Example: if a lead goes from interested to meeting booked to closed, it will count as 3 events (total_interested: 1, total_meeting_booked_1, and total_closed: 1) when this parameter is set to true, and as 1 event (total_interested) when it is set to false (default).'
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  open_count:
+                    type: integer
+                    description: The total number of times the emails were opened, including duplicates
+                    example: 800
+                  open_count_unique:
+                    type: integer
+                    description: The number of emails that got opened (for the first time only)
+                    example: 800
+                  open_count_unique_by_step:
+                    type: integer
+                    description: The unique number of times the emails were opened (counted once per lead, step, and campaign)
+                    example: 800
+                  link_click_count:
+                    type: integer
+                    description: The number of links that got clicked
+                    example: 800
+                  link_click_count_unique:
+                    type: integer
+                    description: The number of links that got clicked (for the first time)
+                    example: 800
+                  link_click_count_unique_by_step:
+                    type: integer
+                    description: The unique number of links that got clicked, per step (counted once per lead, step, and campaign)
+                    example: 800
+                  reply_count:
+                    type: integer
+                    description: The total number of replies received (if a lead replies multiple times, each reply is counted)
+                    example: 300
+                  reply_count_unique:
+                    type: integer
+                    description: The number of unique replies (first reply per lead). Excludes automatic replies.
+                    example: 300
+                  reply_count_unique_by_step:
+                    type: integer
+                    description: The number of unique replies per step (first reply per lead per step). Excludes automatic replies.
+                    example: 300
+                  reply_count_automatic:
+                    type: integer
+                    description: The total number of automatic replies received (e.g., out-of-office)
+                    example: 50
+                  reply_count_automatic_unique:
+                    type: integer
+                    description: The number of unique leads that sent automatic replies
+                    example: 45
+                  reply_count_automatic_unique_by_step:
+                    type: integer
+                    description: The unique number of automatic replies per step (counted once per lead, step, and campaign)
+                    example: 45
+                  bounced_count:
+                    type: integer
+                    description: The number of bounced leads
+                    example: 50
+                  unsubscribed_count:
+                    type: integer
+                    description: The number of unsubscribed leads
+                    example: 20
+                  completed_count:
+                    type: integer
+                    description: The number of leads that the campaign was completed for
+                    example: 1100
+                  emails_sent_count:
+                    type: integer
+                    description: The total number of sent emails
+                    example: 5000
+                  contacted_count:
+                    type: integer
+                    description: The total number of unique leads contacted
+                    example: 4500
+                  new_leads_contacted_count:
+                    type: integer
+                    description: The total number of new leads contacted
+                    example: 200
+                  total_opportunities:
+                    type: integer
+                    description: The total number of unique opportunities created
+                    example: 10
+                  total_opportunity_value:
+                    type: number
+                    description: The total value of opportunities created
+                    example: 1000
+                  total_interested:
+                    type: integer
+                    description: The total number of interested opportunities created
+                    example: 103
+                  total_meeting_booked:
+                    type: integer
+                    description: The total number of meeting booked opportunities created
+                    example: 45
+                  total_meeting_completed:
+                    type: integer
+                    description: The total number of meeting completed opportunities created
+                    example: 12
+                  total_closed:
+                    type: integer
+                    description: The total number of closed opportunities created
+                    example: 10
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The error message
+                    example: Start Date must be earlier than End Date
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/campaigns/analytics/daily:
+    get:
+      operationId: getDailyCampaignAnalytics
+      summary: Get daily campaign analytics
+      tags:
+      - Analytics
+      description: Get campaign daily analytics
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9ba2-7890-9f7c-5750de86de7e
+        example: 019ffad2-9ba2-7890-9f7c-5750de86de7e
+        in: query
+        name: campaign_id
+        required: false
+        description: Campaign ID (optional). Leave this field empty to get the analytics for all campaigns
+      - schema:
+          type: string
+          example: '2024-01-01'
+        example: '2024-01-01'
+        in: query
+        name: start_date
+        required: false
+        description: Start of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: string
+          example: '2024-01-01'
+        example: '2024-01-01'
+        in: query
+        name: end_date
+        required: false
+        description: End of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: number
+          enum:
+          - -99
+          - -1
+          - -2
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          x-enumDescriptions:
+            '0': Draft
+            '1': Active
+            '2': Paused
+            '3': Completed
+            '4': Running Subsequences
+            '-99': Account Suspended
+            '-1': Accounts Unhealthy
+            '-2': Bounce Protect
+          example: 1
+        examples:
+          '1':
+            value: 1
+          '2':
+            value: 2
+          '3':
+            value: 3
+        in: query
+        name: campaign_status
+        required: false
+        description: Filter by campaign status (only the analytics for the campaigns with the specified status will be returned)
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      description: The date of the analytics entry, in YYYY-MM-DD format
+                      example: '2025-03-01'
+                    sent:
+                      type: integer
+                      description: The total number of sent emails
+                      example: 5421
+                    contacted:
+                      type: integer
+                      description: The total number of unique contacts who received an email that day
+                      example: 5000
+                    new_leads_contacted:
+                      type: integer
+                      description: The total number of new leads contacted that day
+                      example: 200
+                    opened:
+                      type: integer
+                      description: The total number of opened emails
+                      example: 99
+                    unique_opened:
+                      type: integer
+                      description: The total number of unique opened emails
+                      example: 60
+                    replies:
+                      type: integer
+                      description: The total number of replies
+                      example: 60
+                    unique_replies:
+                      type: integer
+                      description: The total number of unique replies
+                      example: 60
+                    replies_automatic:
+                      type: integer
+                      description: The total number of automatic replies detected
+                      example: 5
+                    unique_replies_automatic:
+                      type: integer
+                      description: The total number of unique automatic replies detected
+                      example: 4
+                    clicks:
+                      type: integer
+                      description: The total number of links clicked
+                      example: 60
+                    unique_clicks:
+                      type: integer
+                      description: The total number of unique links clicked. Unique meaning from unique leads, not unique links. For instance, if a lead clicked a link 3 times, it will be counted as 1 unique click. If a lead clicked 3 different links, it will still be counted as 1 unique click
+                      example: 60
+                    opportunities:
+                      type: integer
+                      description: The total number of unique opportunities created from the campaign on that day
+                      example: 5
+                    unique_opportunities:
+                      type: integer
+                      description: The total number of unique opportunities created from unique leads from the campaign on that day
+                      example: 3
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The error message
+                    example: Start Date must be earlier than End Date
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/campaigns/analytics/steps:
+    get:
+      operationId: getCampaignStepsAnalytics
+      summary: Get campaign steps analytics
+      tags:
+      - Analytics
+      description: Get campaign steps analytics
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9ba3-7a9b-ac87-cd7e663fa784
+        example: 019ffad2-9ba3-7a9b-ac87-cd7e663fa784
+        in: query
+        name: campaign_id
+        required: false
+        description: Campaign ID (optional). Leave this field empty to get the analytics for all campaigns
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: start_date
+        required: false
+        description: Start of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: end_date
+        required: false
+        description: End of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or a full ISO 8601 timestamp. Date-only values are interpreted as UTC midnight — e.g. `2026-04-07` is treated as `2026-04-07T00:00:00.000Z`.
+      - schema:
+          type: boolean
+          default: false
+          example: true
+        example: true
+        in: query
+        name: include_opportunities_count
+        required: false
+        description: Whether to include the opportunities count per step. If this field is true then `opportunities`, `unique_opportunities`, `meetings_booked`, and `won` fields will be included in the response
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    step:
+                      type:
+                      - 'null'
+                      - string
+                      description: The step number. When null it means we couldn't determine the step number for the event, for instance for list leads, which are not part of a campaign.
+                      example: '1'
+                    variant:
+                      type:
+                      - 'null'
+                      - string
+                      description: The variant number, starting from 0. 0 = A, 1 = B, 2 = C, etc. When null it means we couldn't determine the variant for the event.
+                      example: '0'
+                    sent:
+                      type: integer
+                      description: The total number of sent emails
+                      example: 5421
+                    opened:
+                      type: integer
+                      description: The total number of opened emails
+                      example: 99
+                    unique_opened:
+                      type: integer
+                      description: The total number of opened emails
+                      example: 60
+                    replies:
+                      type: integer
+                      description: The total number of replies
+                      example: 60
+                    unique_replies:
+                      type: integer
+                      description: The total number of replies
+                      example: 60
+                    replies_automatic:
+                      type: integer
+                      description: The total number of automatic replies detected
+                      example: 5
+                    unique_replies_automatic:
+                      type: integer
+                      description: The total number of unique automatic replies detected
+                      example: 4
+                    clicks:
+                      type: integer
+                      description: The total number of links clicked
+                      example: 60
+                    unique_clicks:
+                      type: integer
+                      description: The total number of unique links clicked. Unique meaning from unique leads, not unique links. For instance, if a lead clicked a link 3 times, it will be counted as 1 unique click. If a lead clicked 3 different links, it will still be counted as 1 unique click
+                      example: 60
+                    opportunities:
+                      type: integer
+                      description: The total number of opportunities created from this step. Included only if `include_opportunities_count` is `true`
+                      example: 10
+                    unique_opportunities:
+                      type: integer
+                      description: The total number of unique opportunities created from this step. Unique meaning unique per lead. If a lead has multiple opportunities, it will be counted as 1 unique opportunity. Included only if `include_opportunities_count` is `true`
+                      example: 8
+                    meetings_booked:
+                      type: integer
+                      description: The total number of opportunities from this step whose current CRM status is Meeting Booked. Included only if `include_opportunities_count` is `true`
+                      example: 2
+                    won:
+                      type: integer
+                      description: The total number of opportunities from this step whose current CRM status is Won. Included only if `include_opportunities_count` is `true`
+                      example: 1
+                  required:
+                  - step
+                  - variant
+                  - sent
+                  - opened
+                  - unique_opened
+                  - replies
+                  - unique_replies
+                  - replies_automatic
+                  - unique_replies_automatic
+                  - clicks
+                  - unique_clicks
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The error message
+                    example: Start Date must be earlier than End Date
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/subsequences/{id}/analytics/steps:
+    get:
+      operationId: getSubsequenceStepsAnalytics
+      summary: Get subsequence step and variant analytics
+      tags:
+      - Analytics
+      description: 'Returns engagement metrics grouped by zero-based step and variant for one subsequence. Results include only activity from the requested subsequence, excluding its parent campaign and sibling subsequences.
+
+
+
+        Requires one of the following scopes: `subsequences:read`, `subsequences:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T12:00:00.000Z':
+            value: '2024-01-01T12:00:00.000Z'
+        in: query
+        name: start_date
+        required: false
+        description: Inclusive start of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or an ISO 8601 timestamp. Timestamps are normalized to their UTC calendar date.
+      - schema:
+          type: string
+          example: '2024-01-31'
+        examples:
+          '2024-01-31':
+            value: '2024-01-31'
+          '2024-01-31T23:59:59.999Z':
+            value: '2024-01-31T23:59:59.999Z'
+        in: query
+        name: end_date
+        required: false
+        description: Inclusive end of the analytics range. Accepts a date-only value (`YYYY-MM-DD`) or an ISO 8601 timestamp. Timestamps are normalized to their UTC calendar date.
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c8b-7899-a0d0-1b1ac5dedeb4
+        example: 019ffad2-9c8b-7899-a0d0-1b1ac5dedeb4
+        in: path
+        name: id
+        required: true
+        description: The ID of the subsequence to analyze.
+      responses:
+        '200':
+          description: Engagement metrics grouped by subsequence step and variant.
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Engagement metrics grouped by subsequence step and variant.
+                items:
+                  type: object
+                  properties:
+                    step:
+                      type:
+                      - 'null'
+                      - string
+                      description: Zero-based step index. `0` is the first step. Null when the event could not be attributed to a step.
+                      example: '0'
+                    variant:
+                      type:
+                      - 'null'
+                      - string
+                      description: Zero-based variant index. `0` is variant A, `1` is variant B, and so on. Null when the event could not be attributed to a variant.
+                      example: '0'
+                    sent:
+                      type: integer
+                      description: Total emails sent from this step and variant.
+                      example: 100
+                    opened:
+                      type: integer
+                      description: Total open events attributed to this step and variant.
+                      example: 45
+                    unique_opened:
+                      type: integer
+                      description: Number of unique leads that opened an email from this step and variant.
+                      example: 40
+                    replies:
+                      type: integer
+                      description: Total replies attributed to this step and variant.
+                      example: 12
+                    unique_replies:
+                      type: integer
+                      description: Number of unique leads that replied to this step and variant.
+                      example: 11
+                    replies_automatic:
+                      type: integer
+                      description: Total automatic replies attributed to this step and variant.
+                      example: 2
+                    unique_replies_automatic:
+                      type: integer
+                      description: Number of unique leads that sent an automatic reply to this step and variant.
+                      example: 2
+                    clicks:
+                      type: integer
+                      description: Total link click events attributed to this step and variant.
+                      example: 18
+                    unique_clicks:
+                      type: integer
+                      description: Number of unique leads that clicked a link in this step and variant.
+                      example: 15
+                  required:
+                  - step
+                  - variant
+                  - sent
+                  - opened
+                  - unique_opened
+                  - replies
+                  - unique_replies
+                  - replies_automatic
+                  - unique_replies_automatic
+                  - clicks
+                  - unique_clicks
+        '400':
+          description: The request is invalid (e.g. missing required fields, invalid field values, or an invalid state for the operation)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '403':
+          description: This request is forbidden (the API key scope or workspace plan does not allow this action)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 403
+                    examples:
+                    - 403
+                    example: 403
+                  error:
+                    type: string
+                    enum:
+                    - Forbidden
+                    examples:
+                    - Forbidden
+                    example: Forbidden
+                  message:
+                    type: string
+                    examples:
+                    - Forbidden
+                    example: Forbidden
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

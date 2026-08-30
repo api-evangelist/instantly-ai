@@ -1,0 +1,2068 @@
+openapi: 3.2.0
+info:
+  title: Explorer Email API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Email
+  description: A campaign email, a reply, a manually sent email, or any other email that's visible in the Unibox
+  x-group: Email
+paths:
+  /api/v2/emails/test:
+    post:
+      operationId: sendTestEmail
+      summary: Send a test email
+      tags:
+      - Email
+      description: 'Send a preview/test email without creating an email entity in Unibox. Rate limit: 10 requests per minute per workspace.
+
+
+
+        Requires one of the following scopes: `emails:create`, `emails:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eaccount:
+                  type: string
+                  description: The email account that will be used to send this email. It has to be an email account connected to your workspace.
+                  example: jondoe@example.com
+                to_address_email_list:
+                  type: string
+                  description: Comma-separated list of recipients that will receive the test email.
+                  example: recipient@example.com,recipient2@example.com
+                subject:
+                  type: string
+                  description: Subject line of the test email.
+                  example: Test email subject
+                body:
+                  type: object
+                  description: HTML body of the test email. Use `<br/>` tags for delivered email line breaks.
+                  properties:
+                    html:
+                      type: string
+                      description: HTML body of the test email. Use `<br/>` tags for delivered email line breaks.
+                      example: This is a test email.<br/><br/>Second line.
+                  required:
+                  - html
+              required:
+              - eaccount
+              - to_address_email_list
+              - subject
+              - body
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: object
+                  properties:
+                    status:
+                      type: string
+                      enum:
+                      - success
+                      examples:
+                      - success
+                      example: success
+                  required:
+                  - status
+                - type: object
+                  properties:
+                    error:
+                      type: string
+                      enum:
+                      - ACC_AUTH_ERROR
+                      - ACC_NOT_FOUND
+                      - ACC_UNKNOWN_ERROR
+                      examples:
+                      - ACC_AUTH_ERROR
+                      example: ACC_AUTH_ERROR
+                  required:
+                  - error
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/emails/reply:
+    post:
+      operationId: replyToEmail
+      summary: Reply to an email
+      tags:
+      - Email
+      description: 'Send a reply to an email. This endpoint can be used to send an email only as a reply to an existing email. In order to reply to an email, please specify the `reyply_to_uuid` field, and your email will be sent as a reply to that email. The `reyply_to_uuid` field represents the `id` field of an existing email, which is being returned to you in all the `/email` endpoints
+
+
+
+        Requires one of the following scopes: `emails:create`, `emails:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eaccount:
+                  type: string
+                  description: The email account that will be used to send this email. It has to be an email account connected to your workspace
+                  example: jondoe@example.com
+                reply_to_uuid:
+                  type: string
+                  description: The id of the email to reply to
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                subject:
+                  type: string
+                  description: Subject line of the email message
+                  example: 'Re: Your inquiry'
+                body:
+                  description: The email body. You can specify either the `html` or the `text` field, or both. Use `<br/>` tags for delivered email line breaks.
+                  type: object
+                  properties:
+                    html:
+                      type: string
+                      description: HTML body of the email message. Use `<br/>` tags for delivered email line breaks.
+                      example: Hello, how are you?<br/><br/>Looking forward to hearing from you.
+                    text:
+                      type: string
+                      description: Text body of the email message. For delivered email line breaks, use `html` with `<br/>` tags.
+                      example: Hello, how are you?
+                additional_recipients:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                    example: recipient@example.com
+                  description: Optional list of extra recipient email addresses to include in the reply, in addition to the default recipient (the sender of the email being replied to).
+                  example:
+                  - recipient@example.com
+                cc_address_email_list:
+                  type: string
+                  description: Comma-separated list of CC email addresses
+                  example: cc@example.com
+                bcc_address_email_list:
+                  type: string
+                  description: Comma-separated list of BCC email addresses
+                  example: bcc@example.com
+                reminder_ts:
+                  type: string
+                  format: date-time
+                  description: If provided then a reminder will be attached to this email, you will see this reminder in the Unibox in the web app
+                  example: '2026-08-13T11:12:14.329Z'
+                assigned_to:
+                  type: string
+                  format: uuid
+                  description: The user id assigned to the lead
+                  example: 019ffad2-9bf9-7714-aea0-ea27573f0b7e
+              required:
+              - reply_to_uuid
+              - eaccount
+              - subject
+              - body
+        required: true
+      responses:
+        '200':
+          description: The requested Email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/emails/forward:
+    post:
+      operationId: forwardEmail
+      summary: Forward an email
+      tags:
+      - Email
+      description: 'Forward an existing email to another recipient. You must specify the `reply_to_uuid` field, which represents the `id` of an existing email returned by the `/emails` endpoints. By default only the provided body is sent. Set `include_original_body` to `true` to append the original email context.
+
+
+
+        Requires one of the following scopes: `emails:create`, `emails:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eaccount:
+                  type: string
+                  description: The email account that will be used to send this email. It has to be an email account connected to your workspace
+                  example: jondoe@example.com
+                reply_to_uuid:
+                  type: string
+                  description: The id of the email you want to forward
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                to_address_email_list:
+                  type: string
+                  description: Comma-separated list of recipients that will receive the forwarded email
+                  example: recipient@example.com
+                subject:
+                  type: string
+                  description: Subject line of the forwarded email message
+                  example: 'Fwd: Interesting update'
+                body:
+                  type: object
+                  description: Optional body content for the forwarded email. When `include_original_body` is `true`, this can be used as a note before the appended original email content. You can specify either the `html` or the `text` field, or both. For HTML content, Use `<br/>` tags for delivered email line breaks. For text content, Newline characters are preserved as delivered line breaks.
+                  properties:
+                    html:
+                      type: string
+                      description: HTML body of the forwarded email. Use `<br/>` tags for delivered email line breaks.
+                      example: Sharing this with you.<br/><br/>Let me know what you think.
+                    text:
+                      type: string
+                      description: Text body of the forwarded email. Newline characters are preserved as delivered line breaks.
+                      example: Sharing this with you.
+                cc_address_email_list:
+                  type: string
+                  description: Comma-separated list of CC email addresses
+                  example: cc@example.com
+                bcc_address_email_list:
+                  type: string
+                  description: Comma-separated list of BCC email addresses
+                  example: bcc@example.com
+                reply_to:
+                  type: string
+                  format: email
+                  description: Reply-to email address that recipients should use when replying
+                  example: reply@example.com
+                forwarded_attachments:
+                  type: string
+                  description: JSON-encoded forwarded attachment metadata from the original email
+                  example: '[{"filename":"attachment.pdf","url":"https://cdn.instantly.ai/example-attachment/file.pdf"}]'
+                include_original_body:
+                  type: boolean
+                  description: 'When true, append the original email headers and content after the provided body. Default: false.'
+                  example: true
+                assigned_to:
+                  type: string
+                  format: uuid
+                  description: The user id assigned to the lead
+                  example: 019ffad2-9bf9-7714-aea0-ea28a73066ef
+              required:
+              - reply_to_uuid
+              - to_address_email_list
+              - eaccount
+              - subject
+              anyOf:
+              - required:
+                - body
+                properties:
+                  body:
+                    type: object
+                    properties:
+                      html:
+                        type: string
+                      text:
+                        type: string
+                    anyOf:
+                    - required:
+                      - html
+                      properties:
+                        html:
+                          type: string
+                          minLength: 1
+                    - required:
+                      - text
+                      properties:
+                        text:
+                          type: string
+                          minLength: 1
+              - required:
+                - include_original_body
+                properties:
+                  include_original_body:
+                    type: boolean
+                    enum:
+                    - true
+        required: true
+      responses:
+        '200':
+          description: The requested Email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/emails:
+    get:
+      operationId: listEmail
+      summary: List email
+      tags:
+      - Email
+      description: '**Rate Limit:** This endpoint has a rate limit of 20 requests per minute, unlike other API endpoints.
+
+
+
+        Requires one of the following scopes: `emails:read`, `emails:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: string
+          example: search term
+        example: search term
+        in: query
+        name: search
+        required: false
+        description: The search query to filter emails. It can be an email address (the lead email address), or a special string that starts with "thread:" to search for emails in a specific thread. If you want to search for emails in a specific thread, use the "thread:" prefix followed by the thread ID (e.g., "thread:123e4567-e89b-12d3-a456-426614174000").
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: query
+        name: campaign_id
+        required: false
+        description: The ID of the campaign to filter emails by.
+      - schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: query
+        name: list_id
+        required: false
+        description: The ID of the lead list to filter emails by.
+      - schema:
+          type: number
+          example: 1
+        examples:
+          '1':
+            value: 1
+          '2':
+            value: 2
+          '3':
+            value: 3
+        in: query
+        name: i_status
+        required: false
+        description: The status of the emails to filter by.
+      - schema:
+          type: string
+          example: jon@example.com
+        examples:
+          jon@example.com:
+            value: jon@example.com
+          jon@example.com,alex@example.com:
+            value: jon@example.com,alex@example.com
+        in: query
+        name: eaccount
+        required: false
+        description: The email account that was used to send this email. You can filter by multiple email accounts by providing a comma-separated list of email addresses.
+      - schema:
+          type: boolean
+          example: true
+        examples:
+          'true':
+            value: true
+          'false':
+            value: false
+        in: query
+        name: is_unread
+        required: false
+        description: Whether the email is unread.
+      - schema:
+          type: boolean
+          example: true
+        examples:
+          'true':
+            value: true
+          'false':
+            value: false
+        in: query
+        name: has_reminder
+        required: false
+      - schema:
+          type: string
+          enum:
+          - emode_focused
+          - emode_others
+          - emode_all
+          example: emode_focused
+        example: emode_focused
+        in: query
+        name: mode
+        required: false
+        description: The mode to filter emails by.
+      - schema:
+          type: boolean
+          example: true
+        examples:
+          'true':
+            value: true
+          'false':
+            value: false
+        in: query
+        name: preview_only
+        required: false
+        description: Whether to only return the preview of the emails.
+      - schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          example: asc
+        examples:
+          asc:
+            value: asc
+          desc:
+            value: desc
+        in: query
+        name: sort_order
+        required: false
+        description: The order to sort the emails by (based on the email creation date). Default is "desc".
+      - schema:
+          type: boolean
+          example: true
+        examples:
+          'true':
+            value: true
+          'false':
+            value: false
+        in: query
+        name: scheduled_only
+        required: false
+        description: Whether to only return the scheduled emails.
+      - schema:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: query
+        name: assigned_to
+        required: false
+        description: The ID of the user to filter emails by.
+      - schema:
+          type: string
+          example: jondoe@example.com
+        example: jondoe@example.com
+        in: query
+        name: lead
+        required: false
+        description: The email of the lead to filter emails by.
+      - schema:
+          type: string
+          example: example.com
+        example: example.com
+        in: query
+        name: company_domain
+        required: false
+        description: The domain of the company to filter emails by.
+      - schema:
+          type: boolean
+          example: true
+        examples:
+          'true':
+            value: true
+          'false':
+            value: false
+        in: query
+        name: marked_as_done
+        required: false
+        description: Whether the email is marked as done.
+      - schema:
+          type: string
+          enum:
+          - received
+          - sent
+          - manual
+          example: received
+        examples:
+          received:
+            value: received
+          sent:
+            value: sent
+          manual:
+            value: manual
+        in: query
+        name: email_type
+        required: false
+        description: The type of the email to filter by.
+      - schema:
+          type: string
+          example: '2026-08-13T11:12:14.330Z'
+        example: '2026-08-13T11:12:14.330Z'
+        in: query
+        name: min_timestamp_created
+        required: false
+        description: Filter emails created after this timestamp (ISO format)
+      - schema:
+          type: string
+          example: '2026-08-13T11:12:14.330Z'
+        example: '2026-08-13T11:12:14.330Z'
+        in: query
+        name: max_timestamp_created
+        required: false
+        description: Filter emails created before this timestamp (ISO format)
+      - schema:
+          type: boolean
+          example: true
+        examples:
+          'true':
+            value: true
+          'false':
+            value: false
+        in: query
+        name: latest_of_thread
+        required: false
+        description: Whether to only return the latest email in each thread.
+      responses:
+        '200':
+          description: The list of Email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Email
+                    items:
+                      $ref: '#/components/schemas/Email'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9bfa-76fa-903e-f9e449c44ff5
+                    - '2026-08-13T11:12:14.330Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9bfa-76fa-903e-f9e449c44ff5
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/emails/{id}:
+    get:
+      operationId: getEmail
+      summary: Get email
+      tags:
+      - Email
+      description: 'Requires one of the following scopes: `emails:read`, `emails:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9bfb-7349-9fce-172a71e47d90
+        example: 019ffad2-9bfb-7349-9fce-172a71e47d90
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchEmail
+      summary: Patch email
+      tags:
+      - Email
+      description: 'Requires one of the following scopes: `emails:update`, `emails:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_unread:
+                  type:
+                  - number
+                  - 'null'
+                  description: Indicates if the email is unread
+                  example: 1
+                reminder_ts:
+                  type:
+                  - string
+                  - 'null'
+                  description: Timestamp for the reminder.
+                  format: date-time
+                  example: '2026-08-13T11:11:58.104Z'
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9bfb-7349-9fce-172b525f7146
+        example: 019ffad2-9bfb-7349-9fce-172b525f7146
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to update
+      responses:
+        '200':
+          description: The updated Email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteEmail
+      summary: Delete email
+      tags:
+      - Email
+      description: 'Requires one of the following scopes: `emails:delete`, `emails:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9bfc-7100-861f-3daed3baa09b
+        example: 019ffad2-9bfc-7100-861f-3daed3baa09b
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted Email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/emails/unread/count:
+    get:
+      operationId: countUnreadEmails
+      summary: Count unread emails
+      tags:
+      - Email
+      description: 'Requires one of the following scopes: `emails:read`, `emails:all`, `all:read`, `all:all`'
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    example: 100
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/emails/threads/{thread_id}/mark-as-read:
+    post:
+      operationId: markThreadAsRead
+      summary: Mark all emails in a thread as read
+      tags:
+      - Email
+      description: 'Requires one of the following scopes: `emails:update`, `emails:all`, `all:update`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: path
+        name: thread_id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    Email:
+      title: Email
+      description: A campaign email, a reply, a manually sent email, or any other email that's visible in the Unibox
+      x-tags:
+      - Schemas
+      - Email
+      type: object
+      properties:
+        id:
+          type: string
+          description: A Unique identifier
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a09d243ff0
+        timestamp_created:
+          type: string
+          description: Timestamp when the email was added to our database. This is not the timestamp of the email itself, since the email could have been sent at a different time. Please check the `timestamp_email` field for the timestamp of the email.
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.104Z'
+        timestamp_email:
+          type: string
+          description: The timestamp of the email, as provided by the email server. Please note that the timestamp is not always accurate, as it can be manipulated by the sender or the email server.
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.104Z'
+        message_id:
+          type: string
+          description: Unique email ID from the email server
+          readOnly: true
+          example: <example123@mail.gmail.com>
+        subject:
+          type: string
+          description: Subject line of the email message
+          example: 'Re: Your inquiry'
+        from_address_email:
+          type:
+          - 'null'
+          - string
+          description: The sender email address, populated based on the eaccount
+          readOnly: true
+          format: email
+          example: sender@example.com
+        to_address_email_list:
+          type: string
+          description: Comma-separated list of recipient email addresses
+          example: recipient@example.com
+        cc_address_email_list:
+          type:
+          - 'null'
+          - string
+          description: Comma-separated list of CC email addresses
+          example: cc@example.com
+        bcc_address_email_list:
+          type:
+          - 'null'
+          - string
+          description: Comma-separated list of BCC email addresses
+          example: bcc@example.com
+        reply_to:
+          type:
+          - 'null'
+          - string
+          description: Reply-to email address
+          example: replyto@example.com
+        body:
+          type: object
+          description: An object containing the email body in HTML and text format
+          readOnly: true
+          properties:
+            text:
+              type: string
+              description: Plain-text representation of the email body. Newline characters are preserved as line breaks in this text view.
+              example: This is a test email
+            html:
+              type: string
+              description: HTML content of the email. Use `<br/>` tags for delivered email line breaks.
+              example: This is a test email.<br/><br/>Second line.
+        organization_id:
+          type: string
+          description: The workspace ID
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a19020dfa8
+        campaign_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the campaign that the email is associated with (it can be null for manually sent emails)
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a2d5f98274
+        subsequence_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the campaign subsequence that the email is associated with (it can be null for manually sent emails)
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a378631cf2
+        list_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the list (if the lead is part of a list)
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a45f3d96df
+        lead:
+          type:
+          - 'null'
+          - string
+          description: The email address of the lead that the email is associated with
+          example: jondoe@example.com
+        lead_id:
+          type:
+          - 'null'
+          - string
+          description: The lead id (if any)
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a5378a5b47
+        eaccount:
+          type: string
+          description: The email account that was used to send the email. This needs to be validated to make sure it exists in the user workspace
+          example: eaccount-123
+        ue_type:
+          type:
+          - 'null'
+          - number
+          description: Email type based on the life cycle of the email
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          x-enumDescriptions:
+            '1': Sent from campaign
+            '2': Received
+            '3': Sent
+            '4': Scheduled
+          example: 3
+        step:
+          type:
+          - 'null'
+          - string
+          description: The campaign step that the email is associated with
+          example: step-123
+        is_unread:
+          type:
+          - 'null'
+          - number
+          description: Indicates if the email is unread
+          example: 1
+        is_auto_reply:
+          type:
+          - 'null'
+          - number
+          description: Indicates if the email is an auto-reply. 0 (zero) - is false, and 1 is true
+          readOnly: true
+          example: 0
+        reminder_ts:
+          type:
+          - 'null'
+          - string
+          description: Timestamp for the reminder.
+          format: date-time
+          example: '2026-08-13T11:11:58.104Z'
+        ai_interest_value:
+          type:
+          - 'null'
+          - number
+          description: AI interest value
+          example: 0.75
+        ai_assisted:
+          type:
+          - 'null'
+          - number
+          description: Indicates if AI assistance was used
+          example: 1
+        is_focused:
+          type:
+          - 'null'
+          - number
+          description: Indicates if the email is focused (is in the primary tab in the Unibox)
+          example: 1
+        i_status:
+          type:
+          - 'null'
+          - number
+          description: Indicates the interest status of the email
+          example: 0
+        thread_id:
+          type:
+          - 'null'
+          - string
+          description: Identifier for the email thread. All the emails in the same thread have the same thread ID
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a632e2c947
+        content_preview:
+          type:
+          - 'null'
+          - string
+          description: A short preview of the email content (usually the first few lines of the email)
+          example: This is a preview of the email content.
+        attachment_json:
+          type:
+          - 'null'
+          - object
+          description: Attachment metadata for the email. This field is null when there are no attachments.
+          readOnly: true
+          properties:
+            files:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - filename
+                properties:
+                  filename:
+                    type: string
+                    description: Attachment file name
+                    examples:
+                    - attachment.pdf
+                    example: attachment.pdf
+                  size:
+                    type: number
+                    description: Attachment file size in bytes
+                    examples:
+                    - 1927
+                    example: 1927
+                  type:
+                    type: string
+                    description: Attachment MIME type
+                    examples:
+                    - application/pdf
+                    example: application/pdf
+                  url:
+                    type: string
+                    format: uri
+                    description: Download URL when available
+                    examples:
+                    - https://cdn.instantly.ai/example-attachment/file.pdf
+                    example: https://cdn.instantly.ai/example-attachment/file.pdf
+                  error:
+                    type:
+                    - 'null'
+                    - string
+                    description: Error description when the attachment failed to upload
+                    examples:
+                    - Upload failed
+                    example: Upload failed
+          required:
+          - files
+          additionalProperties: false
+          example:
+            files:
+            - filename: attachment
+              size: 1927
+              type: text/css
+              url: https://cdn.instantly.ai/example-attachment/
+              error: null
+        from_address_json:
+          type:
+          - 'null'
+          - array
+          description: List of from address details
+        to_address_json:
+          type:
+          - 'null'
+          - array
+          description: List of to address details
+        cc_address_json:
+          type:
+          - 'null'
+          - array
+          description: List of CC address details
+        ai_agent_id:
+          type:
+          - 'null'
+          - string
+          description: ID of the AI agent that sent this email (if applicable)
+          format: uuid
+          example: 019ffad2-5c98-7531-9735-e1a721735ad8
+      required:
+      - id
+      - timestamp_created
+      - timestamp_email
+      - message_id
+      - subject
+      - to_address_email_list
+      - body
+      - organization_id
+      - eaccount
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

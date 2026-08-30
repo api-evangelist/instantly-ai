@@ -1,0 +1,255 @@
+openapi: 3.2.0
+info:
+  title: Explorer Custom Tag Mapping API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: CustomTagMapping
+  description: This entity represents a tag being assigned to a specific campaign or email account. When an email account is assigned a tag, a new custom tag mapping entry is created, which connects the tag (`tag_id` field) with the email account (`resource_id` field). You can use it to see which tag si connected to which resource.
+  x-group: Custom Tag Mapping
+paths:
+  /api/v2/custom-tag-mappings:
+    get:
+      operationId: listCustomTagMapping
+      summary: List custom tag mapping
+      tags:
+      - CustomTagMapping
+      description: 'Requires one of the following scopes: `custom_tag_mappings:read`, `custom_tag_mappings:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: string
+          example: id1,id2,id3
+        example: id1,id2,id3
+        in: query
+        name: resource_ids
+        required: false
+        description: The list of resource ids to filter custom tag mappings by. A resource id is the id of an account or a campaign.
+      responses:
+        '200':
+          description: The list of Custom Tag Mapping
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Custom Tag Mapping
+                    items:
+                      $ref: '#/components/schemas/CustomTagMapping'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9bd3-72ed-a9b6-865b150cdcc1
+                    - '2026-08-13T11:12:14.291Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9bd3-72ed-a9b6-865b150cdcc1
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    CustomTagMapping:
+      title: Custom Tag Mapping
+      description: This entity represents a tag being assigned to a specific campaign or email account. When an email account is assigned a tag, a new custom tag mapping entry is created, which connects the tag (`tag_id` field) with the email account (`resource_id` field). You can use it to see which tag si connected to which resource.
+      x-tags:
+      - Schemas
+      - CustomTagMapping
+      type: object
+      properties:
+        id:
+          type: string
+          description: A Unique identifier
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5d0f-78fe-84ff-6c9de04ca9eb
+        tag_id:
+          type: string
+          description: ID of the tag this custom mapping belongs to
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5d0f-78fe-84ff-6c9ef57a3dd5
+        resource_id:
+          type: string
+          description: ID of the resource custom tag mapping belongs to, resource_type determines the type of resource
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5d0f-78fe-84ff-6c9f619d8285
+        resource_type:
+          type: number
+          description: Resource type of custom tag, can be 1 for campaigns or 2 for accounts
+          readOnly: true
+          enum:
+          - 1
+          - 2
+          x-enumDescriptions:
+            '1': Account
+            '2': Campaign
+          example: 1
+        timestamp_created:
+          type: string
+          description: Timestamp when the custom tag mapping was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.223Z'
+        organization_id:
+          type: string
+          description: Organization ID that owns this custom tag mapping
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5d0f-78fe-84ff-6ca0b62afe64
+      required:
+      - id
+      - tag_id
+      - resource_id
+      - resource_type
+      - timestamp_created
+      - organization_id
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

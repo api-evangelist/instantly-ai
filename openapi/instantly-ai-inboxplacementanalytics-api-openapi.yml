@@ -1,0 +1,1367 @@
+openapi: 3.2.0
+info:
+  title: Explorer Inbox Placement Analytics API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: InboxPlacementAnalytics
+  description: Analytics data for individual emails in inbox placement tests
+  x-group: Inbox Placement Analytics
+paths:
+  /api/v2/inbox-placement-analytics:
+    get:
+      operationId: listInboxPlacementAnalytics
+      summary: List inbox placement analytics
+      tags:
+      - InboxPlacementAnalytics
+      description: 'Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c10-7031-b800-4c42ddf964b4
+        example: 019ffad2-9c10-7031-b800-4c42ddf964b4
+        in: query
+        name: test_id
+        required: true
+      - schema:
+          type: string
+          example: '2026-08-13T11:12:14.352Z'
+        example: '2026-08-13T11:12:14.352Z'
+        in: query
+        name: date_from
+        required: false
+      - schema:
+          type: string
+          example: '2026-08-13T11:12:14.352Z'
+        example: '2026-08-13T11:12:14.352Z'
+        in: query
+        name: date_to
+        required: false
+      - schema:
+          type: string
+          example: 1,2
+        example: 1,2
+        in: query
+        name: recipient_geo
+        required: false
+        description: A comma-separated list of recipient geo values.
+      - schema:
+          type: string
+          example: 1,2
+        example: 1,2
+        in: query
+        name: recipient_type
+        required: false
+        description: A comma-separated list of recipient type values.
+      - schema:
+          type: string
+          example: 1,2
+        example: 1,2
+        in: query
+        name: recipient_esp
+        required: false
+        description: A comma-separated list of recipient ESP values.
+      - schema:
+          type: string
+          example: john@doe.com
+        example: john@doe.com
+        in: query
+        name: sender_email
+        required: false
+      responses:
+        '200':
+          description: The list of Inbox Placement Analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Inbox Placement Analytics
+                    items:
+                      $ref: '#/components/schemas/InboxPlacementAnalytics'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9c10-7031-b800-4c432391ac4d
+                    - '2026-08-13T11:12:14.352Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9c10-7031-b800-4c432391ac4d
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/inbox-placement-analytics/{id}:
+    get:
+      operationId: getInboxPlacementAnalytics
+      summary: Get inbox placement analytics
+      tags:
+      - InboxPlacementAnalytics
+      description: 'Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c11-761e-8be7-8204f980e956
+        example: 019ffad2-9c11-761e-8be7-8204f980e956
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Inbox Placement Analytics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxPlacementAnalytics'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/inbox-placement-analytics/stats-by-test-id:
+    post:
+      operationId: getInboxPlacementAnalyticsStatsByTestId
+      summary: Retrieve inbox placement analytics stats by test id
+      tags:
+      - InboxPlacementAnalytics
+      description: 'Provides aggregated inbox, spam and category counts for specified test IDs
+
+
+
+        Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-9c11-761e-8be7-8205dfb9980e
+                  minItems: 1
+                date_from:
+                  type: string
+                  example: '2026-08-13T11:12:14.353Z'
+                date_to:
+                  type: string
+                  example: '2026-08-13T11:12:14.353Z'
+                recipient_geo:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    x-enumDescriptions:
+                      '1': United States
+                      '2': Italy
+                      '3': Germany
+                      '4': France
+                    example: 1
+                  example:
+                  - 1
+                recipient_type:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    x-enumDescriptions:
+                      '1': Professional
+                      '2': Personal
+                    example: 1
+                  example:
+                  - 1
+                recipient_esp:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    - 8
+                    - 12
+                    - 13
+                    x-enumDescriptions:
+                      '1': Google
+                      '2': Microsoft
+                      '8': AirMail
+                      '12': Web.de
+                      '13': Libero.it
+                    example: 1
+                  example:
+                  - 1
+                  - 2
+                sender_email:
+                  type: string
+                  example: john@doe.com
+              required:
+              - test_ids
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    test_id:
+                      type: string
+                      format: uuid
+                      example: 019ffad2-9c11-761e-8be7-8206b9663293
+                    count:
+                      type: number
+                      example: 1
+                    spam_count:
+                      type: number
+                      example: 1
+                    spam_percent:
+                      type: number
+                      example: 1
+                    inbox_count:
+                      type: number
+                      example: 1
+                    inbox_percent:
+                      type: number
+                      example: 1
+                    category_count:
+                      type: number
+                      example: 1
+                    category_percent:
+                      type: number
+                      example: 1
+                  required:
+                  - test_id
+                  - count
+                  - spam_count
+                  - spam_percent
+                  - inbox_count
+                  - inbox_percent
+                  - category_count
+                  - category_percent
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/inbox-placement-analytics/deliverability-insights:
+    post:
+      operationId: getInboxPlacementAnalyticsDeliverabilityInsights
+      summary: Retrieve inbox placement analytics deliverability insights
+      tags:
+      - InboxPlacementAnalytics
+      description: 'Provides deliverability insights for a specific inbox placement test
+
+
+
+        Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_id:
+                  type: string
+                  format: uuid
+                  example: 019ffad2-9c12-7627-a335-4988c0aa83fd
+                date_from:
+                  type: string
+                  example: '2026-08-13T11:12:14.354Z'
+                date_to:
+                  type: string
+                  example: '2026-08-13T11:12:14.354Z'
+                previous_date_from:
+                  type: string
+                  example: '2026-08-13T11:12:14.354Z'
+                previous_date_to:
+                  type: string
+                  example: '2026-08-13T11:12:14.354Z'
+                show_previous:
+                  type: boolean
+                  example: true
+                recipient_geo:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    x-enumDescriptions:
+                      '1': United States
+                      '2': Italy
+                      '3': Germany
+                      '4': France
+                    example: 1
+                  example:
+                  - 1
+                recipient_type:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    x-enumDescriptions:
+                      '1': Professional
+                      '2': Personal
+                    example: 1
+                  example:
+                  - 1
+                recipient_esp:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    - 8
+                    - 12
+                    - 13
+                    x-enumDescriptions:
+                      '1': Google
+                      '2': Microsoft
+                      '8': AirMail
+                      '12': Web.de
+                      '13': Libero.it
+                    example: 1
+                  example:
+                  - 1
+                  - 2
+              required:
+              - test_id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    test_id:
+                      type: string
+                      format: uuid
+                      example: 019ffad2-9c12-7627-a335-49891053917b
+                    from:
+                      type:
+                      - 'null'
+                      - string
+                      example: '2024-01-01'
+                    to:
+                      type:
+                      - 'null'
+                      - string
+                      example: '2024-01-01'
+                    previous_from:
+                      type:
+                      - 'null'
+                      - string
+                      example: '2023-01-01'
+                    previous_to:
+                      type:
+                      - 'null'
+                      - string
+                      example: '2023-01-01'
+                    sender_esp:
+                      type: number
+                      enum:
+                      - 1
+                      - 2
+                      - 8
+                      - 12
+                      - 13
+                      x-enumDescriptions:
+                        '1': Google
+                        '2': Microsoft
+                        '8': AirMail
+                        '12': Web.de
+                        '13': Libero.it
+                      example: 1
+                    recipient_esp:
+                      type: number
+                      enum:
+                      - 1
+                      - 2
+                      - 8
+                      - 12
+                      - 13
+                      x-enumDescriptions:
+                        '1': Google
+                        '2': Microsoft
+                        '8': AirMail
+                        '12': Web.de
+                        '13': Libero.it
+                      example: 1
+                    spam_percentage:
+                      type:
+                      - 'null'
+                      - number
+                      example: 10
+                    inbox_percentage:
+                      type:
+                      - 'null'
+                      - number
+                      example: 20
+                    category_percentage:
+                      type:
+                      - 'null'
+                      - number
+                      example: 70
+                    prev_spam_percentage:
+                      type:
+                      - 'null'
+                      - number
+                      example: 10
+                    prev_inbox_percentage:
+                      type:
+                      - 'null'
+                      - number
+                      example: 56.67
+                    prev_category_percentage:
+                      type:
+                      - 'null'
+                      - number
+                      example: 33.33
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/inbox-placement-analytics/stats-by-date:
+    post:
+      operationId: getInboxPlacementAnalyticsStatsByDate
+      summary: Get inbox placement analytics stats by date
+      tags:
+      - InboxPlacementAnalytics
+      description: 'Provides a time series representing the distribution of emails sent to inbox, spam, or category folders for scheduled inbox placement tests.
+
+
+
+        Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                test_id:
+                  type: string
+                  format: uuid
+                  example: 019ffad2-9c13-7365-81db-d29875d4a700
+                date_from:
+                  type: string
+                  example: '2026-08-13T11:12:14.355Z'
+                date_to:
+                  type: string
+                  example: '2026-08-13T11:12:14.355Z'
+                recipient_geo:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    x-enumDescriptions:
+                      '1': United States
+                      '2': Italy
+                      '3': Germany
+                      '4': France
+                    example: 1
+                  example:
+                  - 1
+                recipient_type:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    x-enumDescriptions:
+                      '1': Professional
+                      '2': Personal
+                    example: 1
+                  example:
+                  - 1
+                recipient_esp:
+                  type: array
+                  items:
+                    type: number
+                    enum:
+                    - 1
+                    - 2
+                    - 8
+                    - 12
+                    - 13
+                    x-enumDescriptions:
+                      '1': Google
+                      '2': Microsoft
+                      '8': AirMail
+                      '12': Web.de
+                      '13': Libero.it
+                    example: 1
+                  example:
+                  - 1
+                  - 2
+                sender_email:
+                  type: string
+                  example: john@doe.com
+              required:
+              - test_id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    timestamp_created_date:
+                      type: string
+                      example: '2026-08-13T11:12:14.355Z'
+                    sent_count:
+                      type: number
+                      example: 1
+                    received_count:
+                      type: number
+                      example: 1
+                    spam_count:
+                      type: number
+                      example: 1
+                    inbox_count:
+                      type: number
+                      example: 1
+                    category_count:
+                      type: number
+                      example: 1
+                  required:
+                  - timestamp_created_date
+                  - sent_count
+                  - received_count
+                  - spam_count
+                  - inbox_count
+                  - category_count
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    InboxPlacementAnalytics:
+      title: Inbox Placement Analytics
+      description: Analytics data for individual emails in inbox placement tests
+      x-tags:
+      - Schemas
+      - InboxPlacementAnalytics
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the inbox placement analytics entry
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c4f-7ddc-8443-b57a2353f89f
+        timestamp_created:
+          type: string
+          description: Timestamp when the inbox placement analytics was created
+          readOnly: true
+          example: '2026-08-13T11:11:58.031Z'
+        timestamp_created_date:
+          type: string
+          description: Date when the inbox placement analytics was created
+          readOnly: true
+          example: '2026-08-13'
+        organization_id:
+          type: string
+          description: Organization ID
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c4f-7ddc-8443-b57b2ee32344
+        test_id:
+          type: string
+          description: Inbox Placement Test ID
+          format: uuid
+          example: 019ffad2-5c4f-7ddc-8443-b57c259f81c8
+        is_spam:
+          type:
+          - 'null'
+          - boolean
+          description: Indicates if the email landed in spam (null if not determined). Only present when record_type is 2 (received).
+          example: true
+        has_category:
+          type:
+          - 'null'
+          - boolean
+          description: Indicates if the email was categorized like promotions, social, etc. (null if not determined). Only present when record_type is 2 (received).
+          example: true
+        sender_email:
+          type:
+          - 'null'
+          - string
+          description: Email address of the sender
+          example: sender@example.com
+        sender_esp:
+          type:
+          - 'null'
+          - number
+          description: The sender ESP (Email Service Provider). Only present when record_type is 2 (received).
+          enum:
+          - 1
+          - 2
+          - 8
+          - 12
+          - 13
+          x-enumDescriptions:
+            '1': Google
+            '2': Microsoft
+            '8': AirMail
+            '12': Web.de
+            '13': Libero.it
+          example: 1
+        recipient_email:
+          type:
+          - 'null'
+          - string
+          description: Email address of the recipient
+          example: recipient@example.com
+        recipient_esp:
+          type:
+          - 'null'
+          - number
+          description: The recipient ESP (Email Service Provider)
+          enum:
+          - 1
+          - 2
+          - 8
+          - 12
+          - 13
+          x-enumDescriptions:
+            '1': Google
+            '2': Microsoft
+            '8': AirMail
+            '12': Web.de
+            '13': Libero.it
+          example: 1
+        recipient_geo:
+          type:
+          - 'null'
+          - number
+          description: The geographic location of the recipient
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          x-enumDescriptions:
+            '1': United States
+            '2': Italy
+            '3': Germany
+            '4': France
+          example: 1
+        recipient_type:
+          type:
+          - 'null'
+          - number
+          description: The type of recipient
+          enum:
+          - 1
+          - 2
+          x-enumDescriptions:
+            '1': Professional
+            '2': Personal
+          example: 1
+        spf_pass:
+          type:
+          - 'null'
+          - boolean
+          description: Indicates if the email passed SPF validation. Only present when record_type is 2 (received).
+          example: true
+        dkim_pass:
+          type:
+          - 'null'
+          - boolean
+          description: Indicates if the email passed DKIM validation. Only present when record_type is 2 (received).
+          example: true
+        dmarc_pass:
+          type:
+          - 'null'
+          - boolean
+          description: Indicates if the email passed DMARC validation. Only present when record_type is 2 (received).
+          example: true
+        smtp_ip_blacklist_report:
+          type:
+          - 'null'
+          - object
+          description: Blacklist report for the SMTP IP address. Only present when record_type is 2 (received).
+        authentication_failure_results:
+          type:
+          - 'null'
+          - object
+          description: Details of authentication failures for SPF, DKIM, and DMARC. Only present when record_type is 2 (received).
+          properties:
+            authentication_results:
+              type: string
+              description: Authentication results
+              examples:
+              - "Authentication-Results: smtp.local;\n\tdkim=pass header.d=gappssmtp.com\n header.b=ABC123"
+              example: "Authentication-Results: smtp.local;\n\tdkim=pass header.d=gappssmtp.com\n header.b=ABC123"
+            dkim_signature:
+              type: string
+              description: DKIM signature
+              examples:
+              - "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gappssmtp.com; s=20161025;\n h=mime-version:from:date:message-id:subject:to; bh=ABC123; b=ABC123"
+              example: "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gappssmtp.com; s=20161025;\n h=mime-version:from:date:message-id:subject:to; bh=ABC123; b=ABC123"
+            received_spf:
+              type: string
+              description: Received SPF
+              examples:
+              - 'Received-SPF: pass'
+              example: 'Received-SPF: pass'
+        record_type:
+          type:
+          - 'null'
+          - number
+          description: The type of record (sent or received)
+          enum:
+          - 1
+          - 2
+          x-enumDescriptions:
+            '1': Sent
+            '2': Received
+          example: 1
+      required:
+      - id
+      - timestamp_created
+      - timestamp_created_date
+      - organization_id
+      - test_id
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

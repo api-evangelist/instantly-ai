@@ -1,0 +1,579 @@
+openapi: 3.2.0
+info:
+  title: Explorer Background Job API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: BackgroundJob
+  description: A background job that can be used to perform long-running tasks
+  x-group: Background Job
+paths:
+  /api/v2/background-jobs:
+    get:
+      operationId: listBackgroundJob
+      summary: List background job
+      tags:
+      - BackgroundJob
+      description: 'Requires one of the following scopes: `background-jobs:read`, `background-jobs:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 507f1f77bcf86cd799439011
+        example: 507f1f77bcf86cd799439011
+        in: query
+        name: starting_after
+        required: false
+      - schema:
+          type: string
+          example: 676f3caadedbfe9abea3bab4
+        example: 676f3caadedbfe9abea3bab4
+        in: query
+        name: ids
+        required: false
+        description: The ID of the job. Multiple IDs can be provided as a comma-separated list
+      - schema:
+          type: string
+          example: 676f3caadedbfe9abea3bab4
+        example: 676f3caadedbfe9abea3bab4
+        in: query
+        name: included_ids
+        required: false
+        description: The ID of the job to be included in the response. Multiple IDs can be provided as a comma-separated list
+      - schema:
+          type: string
+          example: 676f3caadedbfe9abea3bab4
+        example: 676f3caadedbfe9abea3bab4
+        in: query
+        name: excluded_ids
+        required: false
+        description: The ID of the job to be excluded from the response. Multiple IDs can be provided as a comma-separated list
+      - schema:
+          type: string
+          enum:
+          - move-leads
+          - import-leads
+          - export-leads
+          - update-warmup-accounts
+          - rename-variable
+          - broadcast-ai-generate
+          - broadcast-website-scrape
+          - import-subscribers-from-crm
+          - resync-subscriber-crm-tags
+          example: move-leads
+        example: move-leads
+        in: query
+        name: type
+        required: false
+        description: The type of the job
+      - schema:
+          type: string
+          enum:
+          - list
+          - campaign
+          - workspace
+          - broadcast
+          - subscriber-group-sync
+          - subscriber-group
+          example: list
+        example: list
+        in: query
+        name: entity_type
+        required: false
+        description: The type of the entity
+      - schema:
+          type: string
+          example: 676f3caadedbfe9abea3bab4
+        example: 676f3caadedbfe9abea3bab4
+        in: query
+        name: entity_id
+        required: false
+        description: The ID of the entity. Multiple IDs can be provided as a comma-separated list
+      - schema:
+          type: string
+          example: pending,in-progress
+        example: pending,in-progress
+        in: query
+        name: status
+        required: false
+        description: 'The status of the job. Multiple statuses can be provided as a comma-separated list. Valid statuses are: pending, in-progress, success, failed, draining, paused, cancelled'
+      - schema:
+          type: string
+          enum:
+          - created_at
+          - updated_at
+          x-enumDescriptions:
+            created_at: Created at
+            updated_at: Updated at
+          example: created_at
+        example: created_at
+        in: query
+        name: sort_column
+        required: false
+        description: The column to sort the results by
+      - schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          x-enumDescriptions:
+            asc: Ascending
+            desc: Descending
+          example: desc
+        example: desc
+        in: query
+        name: sort_order
+        required: false
+        description: The order to sort the results by
+      responses:
+        '200':
+          description: The list of Background Job
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Background Job
+                    items:
+                      $ref: '#/components/schemas/BackgroundJob'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9b89-77a5-91d0-e7e5db28afca
+                    - '2026-08-13T11:12:14.217Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9b89-77a5-91d0-e7e5db28afca
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/background-jobs/{id}:
+    get:
+      operationId: getBackgroundJob
+      summary: Get background job
+      tags:
+      - BackgroundJob
+      description: 'Requires one of the following scopes: `background-jobs:read`, `background-jobs:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: success_count,failed_count,total_to_process
+        examples:
+          success_count,failed_count,total_to_process:
+            value: success_count,failed_count,total_to_process
+          moved_lead_emails,moved_leads:
+            value: moved_lead_emails,moved_leads
+        in: query
+        name: data_fields
+        required: false
+        description: Comma-separated list of fields to include from the `data` object (e.g., "success_count,failed_count" or "moved_lead_emails,moved_leads"). For `move-leads` jobs, `moved_lead_emails` is capped at 10,000 entries.
+      - schema:
+          type: string
+          example: 6a7da68ed583d899a375b4ea
+        example: 6a7da68ed583d899a375b4ea
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Background Job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundJob'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    BackgroundJob:
+      title: Background Job
+      description: A background job that can be used to perform long-running tasks
+      x-tags:
+      - Schemas
+      - BackgroundJob
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the background job
+          readOnly: true
+          example: 675266e304a8e55b17f0228b
+        workspace_id:
+          type: string
+          description: Workspace ID
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2d0ca3333c
+        user_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the user that triggered the action that created the job
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2e0ec0b7f1
+        type:
+          type: string
+          description: Type of background job
+          enum:
+          - move-leads
+          - import-leads
+          - export-leads
+          - update-warmup-accounts
+          - rename-variable
+          - broadcast-ai-generate
+          - broadcast-website-scrape
+          - import-subscribers-from-crm
+          - resync-subscriber-crm-tags
+          x-enumDescriptions:
+            move-leads: Move Leads
+            import-leads: Import Leads
+            export-leads: Export Leads
+            update-warmup-accounts: Update Warmup Accounts
+            rename-variable: Rename Variable
+            broadcast-ai-generate: AI broadcast generation
+            broadcast-website-scrape: Broadcast website analysis
+            import-subscribers-from-crm: Import Subscribers From CRM
+            resync-subscriber-crm-tags: Re-sync Subscriber CRM Tags
+          example: move-leads
+        entity_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the entity that the job is related to
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2f7b30b3ce
+        entity_type:
+          type: string
+          description: Type of entity
+          enum:
+          - list
+          - campaign
+          - workspace
+          - broadcast
+          - subscriber-group-sync
+          - subscriber-group
+          x-enumDescriptions:
+            list: The entity is a lead list
+            campaign: The entity is a campaign
+            workspace: The entity is a workspace
+            broadcast: The entity is an email-marketing broadcast
+            subscriber-group-sync: The entity is a subscriber-group sync
+            subscriber-group: The entity is a subscriber group
+          example: list
+        data:
+          type: object
+          description: Data about the job, used to store any additional information we need to process the job
+          properties:
+            moved_lead_emails:
+              type: array
+              description: For `move-leads` jobs, up to the first 10,000 email addresses of leads that actually moved or copied to the destination after all filters were applied. Use `moved_leads` for the full count.
+              items:
+                type: string
+                format: email
+                example: jane@example.com
+              example:
+              - jane@example.com
+              - john@example.com
+          additionalProperties: true
+        progress:
+          type: number
+          description: Progress of the job as a percentage (from 0 to 100)
+          minimum: 0
+          maximum: 100
+          example: 0
+        status:
+          type: string
+          description: Job status
+          enum:
+          - pending
+          - in-progress
+          - success
+          - failed
+          - draining
+          - paused
+          - cancelled
+          x-enumDescriptions:
+            pending: The background job is waiting in the queue to be processed
+            in-progress: The background job is being processed
+            success: The background job has been successfully processed
+            failed: The background job has failed
+            draining: The background job is replaying deferred live events
+            paused: The background job is paused (e.g. waiting for quota or auth)
+            cancelled: The background job was cancelled by the user
+          example: pending
+        created_at:
+          type: string
+          description: Timestamp when the job was created
+          example: '2026-08-13T11:11:58.077Z'
+        updated_at:
+          type: string
+          description: Timestamp when the job was last updated
+          example: '2026-08-13T11:11:58.077Z'
+      required:
+      - id
+      - workspace_id
+      - type
+      - progress
+      - status
+      - created_at
+      - updated_at
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

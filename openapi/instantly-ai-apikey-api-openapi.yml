@@ -1,0 +1,932 @@
+openapi: 3.2.0
+info:
+  title: Explorer API Key API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: APIKey
+  description: API Key
+  x-group: API Key
+paths:
+  /api/v2/api-keys:
+    post:
+      operationId: createAPIKey
+      summary: Create api key
+      tags:
+      - APIKey
+      description: 'Requires one of the following scopes: `api_keys:create`, `api_keys:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateAPI Key
+              description: The API Key to create
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: My API Key
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - all:all
+                    - all:create
+                    - all:read
+                    - all:update
+                    - all:delete
+                    - ai_agents:all
+                    - ai_agents:create
+                    - ai_agents:read
+                    - ai_agents:update
+                    - ai_agents:delete
+                    - api_keys:all
+                    - api_keys:create
+                    - api_keys:read
+                    - api_keys:update
+                    - api_keys:delete
+                    - audit_logs:all
+                    - audit_logs:create
+                    - audit_logs:read
+                    - audit_logs:update
+                    - audit_logs:delete
+                    - custom_prompt_templates:all
+                    - custom_prompt_templates:create
+                    - custom_prompt_templates:read
+                    - custom_prompt_templates:update
+                    - custom_prompt_templates:delete
+                    - account_campaign_mappings:all
+                    - account_campaign_mappings:create
+                    - account_campaign_mappings:read
+                    - account_campaign_mappings:update
+                    - account_campaign_mappings:delete
+                    - campaigns:all
+                    - campaigns:create
+                    - campaigns:read
+                    - campaigns:update
+                    - campaigns:delete
+                    - inbox_placement_tests:all
+                    - inbox_placement_tests:create
+                    - inbox_placement_tests:read
+                    - inbox_placement_tests:update
+                    - inbox_placement_tests:delete
+                    - inbox_placement_analytics:all
+                    - inbox_placement_analytics:create
+                    - inbox_placement_analytics:read
+                    - inbox_placement_analytics:update
+                    - inbox_placement_analytics:delete
+                    - inbox_placement_reports:all
+                    - inbox_placement_reports:create
+                    - inbox_placement_reports:read
+                    - inbox_placement_reports:update
+                    - inbox_placement_reports:delete
+                    - lead_lists:all
+                    - lead_lists:create
+                    - lead_lists:read
+                    - lead_lists:update
+                    - lead_lists:delete
+                    - leads:all
+                    - leads:create
+                    - leads:read
+                    - leads:update
+                    - leads:delete
+                    - background-jobs:all
+                    - background-jobs:create
+                    - background-jobs:read
+                    - background-jobs:update
+                    - background-jobs:delete
+                    - custom_tags:all
+                    - custom_tags:create
+                    - custom_tags:read
+                    - custom_tags:update
+                    - custom_tags:delete
+                    - custom_tag_mappings:all
+                    - custom_tag_mappings:create
+                    - custom_tag_mappings:read
+                    - custom_tag_mappings:update
+                    - custom_tag_mappings:delete
+                    - crm_actions:all
+                    - crm_actions:create
+                    - crm_actions:read
+                    - crm_actions:update
+                    - crm_actions:delete
+                    - accounts:all
+                    - accounts:create
+                    - accounts:read
+                    - accounts:update
+                    - accounts:delete
+                    - block_list_entries:all
+                    - block_list_entries:create
+                    - block_list_entries:read
+                    - block_list_entries:update
+                    - block_list_entries:delete
+                    - lead-labels:all
+                    - lead-labels:create
+                    - lead-labels:read
+                    - lead-labels:update
+                    - lead-labels:delete
+                    - email_verifications:all
+                    - email_verifications:create
+                    - email_verifications:read
+                    - emails:all
+                    - emails:create
+                    - emails:read
+                    - emails:update
+                    - emails:delete
+                    - email_templates:all
+                    - email_templates:create
+                    - email_templates:read
+                    - email_templates:update
+                    - email_templates:delete
+                    - workspaces:all
+                    - workspaces:create
+                    - workspaces:read
+                    - workspaces:update
+                    - workspaces:delete
+                    - workspace_billing:all
+                    - workspace_billing:create
+                    - workspace_billing:read
+                    - workspace_billing:update
+                    - workspace_billing:delete
+                    - workspace_group_members:all
+                    - workspace_group_members:create
+                    - workspace_group_members:read
+                    - workspace_group_members:update
+                    - workspace_group_members:delete
+                    - workspace_members:all
+                    - workspace_members:create
+                    - workspace_members:read
+                    - workspace_members:update
+                    - workspace_members:delete
+                    - subsequences:all
+                    - subsequences:create
+                    - subsequences:read
+                    - subsequences:update
+                    - subsequences:delete
+                    - ai_sdr:all
+                    - ai_sdr:create
+                    - ai_sdr:read
+                    - ai_sdr:update
+                    - ai_sdr:delete
+                    - ai_sdr_replies:all
+                    - ai_sdr_replies:create
+                    - ai_sdr_replies:read
+                    - ai_sdr_replies:update
+                    - ai_sdr_replies:delete
+                    - ai_inbox_manager_analytics:all
+                    - ai_inbox_manager_analytics:create
+                    - ai_inbox_manager_analytics:read
+                    - ai_inbox_manager_analytics:update
+                    - ai_inbox_manager_analytics:delete
+                    - sales_flows:all
+                    - sales_flows:create
+                    - sales_flows:read
+                    - sales_flows:update
+                    - sales_flows:delete
+                    - webhooks:all
+                    - webhooks:create
+                    - webhooks:read
+                    - webhooks:update
+                    - webhooks:delete
+                    - webhook_events:all
+                    - webhook_events:create
+                    - webhook_events:read
+                    - webhook_events:update
+                    - webhook_events:delete
+                    - security_tokens:all
+                    - security_tokens:create
+                    - security_tokens:read
+                    - security_tokens:update
+                    - security_tokens:delete
+                    - dfy_email_account_orders:all
+                    - dfy_email_account_orders:create
+                    - dfy_email_account_orders:read
+                    - dfy_email_account_orders:update
+                    - dfy_email_account_orders:delete
+                    - auth:all
+                    - auth:create
+                    - auth:read
+                    - auth:update
+                    - auth:delete
+                    example: campaigns:create
+              required:
+              - name
+              - scopes
+              additionalProperties: false
+        required: true
+        description: The API Key to create
+      responses:
+        '200':
+          description: The API Key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKey'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listAPIKey
+      summary: List api key
+      tags:
+      - APIKey
+      description: 'Requires one of the following scopes: `api_keys:read`, `api_keys:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      responses:
+        '200':
+          description: The list of API Key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of API Key
+                    items:
+                      $ref: '#/components/schemas/APIKey'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9b7c-7dab-88fd-fd23eae3fdec
+                    - '2026-08-13T11:12:14.204Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9b7c-7dab-88fd-fd23eae3fdec
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/api-keys/{id}:
+    delete:
+      operationId: deleteAPIKey
+      summary: Delete api key
+      tags:
+      - APIKey
+      description: 'Requires one of the following scopes: `api_keys:delete`, `api_keys:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9b7d-7279-a70d-81e4b5ba7965
+        example: 019ffad2-9b7d-7279-a70d-81e4b5ba7965
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted API Key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIKey'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    APIKey:
+      title: API Key
+      description: API Key
+      x-tags:
+      - Schemas
+      - APIKey
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c30-79ee-b624-f5375e5b650b
+        name:
+          type: string
+          example: My API Key
+        scopes:
+          type: array
+          items:
+            type: string
+            enum:
+            - all:all
+            - all:create
+            - all:read
+            - all:update
+            - all:delete
+            - ai_agents:all
+            - ai_agents:create
+            - ai_agents:read
+            - ai_agents:update
+            - ai_agents:delete
+            - api_keys:all
+            - api_keys:create
+            - api_keys:read
+            - api_keys:update
+            - api_keys:delete
+            - audit_logs:all
+            - audit_logs:create
+            - audit_logs:read
+            - audit_logs:update
+            - audit_logs:delete
+            - custom_prompt_templates:all
+            - custom_prompt_templates:create
+            - custom_prompt_templates:read
+            - custom_prompt_templates:update
+            - custom_prompt_templates:delete
+            - account_campaign_mappings:all
+            - account_campaign_mappings:create
+            - account_campaign_mappings:read
+            - account_campaign_mappings:update
+            - account_campaign_mappings:delete
+            - campaigns:all
+            - campaigns:create
+            - campaigns:read
+            - campaigns:update
+            - campaigns:delete
+            - inbox_placement_tests:all
+            - inbox_placement_tests:create
+            - inbox_placement_tests:read
+            - inbox_placement_tests:update
+            - inbox_placement_tests:delete
+            - inbox_placement_analytics:all
+            - inbox_placement_analytics:create
+            - inbox_placement_analytics:read
+            - inbox_placement_analytics:update
+            - inbox_placement_analytics:delete
+            - inbox_placement_reports:all
+            - inbox_placement_reports:create
+            - inbox_placement_reports:read
+            - inbox_placement_reports:update
+            - inbox_placement_reports:delete
+            - lead_lists:all
+            - lead_lists:create
+            - lead_lists:read
+            - lead_lists:update
+            - lead_lists:delete
+            - leads:all
+            - leads:create
+            - leads:read
+            - leads:update
+            - leads:delete
+            - background-jobs:all
+            - background-jobs:create
+            - background-jobs:read
+            - background-jobs:update
+            - background-jobs:delete
+            - custom_tags:all
+            - custom_tags:create
+            - custom_tags:read
+            - custom_tags:update
+            - custom_tags:delete
+            - custom_tag_mappings:all
+            - custom_tag_mappings:create
+            - custom_tag_mappings:read
+            - custom_tag_mappings:update
+            - custom_tag_mappings:delete
+            - crm_actions:all
+            - crm_actions:create
+            - crm_actions:read
+            - crm_actions:update
+            - crm_actions:delete
+            - accounts:all
+            - accounts:create
+            - accounts:read
+            - accounts:update
+            - accounts:delete
+            - block_list_entries:all
+            - block_list_entries:create
+            - block_list_entries:read
+            - block_list_entries:update
+            - block_list_entries:delete
+            - lead-labels:all
+            - lead-labels:create
+            - lead-labels:read
+            - lead-labels:update
+            - lead-labels:delete
+            - email_verifications:all
+            - email_verifications:create
+            - email_verifications:read
+            - emails:all
+            - emails:create
+            - emails:read
+            - emails:update
+            - emails:delete
+            - email_templates:all
+            - email_templates:create
+            - email_templates:read
+            - email_templates:update
+            - email_templates:delete
+            - workspaces:all
+            - workspaces:create
+            - workspaces:read
+            - workspaces:update
+            - workspaces:delete
+            - workspace_billing:all
+            - workspace_billing:create
+            - workspace_billing:read
+            - workspace_billing:update
+            - workspace_billing:delete
+            - workspace_group_members:all
+            - workspace_group_members:create
+            - workspace_group_members:read
+            - workspace_group_members:update
+            - workspace_group_members:delete
+            - workspace_members:all
+            - workspace_members:create
+            - workspace_members:read
+            - workspace_members:update
+            - workspace_members:delete
+            - subsequences:all
+            - subsequences:create
+            - subsequences:read
+            - subsequences:update
+            - subsequences:delete
+            - ai_sdr:all
+            - ai_sdr:create
+            - ai_sdr:read
+            - ai_sdr:update
+            - ai_sdr:delete
+            - ai_sdr_replies:all
+            - ai_sdr_replies:create
+            - ai_sdr_replies:read
+            - ai_sdr_replies:update
+            - ai_sdr_replies:delete
+            - ai_inbox_manager_analytics:all
+            - ai_inbox_manager_analytics:create
+            - ai_inbox_manager_analytics:read
+            - ai_inbox_manager_analytics:update
+            - ai_inbox_manager_analytics:delete
+            - sales_flows:all
+            - sales_flows:create
+            - sales_flows:read
+            - sales_flows:update
+            - sales_flows:delete
+            - webhooks:all
+            - webhooks:create
+            - webhooks:read
+            - webhooks:update
+            - webhooks:delete
+            - webhook_events:all
+            - webhook_events:create
+            - webhook_events:read
+            - webhook_events:update
+            - webhook_events:delete
+            - security_tokens:all
+            - security_tokens:create
+            - security_tokens:read
+            - security_tokens:update
+            - security_tokens:delete
+            - dfy_email_account_orders:all
+            - dfy_email_account_orders:create
+            - dfy_email_account_orders:read
+            - dfy_email_account_orders:update
+            - dfy_email_account_orders:delete
+            - auth:all
+            - auth:create
+            - auth:read
+            - auth:update
+            - auth:delete
+            example: campaigns:create
+        key:
+          type: string
+          readOnly: true
+          example: a1b2c3d4e5f6g7h8i9j0
+        organization_id:
+          type: string
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c3e-7d8a-963d-6ecaf1ba9999
+        timestamp_created:
+          type: string
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.015Z'
+        timestamp_updated:
+          type: string
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.015Z'
+      required:
+      - id
+      - name
+      - scopes
+      - key
+      - organization_id
+      - timestamp_created
+      - timestamp_updated
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

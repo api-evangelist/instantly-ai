@@ -1,0 +1,3816 @@
+openapi: 3.2.0
+info:
+  title: Explorer Lead API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Lead
+  description: A lead entity representing an individual lead
+  x-group: Lead
+paths:
+  /api/v2/leads:
+    post:
+      operationId: createLead
+      summary: Create lead
+      tags:
+      - Lead
+      description: 'Requires one of the following scopes: `leads:create`, `leads:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateLead
+              description: 'When using `campaign`: The `email` field is required. When using `list_id`: The `email` field is optional, but at least one of the following must be provided: `email`, `first_name`, or `last_name`.'
+              type: object
+              properties:
+                campaign:
+                  type:
+                  - string
+                  - 'null'
+                  description: Campaign ID associated with the lead
+                  format: uuid
+                  example: 019ffad2-53a3-7590-935f-b48cddbf2d9e
+                email:
+                  type:
+                  - string
+                  - 'null'
+                  description: Email address of the lead
+                  example: example@example.com
+                personalization:
+                  type:
+                  - string
+                  - 'null'
+                  description: Personalization of the lead
+                  example: Hello, how are you?
+                website:
+                  type:
+                  - string
+                  - 'null'
+                  description: Website of the lead
+                  example: https://example.com
+                last_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: Last name of the lead
+                  example: Doe
+                first_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: First name of the lead
+                  example: John
+                company_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: Company name of the lead
+                  example: Example Inc.
+                job_title:
+                  type:
+                  - string
+                  - 'null'
+                  description: Job title of the lead
+                  example: Head of Growth
+                phone:
+                  type:
+                  - string
+                  - 'null'
+                  description: Phone number of the lead
+                  example: '+1234567890'
+                lt_interest_status:
+                  type: number
+                  description: Lead interest status. It can be either a static value (check below), or a custom status interest value
+                  enum:
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 0
+                  - -1
+                  - -2
+                  - -3
+                  - -4
+                  x-enumDescriptions:
+                    '0': Out of Office
+                    '1': Interested
+                    '2': Meeting Booked
+                    '3': Meeting Completed
+                    '4': Won
+                    '-1': Not Interested
+                    '-2': Wrong Person
+                    '-3': Lost
+                    '-4': No Show
+                  example: 1
+                pl_value_lead:
+                  type:
+                  - string
+                  - 'null'
+                  description: Potential value of the lead
+                  example: High
+                list_id:
+                  type:
+                  - string
+                  - 'null'
+                  description: List ID associated with the lead
+                  format: uuid
+                  example: 019ffad2-53a3-7590-935f-b491178cb297
+                assigned_to:
+                  type:
+                  - string
+                  - 'null'
+                  description: ID of the user assigned to the lead
+                  format: uuid
+                  example: 019ffad2-53a3-7590-935f-b4938179e96d
+                skip_if_in_workspace:
+                  type: boolean
+                  description: Whether to skip if the lead is already in the workspace.
+                  example: true
+                skip_if_in_campaign:
+                  type: boolean
+                  description: Whether to skip if the lead is already in the campaign.
+                  example: true
+                skip_if_in_list:
+                  type: boolean
+                  description: Whether to skip if the lead is already in the list.
+                  example: true
+                blocklist_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the blocklist to check for the lead.
+                  example: 019ffad2-9c48-7618-b387-b7a401aae5fc
+                verify_leads_for_lead_finder:
+                  type: boolean
+                  description: Whether to verify the leads for the lead finder.
+                  example: true
+                verify_leads_on_import:
+                  type: boolean
+                  description: Whether to verify the leads on import.
+                  example: true
+                custom_variables:
+                  type: object
+                  additionalProperties:
+                    type:
+                    - string
+                    - number
+                    - boolean
+                    - 'null'
+                  description: Custom variables can include any metadata about the lead that is relevant to the campaign, the campaign will be updated to allow all the other leads in the campaign to have the same custom variables. The custom variables will be added to the lead payload field
+                  example:
+                    past_customer: true
+                    has_tried_competitors: false
+              required: []
+              additionalProperties: false
+        description: 'When using `campaign`: The `email` field is required. When using `list_id`: The `email` field is optional, but at least one of the following must be provided: `email`, `first_name`, or `last_name`.'
+      responses:
+        '200':
+          description: The Lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: bulkDeleteLeads
+      summary: Delete leads in bulk
+      tags:
+      - Lead
+      description: 'Delete multiple leads from a campaign or list based on filters. You must provide either `campaign_id` or `list_id`. Optionally filter by status or specific IDs.
+
+
+
+        Requires one of the following scopes: `leads:delete`, `leads:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the campaign to delete leads from. Required if `list_id` is not provided.
+                  example: 019ffad2-9c4c-7079-b87c-ef3272fbbda1
+                list_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the list to delete leads from. Required if `campaign_id` is not provided.
+                  example: 019ffad2-9c4c-7079-b87c-ef33fbdf5eac
+                status:
+                  type: number
+                  enum:
+                  - 1
+                  - 2
+                  - 3
+                  - -1
+                  - -2
+                  - -3
+                  x-enumDescriptions:
+                    '1': Active
+                    '2': Paused
+                    '3': Completed
+                    '-1': Bounced
+                    '-2': Unsubscribed
+                    '-3': Skipped
+                  description: Optional status filter. Only delete leads with this status.
+                  example: 3
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-9c4c-7079-b87c-ef348efbb1c9
+                  description: Optional array of specific lead IDs to delete. When provided, only these leads will be deleted from the specified campaign or list.
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 10000
+                  description: Maximum number of leads to delete. If not specified, all matching leads will be deleted.
+                  example: 100
+              anyOf:
+              - required:
+                - campaign_id
+              - required:
+                - list_id
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of leads successfully deleted.
+                    example: 5
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/list:
+    post:
+      operationId: listLeads
+      summary: List leads
+      tags:
+      - Lead
+      description: 'This endpoint is a POST endpoint, instead of GET - a deviation from the REST APIs standards we’re following because of the complex arguments it accepts, which would be too hard to express through query parameters. Results are ordered by each lead''s `id` field in ascending order (or by `contact` when distinct_contacts is true) so clients can paginate chronologically by reusing the cursor returned in `next_starting_after`. Leads created on or after October 15, 2025 respect this chronological ordering; older records may appear out of sequence when sorted by ID.
+
+
+
+        Requires one of the following scopes: `leads:read`, `leads:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search:
+                  type: string
+                  description: A search string to search the leads against - can be First Name, Last Name, or Email
+                  example: John Doe
+                filter:
+                  type: string
+                  x-enumDescriptions:
+                    FILTER_VAL_CONTACTED: Filter for contacted leads
+                    FILTER_VAL_NOT_CONTACTED: Filter for not contacted leads
+                    FILTER_VAL_COMPLETED: Filter for completed leads
+                    FILTER_VAL_UNSUBSCRIBED: Filter for unsubscribed leads
+                    FILTER_VAL_ACTIVE: Filter for active leads
+                    FILTER_LEAD_INTERESTED: Filter for interested leads
+                    FILTER_LEAD_NOT_INTERESTED: Filter for not interested leads
+                    FILTER_LEAD_MEETING_BOOKED: Filter for leads with meeting booked
+                    FILTER_LEAD_MEETING_COMPLETED: Filter for leads with meeting completed
+                    FILTER_LEAD_CLOSED: Filter for closed leads
+                    FILTER_LEAD_OUT_OF_OFFICE: Filter for leads out of office
+                    FILTER_LEAD_WRONG_PERSON: Filter for wrong person leads
+                    FILTER_LEAD_LOST: Filter for lost leads
+                    FILTER_LEAD_NO_SHOW: Filter for no show leads
+                    FILTER_LEAD_CUSTOM_LABEL_POSITIVE: Filter for leads with positive custom label
+                    FILTER_LEAD_CUSTOM_LABEL_NEGATIVE: Filter for leads with negative custom label
+                    FILTER_VAL_BOUNCED: Filter for bounced leads
+                    FILTER_VAL_SKIPPED: Filter for skipped leads
+                    FILTER_VAL_RISKY: Filter for risky leads
+                    FILTER_VAL_INVALID: Filter for invalid leads
+                    FILTER_VAL_VALID: Filter for valid leads
+                    FILTER_VAL_IN_SUBSEQUENCE: Filter for leads in subsequence
+                    FILTER_VAL_OPENED_NO_REPLY: Filter for leads with opened emails but no reply
+                    FILTER_VAL_COMPLETED_NO_REPLY: Filter for leads with completed sequence but no reply
+                    FILTER_VAL_NO_OPENS: Filter for leads with no opened emails
+                    FILTER_VAL_REPLIED: Filter for leads that replied
+                    FILTER_VAL_LINK_CLICKED: Filter for leads that clicked a link
+                  description: Filter criteria for leads. For custom lead labels, use the `interest_status` field.
+                  example: FILTER_VAL_CONTACTED
+                campaign:
+                  type: string
+                  format: uuid
+                  description: Campaign ID to filter leads
+                  example: 019ffad2-90b0-7d6d-b877-e244a0d3d2b2
+                list_id:
+                  type: string
+                  format: uuid
+                  description: List ID to filter leads
+                  example: 019ffad2-90b0-7d6d-b877-e24585b902a6
+                in_campaign:
+                  type: boolean
+                  description: Whether the lead is in a campaign
+                  example: true
+                in_list:
+                  type: boolean
+                  description: Whether the lead is in a list
+                  example: true
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-90b0-7d6d-b877-e246e5ba5796
+                  description: Array of lead IDs to include
+                queries:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - actionType
+                    - values
+                    description: Smart view query to filter leads
+                    properties:
+                      actionType:
+                        type: string
+                        enum:
+                        - reply
+                        - email-open
+                        - last-contacted
+                        - link-click
+                        - lead-status
+                        - lead-status-change
+                        example: email-open
+                      values:
+                        type: object
+                        properties:
+                          occurrence-days:
+                            type: number
+                            example: 1
+                          occurrence-count:
+                            type: object
+                            properties:
+                              condition:
+                                type: string
+                                enum:
+                                - more
+                                - less
+                                - equal
+                                example: more
+                              count:
+                                type: number
+                                example: 1
+                          lead-status:
+                            type: object
+                            properties:
+                              status:
+                                type: number
+                                example: 1
+                              condition:
+                                type: string
+                                enum:
+                                - is
+                                - is-not
+                                example: is
+                    example:
+                      actionType: email-open
+                      values:
+                        occurrence-days: 1
+                excluded_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-90b0-7d6d-b877-e2478776f0c0
+                  description: Array of lead IDs to exclude
+                contacts:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                    example: test@test.com
+                  description: Array of emails the leads needs to have
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  description: The number of items to return
+                  example: 10
+                starting_after:
+                  type: string
+                  description: Forward pagination cursor. When distinct_contacts is false, provide the `id` value from the last lead of the previous page; when true, provide the lead's email.
+                  example: 019ffad2-9c48-7618-b387-b7a5991d1b2a
+                organization_user_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-9c48-7618-b387-b7a6d551ef2e
+                  description: Array of organization user IDs to filter leads
+                smart_view_id:
+                  type: string
+                  format: uuid
+                  description: Smart view ID to filter leads
+                  example: 019ffad2-9c48-7618-b387-b7a7119afa1a
+                is_website_visitor:
+                  type: boolean
+                  description: Whether the lead is a website visitor
+                  example: true
+                distinct_contacts:
+                  type: boolean
+                  description: Whether to return distinct contacts
+                  example: true
+                enrichment_status:
+                  type: number
+                  enum:
+                  - 1
+                  - -1
+                  - 11
+                  - -2
+                  x-enumDescriptions:
+                    '1': The lead has been successfully enriched
+                    '11': The lead is pending enrichment
+                    '-1': Enrichment data is not available for the lead
+                    '-2': An error occurred during the enrichment process
+                  description: Enrichment status to filter leads
+                  example: 1
+                esg_code:
+                  type: string
+                  enum:
+                  - '0'
+                  - '1'
+                  - '2'
+                  - '3'
+                  - '4'
+                  - all
+                  - none
+                  x-enumDescriptions:
+                    '0': In Queue
+                    '1': Barracuda
+                    '2': Mimecast
+                    '3': Proofpoint
+                    '4': Cisco
+                    all: All
+                    none: None
+                  description: ESG code to filter leads
+                  example: '1'
+      responses:
+        '200':
+          description: The list of Lead
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Lead
+                    items:
+                      $ref: '#/components/schemas/Lead'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9c48-7618-b387-b7a889cb0c87
+                    - '2026-08-13T11:12:14.408Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9c48-7618-b387-b7a889cb0c87
+                additionalProperties: false
+                required:
+                - items
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/{id}:
+    get:
+      operationId: getLead
+      summary: Get lead
+      tags:
+      - Lead
+      description: 'Requires one of the following scopes: `leads:read`, `leads:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c49-7d93-989e-749770a7c9b8
+        example: 019ffad2-9c49-7d93-989e-749770a7c9b8
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchLead
+      summary: Patch lead
+      tags:
+      - Lead
+      description: 'Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                personalization:
+                  type:
+                  - string
+                  - 'null'
+                  description: Personalization of the lead
+                  example: Hello, how are you?
+                website:
+                  type:
+                  - string
+                  - 'null'
+                  description: Website of the lead
+                  example: https://example.com
+                last_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: Last name of the lead
+                  example: Doe
+                first_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: First name of the lead
+                  example: John
+                company_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: Company name of the lead
+                  example: Example Inc.
+                job_title:
+                  type:
+                  - string
+                  - 'null'
+                  description: Job title of the lead
+                  example: Head of Growth
+                phone:
+                  type:
+                  - string
+                  - 'null'
+                  description: Phone number of the lead
+                  example: '+1234567890'
+                lt_interest_status:
+                  type: number
+                  description: Lead interest status. It can be either a static value (check below), or a custom status interest value
+                  enum:
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 0
+                  - -1
+                  - -2
+                  - -3
+                  - -4
+                  x-enumDescriptions:
+                    '0': Out of Office
+                    '1': Interested
+                    '2': Meeting Booked
+                    '3': Meeting Completed
+                    '4': Won
+                    '-1': Not Interested
+                    '-2': Wrong Person
+                    '-3': Lost
+                    '-4': No Show
+                  example: 1
+                pl_value_lead:
+                  type:
+                  - string
+                  - 'null'
+                  description: Potential value of the lead
+                  example: High
+                assigned_to:
+                  type:
+                  - string
+                  - 'null'
+                  description: ID of the user assigned to the lead
+                  format: uuid
+                  example: 019ffad2-53a3-7590-935f-b4938179e96d
+                custom_variables:
+                  type: object
+                  additionalProperties:
+                    type:
+                    - string
+                    - number
+                    - boolean
+                    - 'null'
+                  description: Custom variables can include any metadata about the lead that is relevant to the campaign, the campaign will be updated to allow all the other leads in the campaign to have the same custom variables. The custom variables will be added to the lead payload field
+                  example:
+                    past_customer: true
+                    has_tried_competitors: false
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c4a-73b2-bd72-f47d2bdfc6ad
+        example: 019ffad2-9c4a-73b2-bd72-f47d2bdfc6ad
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to update
+      responses:
+        '200':
+          description: The updated Lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteLead
+      summary: Delete lead
+      tags:
+      - Lead
+      description: 'Requires one of the following scopes: `leads:delete`, `leads:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c4b-7871-94ec-7c3756e96217
+        example: 019ffad2-9c4b-7871-94ec-7c3756e96217
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted Lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/merge:
+    post:
+      operationId: mergeLeads
+      summary: Merge two leads
+      tags:
+      - Lead
+      description: 'Merge two leads
+
+
+
+        Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lead_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the lead to merge.
+                  example: 019ffad2-9c49-7d93-989e-7498e67442e1
+                destination_lead_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the destination lead to merge into.
+                  example: 019ffad2-9c49-7d93-989e-74993a8ce350
+              required:
+              - lead_id
+              - destination_lead_id
+        required: true
+      responses:
+        '200':
+          description: The requested Lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/update-interest-status:
+    post:
+      operationId: updateLeadInterestStatus
+      summary: Update the interest status of a lead
+      tags:
+      - Lead
+      description: Update the interest status of a lead
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lead_email:
+                  type: string
+                  description: The email of the lead to update the interest status of.
+                  example: test@test.com
+                interest_value:
+                  type:
+                  - number
+                  - 'null'
+                  description: Set this field to "null" to reset the lead value to "Lead". This is the same as moving the lead to the "Lead" status in the web app. Please check the `lt_interest_status` field for the list of possible values.
+                  example: 1
+                campaign_id:
+                  type: string
+                  description: The ID of the campaign to update the interest status of.
+                  example: 019ffad2-9c4a-73b2-bd72-f47b348fa012
+                ai_interest_value:
+                  type: number
+                  description: The AI interest value to set for the lead.
+                  example: 1
+                disable_auto_interest:
+                  type: boolean
+                  description: Whether to disable the auto interest.
+                  example: true
+                list_id:
+                  type: string
+                  description: The ID of the list to update the interest status of.
+                  example: 019ffad2-9c4a-73b2-bd72-f47c19a878c1
+              required:
+              - lead_email
+              - interest_value
+        required: true
+      responses:
+        '202':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Lead interest status update background job submitted
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid lead email
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/subsequence/remove:
+    post:
+      operationId: removeLeadFromSubsequence
+      summary: Remove a lead from a subsequence
+      tags:
+      - Lead
+      description: 'Remove a lead from a subsequence
+
+
+
+        Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: The ID of the lead to remove from the subsequence.
+                  example: 019ffad2-9c4a-73b2-bd72-f47eb9982146
+              required:
+              - id
+        required: true
+      responses:
+        '200':
+          description: The requested Lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/bulk-assign:
+    post:
+      operationId: bulkAssignLeads
+      summary: Bulk assign leads to organization users
+      tags:
+      - Lead
+      description: Bulk assign leads to organization users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search:
+                  type: string
+                  description: The search query to filter leads by.
+                  example: test
+                filter:
+                  type: string
+                  enum:
+                  - FILTER_VAL_CONTACTED
+                  - FILTER_VAL_NOT_CONTACTED
+                  - FILTER_VAL_COMPLETED
+                  - FILTER_VAL_UNSUBSCRIBED
+                  - FILTER_VAL_ACTIVE
+                  - FILTER_LEAD_INTERESTED
+                  - FILTER_LEAD_NOT_INTERESTED
+                  - FILTER_LEAD_MEETING_BOOKED
+                  - FILTER_LEAD_MEETING_COMPLETED
+                  - FILTER_LEAD_CLOSED
+                  - FILTER_LEAD_OUT_OF_OFFICE
+                  - FILTER_LEAD_WRONG_PERSON
+                  - FILTER_LEAD_LOST
+                  - FILTER_LEAD_NO_SHOW
+                  - FILTER_LEAD_CUSTOM_LABEL_POSITIVE
+                  - FILTER_LEAD_CUSTOM_LABEL_NEGATIVE
+                  - FILTER_VAL_BOUNCED
+                  - FILTER_VAL_SKIPPED
+                  - FILTER_VAL_RISKY
+                  - FILTER_VAL_INVALID
+                  - FILTER_VAL_VALID
+                  - FILTER_VAL_IN_SUBSEQUENCE
+                  - FILTER_VAL_OPENED_NO_REPLY
+                  - FILTER_VAL_COMPLETED_NO_REPLY
+                  - FILTER_VAL_NO_OPENS
+                  - FILTER_VAL_REPLIED
+                  - FILTER_VAL_LINK_CLICKED
+                  description: The filter to apply to the leads.
+                  example: FILTER_LEAD_CLOSED
+                campaign:
+                  type: string
+                  format: uuid
+                  description: The ID of the campaign to filter leads by.
+                  example: 019ffad2-9c4b-7871-94ec-7c3113254b8f
+                list_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the list to filter leads by.
+                  example: 019ffad2-9c4b-7871-94ec-7c32b22f5b96
+                in_campaign:
+                  type: boolean
+                  description: Whether the leads are in the campaign.
+                  example: true
+                in_list:
+                  type: boolean
+                  description: Whether the leads are in the list.
+                  example: true
+                organization_user_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-9c4b-7871-94ec-7c3334c55b26
+                  minItems: 1
+                smart_view_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the smart view to filter leads by.
+                  example: 019ffad2-9c4b-7871-94ec-7c34c7724780
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-9c4b-7871-94ec-7c35f4f00a6b
+                  description: The IDs of the leads to filter by.
+                limit:
+                  type: integer
+                  minimum: 0
+                  description: The limit of the number of leads to return.
+                  example: 10
+                queries:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      actionType:
+                        type: string
+                        enum:
+                        - reply
+                        - email-open
+                        - last-contacted
+                        - link-click
+                        - lead-status
+                        - lead-status-change
+                        x-enumDescriptions:
+                          reply: Reply
+                          email-open: Email Opened
+                          last-contacted: Last Contacted
+                          link-click: Link Click
+                          lead-status: Lead Status
+                          lead-status-change: Lead Status Change
+                        example: email-open
+                      values:
+                        type: object
+                        properties:
+                          occurrence-days:
+                            type: number
+                            example: 5
+                          occurrence-count:
+                            type: object
+                            properties:
+                              condition:
+                                type: string
+                                enum:
+                                - more
+                                - less
+                                - equal
+                                x-enumDescriptions:
+                                  more: More than the count
+                                  less: Less than the count
+                                  equal: Equal to the count
+                                example: more
+                              count:
+                                type: number
+                                example: 5
+                          lead-status:
+                            type: object
+                            properties:
+                              status:
+                                type: number
+                                example: 5
+                              condition:
+                                type: string
+                                enum:
+                                - is
+                                - is-not
+                                x-enumDescriptions:
+                                  is: Is
+                                  is-not: Is Not
+                                example: is
+                    required:
+                    - actionType
+                    - values
+                assigned_to:
+                  type: string
+                  format: uuid
+                  description: Filter leads by their current owner (the user they are currently assigned to).
+                  example: 019ffad2-9c4b-7871-94ec-7c36f676e920
+                has_clause:
+                  type: boolean
+                  description: Whether this endpoint should list data based on the filters currently applied in the web app.
+                  example: true
+              required:
+              - organization_user_ids
+        required: true
+      responses:
+        '202':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: accepted
+                  message:
+                    type: string
+                    example: Your request will be processed in a background job
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid ID on `organization_user_ids` field
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/move:
+    post:
+      operationId: moveLeads
+      summary: Move leads to a campaign or list
+      tags:
+      - Lead
+      description: 'Move leads to a different campaign or list. This endpoint will return a background job that will process the move. The job will be processed in the background and the leads will be moved to the destination campaign or list. You can use the `/background-jobs/:id` endpoint to check the job status. Note: When using the `ids` parameter, you must also provide either `campaign` or `list_id` to specify which campaign or list to filter the leads from.
+
+
+
+        Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search:
+                  type: string
+                  description: A search string to search the leads against - can be First Name, Last Name, or Email
+                  example: John Doe
+                filter:
+                  type: string
+                  x-enumDescriptions:
+                    FILTER_VAL_CONTACTED: Filter for contacted leads
+                    FILTER_VAL_NOT_CONTACTED: Filter for not contacted leads
+                    FILTER_VAL_COMPLETED: Filter for completed leads
+                    FILTER_VAL_UNSUBSCRIBED: Filter for unsubscribed leads
+                    FILTER_VAL_ACTIVE: Filter for active leads
+                    FILTER_LEAD_INTERESTED: Filter for interested leads
+                    FILTER_LEAD_NOT_INTERESTED: Filter for not interested leads
+                    FILTER_LEAD_MEETING_BOOKED: Filter for leads with meeting booked
+                    FILTER_LEAD_MEETING_COMPLETED: Filter for leads with meeting completed
+                    FILTER_LEAD_CLOSED: Filter for closed leads
+                    FILTER_LEAD_OUT_OF_OFFICE: Filter for leads out of office
+                    FILTER_LEAD_WRONG_PERSON: Filter for wrong person leads
+                    FILTER_LEAD_LOST: Filter for lost leads
+                    FILTER_LEAD_NO_SHOW: Filter for no show leads
+                    FILTER_LEAD_CUSTOM_LABEL_POSITIVE: Filter for leads with positive custom label
+                    FILTER_LEAD_CUSTOM_LABEL_NEGATIVE: Filter for leads with negative custom label
+                    FILTER_VAL_BOUNCED: Filter for bounced leads
+                    FILTER_VAL_SKIPPED: Filter for skipped leads
+                    FILTER_VAL_RISKY: Filter for risky leads
+                    FILTER_VAL_INVALID: Filter for invalid leads
+                    FILTER_VAL_VALID: Filter for valid leads
+                    FILTER_VAL_IN_SUBSEQUENCE: Filter for leads in subsequence
+                    FILTER_VAL_OPENED_NO_REPLY: Filter for leads with opened emails but no reply
+                    FILTER_VAL_COMPLETED_NO_REPLY: Filter for leads with completed sequence but no reply
+                    FILTER_VAL_NO_OPENS: Filter for leads with no opened emails
+                    FILTER_VAL_REPLIED: Filter for leads that replied
+                    FILTER_VAL_LINK_CLICKED: Filter for leads that clicked a link
+                  description: Filter criteria for leads. For custom lead labels, use the `interest_status` field.
+                  example: FILTER_VAL_CONTACTED
+                campaign:
+                  type: string
+                  format: uuid
+                  description: Campaign ID to filter leads
+                  example: 019ffad2-90b0-7d6d-b877-e244a0d3d2b2
+                list_id:
+                  type: string
+                  format: uuid
+                  description: List ID to filter leads
+                  example: 019ffad2-90b0-7d6d-b877-e24585b902a6
+                in_campaign:
+                  type: boolean
+                  description: Whether the lead is in a campaign
+                  example: true
+                in_list:
+                  type: boolean
+                  description: Whether the lead is in a list
+                  example: true
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-9c4c-7079-b87c-ef35c018077d
+                  description: Array of lead IDs to include. When using this parameter, you must provide either `campaign` or `list_id` to specify which campaign or list to filter the leads from. This parameter acts as a filter within the specified campaign or list, not as a standalone way to select leads.
+                queries:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - actionType
+                    - values
+                    description: Smart view query to filter leads
+                    properties:
+                      actionType:
+                        type: string
+                        enum:
+                        - reply
+                        - email-open
+                        - last-contacted
+                        - link-click
+                        - lead-status
+                        - lead-status-change
+                        example: email-open
+                      values:
+                        type: object
+                        properties:
+                          occurrence-days:
+                            type: number
+                            example: 1
+                          occurrence-count:
+                            type: object
+                            properties:
+                              condition:
+                                type: string
+                                enum:
+                                - more
+                                - less
+                                - equal
+                                example: more
+                              count:
+                                type: number
+                                example: 1
+                          lead-status:
+                            type: object
+                            properties:
+                              status:
+                                type: number
+                                example: 1
+                              condition:
+                                type: string
+                                enum:
+                                - is
+                                - is-not
+                                example: is
+                    example:
+                      actionType: email-open
+                      values:
+                        occurrence-days: 1
+                excluded_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-90b0-7d6d-b877-e2478776f0c0
+                  description: Array of lead IDs to exclude
+                contacts:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                    example: test@test.com
+                  description: Array of emails the leads needs to have
+                to_campaign_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the campaign to move the leads to.
+                  example: 019ffad2-9c4c-7079-b87c-ef369e41d982
+                to_list_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the list to move the leads to.
+                  example: 019ffad2-9c4c-7079-b87c-ef37822d2f35
+                ignore_resource_filter_clauses:
+                  type: boolean
+                  description: Whether to ignore saved lead-finder clauses for the source campaign/list when selecting leads to move.
+                  example: true
+                check_duplicates_in_campaigns:
+                  type: boolean
+                  description: Whether to check duplicates in campaigns.
+                  example: true
+                skip_leads_in_verification:
+                  type: boolean
+                  description: Whether to skip leads in verification.
+                  example: true
+                limit:
+                  type: number
+                  description: The limit of the number of leads to move.
+                  example: 10
+                assigned_to:
+                  type: string
+                  format: uuid
+                  description: The ID of the user to assign the leads to.
+                  example: 019ffad2-9c4c-7079-b87c-ef386e7ad0ff
+                esp_code:
+                  type: number
+                  enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 8
+                  - 9
+                  - 10
+                  - 12
+                  - 13
+                  - 999
+                  - 1000
+                  x-enumDescriptions:
+                    '0': In Queue
+                    '1': Google
+                    '2': Microsoft
+                    '3': Zoho
+                    '8': AirMail
+                    '9': Yahoo
+                    '10': Yandex
+                    '12': Webde
+                    '13': Liberoit
+                    '999': Other
+                    '1000': Not Found
+                  description: The ESP code to move the leads for.
+                  example: 1
+                esg_code:
+                  type: string
+                  enum:
+                  - '0'
+                  - '1'
+                  - '2'
+                  - '3'
+                  - '4'
+                  - all
+                  - none
+                  x-enumDescriptions:
+                    '0': In Queue
+                    '1': Barracuda
+                    '2': Mimecast
+                    '3': Proofpoint
+                    '4': Cisco
+                    all: All
+                    none: None
+                  description: The ESG code to move the leads for.
+                  example: '1'
+                copy_leads:
+                  type: boolean
+                  description: Whether to copy the leads.
+                  example: true
+                check_duplicates:
+                  type: boolean
+                  description: Whether to check duplicates.
+                  example: true
+                reset_interest_status:
+                  type: boolean
+                  description: Whether to reset the interest status of leads when moving or copying them. When true, the interest status will be reset. When false, the existing interest status will be preserved; for non-copy campaign-to-campaign moves, opportunities will also be migrated to the target campaign.
+                  example: true
+      responses:
+        '200':
+          description: The requested Background Job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundJob'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/subsequence/move:
+    post:
+      operationId: moveLeadToSubsequence
+      summary: Move a lead to a subsequence
+      tags:
+      - Lead
+      description: 'Move a lead to a subsequence
+
+
+
+        Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subsequence_id:
+                  type: string
+                  format: uuid
+                  example: 019ffad2-9c4d-7fe7-ac18-6d802bf71d6b
+                id:
+                  type: string
+                  format: uuid
+                  example: 019ffad2-9c4d-7fe7-ac18-6d810b8002c8
+              required:
+              - id
+              - subsequence_id
+        required: true
+      responses:
+        '200':
+          description: The requested Lead
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/leads/add:
+    post:
+      operationId: bulkAddLeads
+      summary: Add leads in bulk to a campaign or list
+      tags:
+      - Lead
+      description: 'Adds up to 1000 leads to either a campaign or a list. You must provide a `campaign_id` or a `list_id`, but not both. The endpoint validates emails, checks against blocklists and existing leads.
+
+
+
+        Requires one of the following scopes: `leads:create`, `leads:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign_id:
+                  type: string
+                  format: uuid
+                  description: The unique identifier for the campaign to add leads to. Use this field OR `list_id`, but not both.
+                  example: 019ffad2-9c4e-7be6-8364-ed444afb02d5
+                list_id:
+                  type: string
+                  format: uuid
+                  description: The unique identifier for the list to add leads to. Use this field OR `campaign_id`, but not both.
+                  example: 019ffad2-9c4e-7be6-8364-ed45ac8115bc
+                leads:
+                  type: array
+                  minItems: 1
+                  maxItems: 1000
+                  description: 'An array of lead objects to create. When using `campaign_id`: Each lead object must contain an `email`. When using `list_id` Each lead object must contain at least one of the following: `email`, `first_name`, or `last_name`.'
+                  items:
+                    type: object
+                    properties:
+                      email:
+                        type:
+                        - string
+                        - 'null'
+                        description: Email address of the lead
+                        example: example@example.com
+                      personalization:
+                        type:
+                        - string
+                        - 'null'
+                        description: Personalization of the lead
+                        example: Hello, how are you?
+                      website:
+                        type:
+                        - string
+                        - 'null'
+                        description: Website of the lead
+                        example: https://example.com
+                      last_name:
+                        type:
+                        - string
+                        - 'null'
+                        description: Last name of the lead
+                        example: Doe
+                      first_name:
+                        type:
+                        - string
+                        - 'null'
+                        description: First name of the lead
+                        example: John
+                      company_name:
+                        type:
+                        - string
+                        - 'null'
+                        description: Company name of the lead
+                        example: Example Inc.
+                      job_title:
+                        type:
+                        - string
+                        - 'null'
+                        description: Job title of the lead
+                        example: Head of Growth
+                      phone:
+                        type:
+                        - string
+                        - 'null'
+                        description: Phone number of the lead
+                        example: '+1234567890'
+                      lt_interest_status:
+                        type: number
+                        description: Lead interest status. It can be either a static value (check below), or a custom status interest value
+                        enum:
+                        - 1
+                        - 2
+                        - 3
+                        - 4
+                        - 0
+                        - -1
+                        - -2
+                        - -3
+                        - -4
+                        x-enumDescriptions:
+                          '0': Out of Office
+                          '1': Interested
+                          '2': Meeting Booked
+                          '3': Meeting Completed
+                          '4': Won
+                          '-1': Not Interested
+                          '-2': Wrong Person
+                          '-3': Lost
+                          '-4': No Show
+                        example: 1
+                      pl_value_lead:
+                        type:
+                        - string
+                        - 'null'
+                        description: Potential value of the lead
+                        example: High
+                      assigned_to:
+                        type:
+                        - string
+                        - 'null'
+                        description: ID of the user assigned to the lead
+                        format: uuid
+                        example: 019ffad2-53a3-7590-935f-b4938179e96d
+                      custom_variables:
+                        type: object
+                        additionalProperties:
+                          type:
+                          - string
+                          - number
+                          - boolean
+                          - 'null'
+                        description: Custom variables can include any metadata about the lead that is relevant to the campaign, the campaign will be updated to allow all the other leads in the campaign to have the same custom variables. The custom variables will be added to the lead payload field
+                        example:
+                          past_customer: true
+                          has_tried_competitors: false
+                    required: []
+                    additionalProperties: false
+                blocklist_id:
+                  type:
+                  - string
+                  - 'null'
+                  format: uuid
+                  description: Optional blocklist ID to check leads against. If omitted, the workspace default blocklist is used.
+                  example: 019ffad2-9c4e-7be6-8364-ed46732be598
+                assigned_to:
+                  type: string
+                  format: uuid
+                  description: Optional user ID to assign all imported leads to. If omitted, leads are assigned to the campaign owner when `campaign_id` is defined, or the user making the request.
+                  example: 019ffad2-9c4e-7be6-8364-ed4744ef5f11
+                verify_leads_on_import:
+                  type: boolean
+                  description: If true, a background job will be created to verify the email addresses of the imported leads.
+                  example: false
+                skip_if_in_workspace:
+                  type: boolean
+                  description: If true, any lead that already exists anywhere in your workspace (in any campaign or list) will be skipped. This option overrides the other "skip_if" flags.
+                  example: true
+                skip_if_in_campaign:
+                  type: boolean
+                  description: If true, any lead that already exists in ANY campaign in your workspace will be skipped.
+                  example: false
+                skip_if_in_list:
+                  type: boolean
+                  description: If true, any lead that already exists in ANY list in your workspace will be skipped.
+                  example: false
+              required:
+              - leads
+        required: true
+      responses:
+        '200':
+          description: A summary of the bulk import operation.
+          content:
+            application/json:
+              schema:
+                description: A summary of the bulk import operation.
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Indicates the request was processed.
+                    example: success
+                  total_sent:
+                    type: integer
+                    description: The total number of leads included in the request payload.
+                    example: 10
+                  leads_uploaded:
+                    type: integer
+                    description: The number of leads that were successfully created.
+                    example: 7
+                  in_blocklist:
+                    type: integer
+                    description: The number of leads that were skipped because their email was found on the blocklist.
+                    example: 1
+                  blocklist_used:
+                    type:
+                    - 'null'
+                    - string
+                    description: The ID of the blocklist that was used for the check.
+                    example: 019ffad2-9c4e-7be6-8364-ed48f0bbb5d8
+                  duplicated_leads:
+                    type: integer
+                    description: The number of leads that were already in this specific campaign or list and were not re-added.
+                    example: 0
+                  skipped_count:
+                    type: integer
+                    description: The number of leads skipped due to the `skip_if_in_...` flags being enabled.
+                    example: 1
+                  invalid_email_count:
+                    type: integer
+                    description: The number of leads skipped due to an invalid email format or a missing email address.
+                    example: 1
+                  incomplete_count:
+                    type: integer
+                    description: The number of leads skipped due to missing email and names. Only calculated for lists.
+                    example: 1
+                  duplicate_email_count:
+                    type: integer
+                    description: The number of leads skipped because their email was duplicated within the request payload itself.
+                    example: 0
+                  remaining_in_plan:
+                    type:
+                    - 'null'
+                    - integer
+                    description: The remaining lead uploads in the current billing plan. This value is only present in the response when a `campaign_id` is provided.
+                    example: 9993
+                  created_leads:
+                    type: array
+                    description: A list of created leads with their summary information. You can use this to map your input to the created leads.
+                    items:
+                      type: object
+                      properties:
+                        index:
+                          type: integer
+                          description: The index of the lead in the input array. For leads that have no email address you can use this field as the key to your input leads.
+                          example: 0
+                        id:
+                          type: string
+                          format: uuid
+                          description: The ID of the lead. Use it for GET, DELETE or PATCH operations.
+                          example: 019ffad2-9c4e-7be6-8364-ed4963ebc549
+                        email:
+                          type:
+                          - 'null'
+                          - string
+                          example: test@example.com
+                        first_name:
+                          type:
+                          - 'null'
+                          - string
+                          example: John
+                        last_name:
+                          type:
+                          - 'null'
+                          - string
+                          example: Doe
+                        phone:
+                          type:
+                          - 'null'
+                          - string
+                          example: '+1234567890'
+                      required:
+                      - id
+                      - index
+                      example:
+                        id: 019ffad2-9c4e-7be6-8364-ed4a16affca8
+                        email: test@example.com
+                        index: 0
+                    example:
+                    - id: 019ffad2-9c4e-7be6-8364-ed4b2bc8b6a5
+                      email: test@example.com
+                      index: 0
+                required:
+                - status
+                - total_sent
+                - leads_uploaded
+                - in_blocklist
+                - blocklist_used
+                - duplicated_leads
+                - skipped_count
+                - invalid_email_count
+                - incomplete_count
+                - duplicate_email_count
+                - remaining_in_plan
+                - created_leads
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    Lead:
+      title: Lead
+      description: A lead entity representing an individual lead
+      x-tags:
+      - Schemas
+      - Lead
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the lead
+          readOnly: true
+          format: uuid
+          example: 019ffad2-53a1-7acf-9ae0-404312bcab56
+        timestamp_created:
+          type: string
+          description: Timestamp when the lead was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        timestamp_updated:
+          type: string
+          description: Timestamp when the lead was last updated
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        organization:
+          type: string
+          description: Organization ID associated with the lead
+          readOnly: true
+          format: uuid
+          example: 019ffad2-53a3-7590-935f-b48baa581e0d
+        campaign:
+          type:
+          - 'null'
+          - string
+          description: Campaign ID associated with the lead
+          format: uuid
+          example: 019ffad2-53a3-7590-935f-b48cddbf2d9e
+        status:
+          type: number
+          description: Status of the lead
+          readOnly: true
+          enum:
+          - 1
+          - 2
+          - 3
+          - -1
+          - -2
+          - -3
+          x-enumDescriptions:
+            '1': Active
+            '2': Paused
+            '3': Completed
+            '-1': Bounced
+            '-2': Unsubscribed
+            '-3': Skipped
+          example: 1
+        email:
+          type:
+          - 'null'
+          - string
+          description: Email address of the lead
+          example: example@example.com
+        personalization:
+          type:
+          - 'null'
+          - string
+          description: Personalization of the lead
+          example: Hello, how are you?
+        website:
+          type:
+          - 'null'
+          - string
+          description: Website of the lead
+          example: https://example.com
+        last_name:
+          type:
+          - 'null'
+          - string
+          description: Last name of the lead
+          example: Doe
+        first_name:
+          type:
+          - 'null'
+          - string
+          description: First name of the lead
+          example: John
+        company_name:
+          type:
+          - 'null'
+          - string
+          description: Company name of the lead
+          example: Example Inc.
+        job_title:
+          type:
+          - 'null'
+          - string
+          description: Job title of the lead
+          example: Head of Growth
+        phone:
+          type:
+          - 'null'
+          - string
+          description: Phone number of the lead
+          example: '+1234567890'
+        email_open_count:
+          type: number
+          description: Number of times the email was opened
+          readOnly: true
+          example: 0
+        email_reply_count:
+          type: number
+          description: Number of times the email was replied to
+          readOnly: true
+          example: 0
+        email_click_count:
+          type: number
+          description: Number of times the email was clicked
+          readOnly: true
+          example: 0
+        company_domain:
+          type: string
+          description: Company domain of the lead
+          readOnly: true
+          example: example.com
+        status_summary:
+          type: object
+          description: Status summary of the lead
+          readOnly: true
+          properties:
+            lastStep:
+              type: object
+              properties:
+                from:
+                  type: string
+                  example: campaign
+                stepID:
+                  type: string
+                  example: 019ffad2-53a3-7590-935f-b48d6ba341ae
+                timestamp_executed:
+                  type: string
+                  format: date-time
+                  example: '2026-08-13T11:11:55.811Z'
+            domain_complete:
+              type: boolean
+              example: true
+        payload:
+          type:
+          - 'null'
+          - object
+          description: Lead custom variables. This object can contain any key, but the values have to be of type string, number, boolean, or null. We do NOT allow objects or arrays as values.
+          readOnly: true
+          properties:
+            firstName:
+              type: string
+              examples:
+              - John
+              example: John
+            lastName:
+              type: string
+              examples:
+              - Doe
+              example: Doe
+            companyName:
+              type: string
+              examples:
+              - Acme Corp
+              example: Acme Corp
+            jobTitle:
+              type: string
+              examples:
+              - Head of Growth
+              example: Head of Growth
+            website:
+              type: string
+              examples:
+              - https://example.com
+              example: https://example.com
+            phone:
+              type: string
+              examples:
+              - '+1234567890'
+              example: '+1234567890'
+            personalization:
+              type: string
+              examples:
+              - Hi {{first_name}}, I noticed you work at {{company_name}}...
+              example: Hi {{first_name}}, I noticed you work at {{company_name}}...
+          additionalProperties:
+            type:
+            - 'null'
+            - string
+            - number
+            - boolean
+            - object
+        status_summary_subseq:
+          type: object
+          description: Subsequence status summary of the lead
+          readOnly: true
+          properties:
+            from:
+              type: string
+              example: campaign
+            stepID:
+              type: string
+              example: 019ffad2-53a3-7590-935f-b48e2d8c05ea
+            timestampExecuted:
+              type: string
+              format: date-time
+              example: '2026-08-13T11:11:55.811Z'
+        last_step_from:
+          type:
+          - 'null'
+          - string
+          description: Source of the last step
+          readOnly: true
+          example: campaign
+        last_step_id:
+          type:
+          - 'null'
+          - string
+          description: ID of the last step
+          readOnly: true
+          format: uuid
+          example: 019ffad2-53a3-7590-935f-b48fcb4f5d3c
+        last_step_timestamp_executed:
+          type:
+          - 'null'
+          - string
+          description: Timestamp when the last step was executed
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        email_opened_step:
+          type:
+          - 'null'
+          - number
+          description: Last email step opened by the lead
+          readOnly: true
+          example: 1
+        email_opened_variant:
+          type:
+          - 'null'
+          - number
+          description: Last step variant opened by the lead
+          readOnly: true
+          example: 1
+        email_replied_step:
+          type:
+          - 'null'
+          - number
+          description: Last email step the lead has replied to
+          readOnly: true
+          example: 1
+        email_replied_variant:
+          type:
+          - 'null'
+          - number
+          description: Last step variant the lead has replied to
+          readOnly: true
+          example: 1
+        email_clicked_step:
+          type:
+          - 'null'
+          - number
+          description: Last email step the lead has clicked
+          readOnly: true
+          example: 1
+        email_clicked_variant:
+          type:
+          - 'null'
+          - number
+          description: Last step variant the lead has clicked
+          readOnly: true
+          example: 1
+        lt_interest_status:
+          type: number
+          description: Lead interest status. It can be either a static value (check below), or a custom status interest value
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 0
+          - -1
+          - -2
+          - -3
+          - -4
+          x-enumDescriptions:
+            '0': Out of Office
+            '1': Interested
+            '2': Meeting Booked
+            '3': Meeting Completed
+            '4': Won
+            '-1': Not Interested
+            '-2': Wrong Person
+            '-3': Lost
+            '-4': No Show
+          example: 1
+        subsequence_id:
+          type:
+          - 'null'
+          - string
+          description: ID of the subsequence
+          readOnly: true
+          example: 019ffad2-53a3-7590-935f-b490c41e66e7
+        verification_status:
+          type: number
+          description: Verification status of the lead
+          readOnly: true
+          enum:
+          - 1
+          - -1
+          - -2
+          - -3
+          - -4
+          - 11
+          - 12
+          x-enumDescriptions:
+            '1': Verified
+            '11': Pending
+            '12': Pending Verification Job
+            '-1': Invalid
+            '-2': Risky
+            '-3': Catch All
+            '-4': Job Change
+          example: 1
+        pl_value_lead:
+          type:
+          - 'null'
+          - string
+          description: Potential value of the lead
+          example: High
+        timestamp_added_subsequence:
+          type:
+          - 'null'
+          - string
+          description: Timestamp when the lead was added to the subsequence
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        timestamp_last_contact:
+          type:
+          - 'null'
+          - string
+          description: Timestamp of the last contact with the lead
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        timestamp_last_open:
+          type:
+          - 'null'
+          - string
+          description: Timestamp of the last email open
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        timestamp_last_reply:
+          type:
+          - 'null'
+          - string
+          description: Timestamp of the last email reply
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        timestamp_last_interest_change:
+          type:
+          - 'null'
+          - string
+          description: Timestamp of the last interest status change
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        timestamp_last_click:
+          type:
+          - 'null'
+          - string
+          description: Timestamp of the last email click
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        enrichment_status:
+          type: number
+          description: Enrichment status of the lead
+          readOnly: true
+          enum:
+          - 1
+          - -1
+          - 11
+          - -2
+          x-enumDescriptions:
+            '1': Enriched
+            '11': Pending
+            '-1': Enrichment data not available
+            '-2': Error
+          example: 1
+        list_id:
+          type:
+          - 'null'
+          - string
+          description: List ID associated with the lead
+          format: uuid
+          example: 019ffad2-53a3-7590-935f-b491178cb297
+        last_contacted_from:
+          type:
+          - 'null'
+          - string
+          description: Source of the last contact
+          readOnly: true
+          example: email
+        uploaded_by_user:
+          type:
+          - 'null'
+          - string
+          description: ID of the user who uploaded the lead
+          readOnly: true
+          format: uuid
+          example: 019ffad2-53a3-7590-935f-b492c5a4251f
+        upload_method:
+          type: string
+          description: Method used to upload the lead
+          readOnly: true
+          enum:
+          - manual
+          - api
+          - website-visitor
+          x-enumDescriptions:
+            manual: Manual
+            api: API
+            website-visitor: Website Visitor
+          example: manual
+        assigned_to:
+          type:
+          - 'null'
+          - string
+          description: ID of the user assigned to the lead
+          format: uuid
+          example: 019ffad2-53a3-7590-935f-b4938179e96d
+        is_website_visitor:
+          type:
+          - 'null'
+          - boolean
+          description: Indicates if the lead is a website visitor
+          readOnly: true
+          example: true
+        timestamp_last_touch:
+          type:
+          - 'null'
+          - string
+          description: Timestamp of the last touch with the lead
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:55.811Z'
+        esp_code:
+          type: number
+          description: ESP code associated with the lead
+          readOnly: true
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 8
+          - 9
+          - 10
+          - 12
+          - 13
+          - 999
+          - 1000
+          x-enumDescriptions:
+            '0': In Queue
+            '1': Google
+            '2': Microsoft
+            '3': Zoho
+            '8': AirMail
+            '9': Yahoo
+            '10': Yandex
+            '12': Web.de
+            '13': Libero.it
+            '999': Other
+            '1000': Not Found
+          example: 1
+        esg_code:
+          type: number
+          description: ESG code associated with the lead
+          readOnly: true
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          x-enumDescriptions:
+            '0': In Queue
+            '1': Barracuda
+            '2': Mimecast
+            '3': Proofpoint
+            '4': Cisco
+          example: 1
+      required:
+      - id
+      - timestamp_created
+      - timestamp_updated
+      - organization
+      - status
+      - email_open_count
+      - email_reply_count
+      - email_click_count
+      - company_domain
+      - status_summary
+      additionalProperties: false
+    BackgroundJob:
+      title: Background Job
+      description: A background job that can be used to perform long-running tasks
+      x-tags:
+      - Schemas
+      - BackgroundJob
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the background job
+          readOnly: true
+          example: 675266e304a8e55b17f0228b
+        workspace_id:
+          type: string
+          description: Workspace ID
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2d0ca3333c
+        user_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the user that triggered the action that created the job
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2e0ec0b7f1
+        type:
+          type: string
+          description: Type of background job
+          enum:
+          - move-leads
+          - import-leads
+          - export-leads
+          - update-warmup-accounts
+          - rename-variable
+          - broadcast-ai-generate
+          - broadcast-website-scrape
+          - import-subscribers-from-crm
+          - resync-subscriber-crm-tags
+          x-enumDescriptions:
+            move-leads: Move Leads
+            import-leads: Import Leads
+            export-leads: Export Leads
+            update-warmup-accounts: Update Warmup Accounts
+            rename-variable: Rename Variable
+            broadcast-ai-generate: AI broadcast generation
+            broadcast-website-scrape: Broadcast website analysis
+            import-subscribers-from-crm: Import Subscribers From CRM
+            resync-subscriber-crm-tags: Re-sync Subscriber CRM Tags
+          example: move-leads
+        entity_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the entity that the job is related to
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2f7b30b3ce
+        entity_type:
+          type: string
+          description: Type of entity
+          enum:
+          - list
+          - campaign
+          - workspace
+          - broadcast
+          - subscriber-group-sync
+          - subscriber-group
+          x-enumDescriptions:
+            list: The entity is a lead list
+            campaign: The entity is a campaign
+            workspace: The entity is a workspace
+            broadcast: The entity is an email-marketing broadcast
+            subscriber-group-sync: The entity is a subscriber-group sync
+            subscriber-group: The entity is a subscriber group
+          example: list
+        data:
+          type: object
+          description: Data about the job, used to store any additional information we need to process the job
+          properties:
+            moved_lead_emails:
+              type: array
+              description: For `move-leads` jobs, up to the first 10,000 email addresses of leads that actually moved or copied to the destination after all filters were applied. Use `moved_leads` for the full count.
+              items:
+                type: string
+                format: email
+                example: jane@example.com
+              example:
+              - jane@example.com
+              - john@example.com
+          additionalProperties: true
+        progress:
+          type: number
+          description: Progress of the job as a percentage (from 0 to 100)
+          minimum: 0
+          maximum: 100
+          example: 0
+        status:
+          type: string
+          description: Job status
+          enum:
+          - pending
+          - in-progress
+          - success
+          - failed
+          - draining
+          - paused
+          - cancelled
+          x-enumDescriptions:
+            pending: The background job is waiting in the queue to be processed
+            in-progress: The background job is being processed
+            success: The background job has been successfully processed
+            failed: The background job has failed
+            draining: The background job is replaying deferred live events
+            paused: The background job is paused (e.g. waiting for quota or auth)
+            cancelled: The background job was cancelled by the user
+          example: pending
+        created_at:
+          type: string
+          description: Timestamp when the job was created
+          example: '2026-08-13T11:11:58.077Z'
+        updated_at:
+          type: string
+          description: Timestamp when the job was last updated
+          example: '2026-08-13T11:11:58.077Z'
+      required:
+      - id
+      - workspace_id
+      - type
+      - progress
+      - status
+      - created_at
+      - updated_at
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

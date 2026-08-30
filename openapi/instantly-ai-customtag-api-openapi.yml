@@ -1,0 +1,1263 @@
+openapi: 3.2.0
+info:
+  title: Explorer Custom Tag API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: CustomTag
+  description: A custom tag for organizing and categorizing accounts and campaigns. You can use them as filters in apis that list accounts and campaigns.
+  x-group: Custom Tag
+paths:
+  /api/v2/custom-tags:
+    post:
+      operationId: createCustomTag
+      summary: Create custom tag
+      tags:
+      - CustomTag
+      description: 'Requires one of the following scopes: `custom_tags:create`, `custom_tags:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateCustom Tag
+              description: The Custom Tag to create
+              type: object
+              properties:
+                label:
+                  type: string
+                  description: Display label for the custom tag. Must be unique per workspace after trimming whitespace.
+                  minLength: 1
+                  pattern: .*\S.*
+                  example: Important
+                description:
+                  type:
+                  - string
+                  - 'null'
+                  description: Detailed description of the custom tag purpose
+                  example: Used for marking important items
+              required:
+              - label
+              additionalProperties: false
+        required: true
+        description: The Custom Tag to create
+      responses:
+        '200':
+          description: The Custom Tag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTag'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '409':
+          description: A tag with the same normalized label already exists in this workspace
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 409
+                    examples:
+                    - 409
+                    example: 409
+                  error:
+                    type: string
+                    enum:
+                    - Conflict
+                    examples:
+                    - Conflict
+                    example: Conflict
+                  message:
+                    type: string
+                    examples:
+                    - A tag with this name already exists.
+                    example: A tag with this name already exists.
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listCustomTag
+      summary: List custom tag
+      tags:
+      - CustomTag
+      description: 'Requires one of the following scopes: `custom_tags:read`, `custom_tags:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: string
+          example: Important
+        example: Important
+        in: query
+        name: search
+        required: false
+        description: The search query to filter custom tags.
+      - schema:
+          type: string
+          example: id1,id2,id3
+        example: id1,id2,id3
+        in: query
+        name: resource_ids
+        required: false
+        description: The list of resource ids to filter custom tags by. A resource id is the id of an account or a campaign.
+      - schema:
+          type: string
+          example: id1,id2,id3
+        example: id1,id2,id3
+        in: query
+        name: tag_ids
+        required: false
+        description: The list of tag ids to filter custom tags by.
+      responses:
+        '200':
+          description: The list of Custom Tag
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Custom Tag
+                    items:
+                      $ref: '#/components/schemas/CustomTag'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9bda-7b11-a331-384690f21765
+                    - '2026-08-13T11:12:14.298Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9bda-7b11-a331-384690f21765
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/custom-tags/{id}:
+    get:
+      operationId: getCustomTag
+      summary: Get custom tag
+      tags:
+      - CustomTag
+      description: 'Requires one of the following scopes: `custom_tags:read`, `custom_tags:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9bda-7b11-a331-3847659da2b6
+        example: 019ffad2-9bda-7b11-a331-3847659da2b6
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Custom Tag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTag'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchCustomTag
+      summary: Patch custom tag
+      tags:
+      - CustomTag
+      description: 'Requires one of the following scopes: `custom_tags:update`, `custom_tags:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  type: string
+                  description: Display label for the custom tag. Must be unique per workspace after trimming whitespace.
+                  minLength: 1
+                  pattern: .*\S.*
+                  example: Important
+                description:
+                  type:
+                  - string
+                  - 'null'
+                  description: Detailed description of the custom tag purpose
+                  example: Used for marking important items
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9bd9-75cc-9859-143662e74842
+        example: 019ffad2-9bd9-75cc-9859-143662e74842
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to update
+      responses:
+        '200':
+          description: The updated Custom Tag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTag'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '409':
+          description: A tag with the same normalized label already exists in this workspace
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 409
+                    examples:
+                    - 409
+                    example: 409
+                  error:
+                    type: string
+                    enum:
+                    - Conflict
+                    examples:
+                    - Conflict
+                    example: Conflict
+                  message:
+                    type: string
+                    examples:
+                    - A tag with this name already exists.
+                    example: A tag with this name already exists.
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteCustomTag
+      summary: Delete custom tag
+      tags:
+      - CustomTag
+      description: 'Requires one of the following scopes: `custom_tags:delete`, `custom_tags:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9bdc-7129-a946-92c917a430e6
+        example: 019ffad2-9bdc-7129-a946-92c917a430e6
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted Custom Tag
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTag'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/custom-tags/toggle-resource:
+    post:
+      operationId: toggleTagResource
+      summary: Assign or unassign tags to resources
+      tags:
+      - CustomTag
+      description: This can be used for both accounts and campaigns. Please check the `resource_type` field for more information.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                tag_ids:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uuid
+                    example: 019ffad2-9bdb-7827-9248-8c35500ac3c5
+                  description: The list of tag ids to assign or unassign
+                resource_type:
+                  type: number
+                  enum:
+                  - 1
+                  - 2
+                  description: The resource type to assign or unassign the tags to
+                  x-enumDescriptions:
+                    '1': Account
+                    '2': Campaign
+                  example: 1
+                resource_ids:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    example: resource-1
+                  description: The list of resource ids to assign or unassign. A resource id is the id of an account or a campaign. Required unless `selected_all` is `true`.
+                excluded_resource_ids:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    example: resource-1
+                  description: Optional list of resource ids to exclude when `selected_all` is `true`.
+                assign:
+                  type: boolean
+                  description: Whether to assign the tags to the resources.
+                  example: true
+                selected_all:
+                  type: boolean
+                  description: Whether to select all resources.
+                  example: false
+                filter:
+                  oneOf:
+                  - type:
+                    - string
+                    - 'null'
+                    examples:
+                    - ACC_FILTER_PAUSED
+                    enum:
+                    - ACC_FILTER_PAUSED
+                    - ACC_FILTER_ERROR
+                    - ACC_FILTER_NO_CTD
+                    - ACC_FILTER_PW_ACCOUNTS
+                    - ACC_FILTER_DFY
+                    - ACC_FILTER_DFY_SETUP_PENDING
+                    - ACC_FILTER_W_ACTIVE
+                    - ACC_FILTER_W_PAUSED
+                    - ACC_FILTER_W_ERROR
+                    - null
+                    x-enumDescriptions:
+                      ACC_FILTER_PAUSED: Paused
+                      ACC_FILTER_ERROR: Error
+                      ACC_FILTER_NO_CTD: No CTD
+                      ACC_FILTER_PW_ACCOUNTS: PW Accounts
+                      ACC_FILTER_DFY: DFY
+                      ACC_FILTER_DFY_SETUP_PENDING: DFY Setup Pending
+                      ACC_FILTER_W_ACTIVE: W Active
+                      ACC_FILTER_W_PAUSED: W Paused
+                      ACC_FILTER_W_ERROR: W Error
+                      'null': No filter
+                    example: ACC_FILTER_PAUSED
+                  - type: object
+                    additionalProperties: false
+                    properties:
+                      tag_id:
+                        oneOf:
+                        - type: string
+                          format: uuid
+                          examples:
+                          - 019ffad2-8faf-7bd3-a109-efd683507585
+                          example: 019ffad2-8faf-7bd3-a109-efd683507585
+                        - type: string
+                          enum:
+                          - no-tag
+                          examples:
+                          - no-tag
+                          example: no-tag
+                      tag_ids:
+                        type: array
+                        minItems: 1
+                        items:
+                          type: string
+                          format: uuid
+                          examples:
+                          - 019ffad2-8fb0-70ac-a1d9-fe8b077f12d3
+                          example: 019ffad2-8fb0-70ac-a1d9-fe8b077f12d3
+                      tag_ids_all:
+                        type: array
+                        minItems: 1
+                        items:
+                          type: string
+                          format: uuid
+                          examples:
+                          - 019ffad2-8fb0-70ac-a1d9-fe8cf36017ed
+                          example: 019ffad2-8fb0-70ac-a1d9-fe8cf36017ed
+                      filter:
+                        type:
+                        - string
+                        - 'null'
+                        examples:
+                        - ACC_FILTER_PAUSED
+                        enum:
+                        - ACC_FILTER_PAUSED
+                        - ACC_FILTER_ERROR
+                        - ACC_FILTER_NO_CTD
+                        - ACC_FILTER_PW_ACCOUNTS
+                        - ACC_FILTER_DFY
+                        - ACC_FILTER_DFY_SETUP_PENDING
+                        - ACC_FILTER_W_ACTIVE
+                        - ACC_FILTER_W_PAUSED
+                        - ACC_FILTER_W_ERROR
+                        - null
+                        x-enumDescriptions:
+                          ACC_FILTER_PAUSED: Paused
+                          ACC_FILTER_ERROR: Error
+                          ACC_FILTER_NO_CTD: No CTD
+                          ACC_FILTER_PW_ACCOUNTS: PW Accounts
+                          ACC_FILTER_DFY: DFY
+                          ACC_FILTER_DFY_SETUP_PENDING: DFY Setup Pending
+                          ACC_FILTER_W_ACTIVE: W Active
+                          ACC_FILTER_W_PAUSED: W Paused
+                          ACC_FILTER_W_ERROR: W Error
+                          'null': No filter
+                        example: ACC_FILTER_PAUSED
+                      search:
+                        type: string
+                        examples:
+                        - jon@doe.com
+                        example: jon@doe.com
+                  description: Optional selected-all filter. Accepts the existing account-status string shape and the merged object shape for account status, tag, any-tag, all-tags, and search criteria.
+                search:
+                  type: string
+                  description: Optional selected-all search query. If omitted, `filter.search` is used when present.
+                  example: jon@doe.com
+              required:
+              - tag_ids
+              - resource_type
+              - assign
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    CustomTag:
+      title: Custom Tag
+      description: A custom tag for organizing and categorizing accounts and campaigns. You can use them as filters in apis that list accounts and campaigns.
+      x-tags:
+      - Schemas
+      - CustomTag
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the custom tag
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c81-7249-9039-cc6326ab04d5
+        timestamp_created:
+          type: string
+          description: Timestamp when the custom tag was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.081Z'
+        timestamp_updated:
+          type: string
+          description: Timestamp when the custom tag was last updated
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.081Z'
+        organization_id:
+          type: string
+          description: Organization ID that owns this custom tag
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c81-7249-9039-cc64ecc57a50
+        label:
+          type: string
+          description: Display label for the custom tag. Must be unique per workspace after trimming whitespace.
+          minLength: 1
+          pattern: .*\S.*
+          example: Important
+        description:
+          type:
+          - 'null'
+          - string
+          description: Detailed description of the custom tag purpose
+          example: Used for marking important items
+      required:
+      - id
+      - timestamp_created
+      - timestamp_updated
+      - organization_id
+      - label
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

@@ -1,0 +1,3813 @@
+openapi: 3.2.0
+info:
+  title: Explorer Account API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Account
+  description: An email account that can be used to send campaigns
+  x-group: Account
+paths:
+  /api/v2/accounts:
+    post:
+      operationId: createAccount
+      summary: Create account
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:create`, `accounts:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateAccount
+              description: The Account to create
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email address of the account
+                  format: email
+                  example: user@example.com
+                first_name:
+                  type: string
+                  description: First name associated with the account
+                  example: John
+                last_name:
+                  type: string
+                  description: Last name associated with the account
+                  example: Doe
+                warmup:
+                  type: object
+                  description: Warmup configuration for the account
+                  properties:
+                    limit:
+                      type: number
+                      description: Email sending limit for the account
+                      example: 100
+                    advanced:
+                      type: object
+                      description: Advanced settings for the account
+                      properties:
+                        warm_ctd:
+                          type: boolean
+                          description: Whether the account is in warm CTD mode
+                          example: false
+                        open_rate:
+                          type: number
+                          description: Email open rate for the account
+                          example: 0.95
+                        important_rate:
+                          type: number
+                          description: Important email rate for the account
+                          example: 0.8
+                        read_emulation:
+                          type: boolean
+                          description: Whether read emulation is enabled
+                          example: true
+                        spam_save_rate:
+                          type: number
+                          description: Spam save rate for the account
+                          example: 0.02
+                        weekday_only:
+                          type: boolean
+                          description: Whether to send emails only on weekdays
+                          example: true
+                    warmup_custom_ftag:
+                      type: string
+                      description: Custom tag for the account
+                      example: warmup
+                    increment:
+                      type: string
+                      enum:
+                      - disabled
+                      - '0'
+                      - '1'
+                      - '2'
+                      - '3'
+                      - '4'
+                      x-enumDescriptions:
+                        '0': '0'
+                        '1': '1'
+                        '2': '2'
+                        '3': '3'
+                        '4': '4'
+                        disabled: Disabled
+                      description: Daily increment added to the sending limit, starting from 0, until the full daily limit is reached (slow ramp). Gradually increases sending volume to improve deliverability. Set to `disabled` to send at the full daily limit from day one.
+                      example: disabled
+                    reply_rate:
+                      type: number
+                      description: Reply rate for the account
+                      example: 0.1
+                daily_limit:
+                  type:
+                  - number
+                  - 'null'
+                  description: Daily email sending limit
+                  example: 100
+                tracking_domain_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: Tracking domain
+                  example: example.com
+                tracking_domain_status:
+                  type:
+                  - string
+                  - 'null'
+                  description: Tracking domain status
+                  example: active
+                enable_slow_ramp:
+                  type:
+                  - boolean
+                  - 'null'
+                  description: Whether to enable slow ramp up for sending limits
+                  example: false
+                inbox_placement_test_limit:
+                  type:
+                  - number
+                  - 'null'
+                  description: The limit for inbox placement tests
+                  minimum: 0
+                  example: 10
+                provider_code:
+                  type: number
+                  description: Provider code for the account. Please make sure to specify the right provider code, otherwise your account will not work.
+                  enum:
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 8
+                  - 11
+                  x-enumDescriptions:
+                    '1': Custom IMAP/SMTP
+                    '2': Google
+                    '3': Microsoft
+                    '4': AWS
+                    '8': AirMail
+                    '11': Airmail Instant
+                  example: 2
+                sending_gap:
+                  type: number
+                  description: The gap between emails sent from this account in minutes (minimum wait time when used with multiple campaigns)
+                  minimum: 0
+                  maximum: 1440
+                  example: 10
+                signature:
+                  type:
+                  - string
+                  - 'null'
+                  description: Email signature for the account
+                  example: Best regards, John Doe
+                reply_to:
+                  type: string
+                  example: reply@example.com
+                imap_username:
+                  type: string
+                  example: username
+                imap_password:
+                  type: string
+                  example: password
+                imap_host:
+                  type: string
+                  example: imap.gmail.com
+                imap_port:
+                  type: number
+                  example: 993
+                smtp_username:
+                  type: string
+                  example: username
+                smtp_password:
+                  type: string
+                  example: password
+                smtp_host:
+                  type: string
+                  example: smtp.gmail.com
+                smtp_port:
+                  type: number
+                  example: 587
+                warmup_custom_ftag:
+                  type: string
+                  example: warmup
+                skip_cname_check:
+                  type: boolean
+                  example: false
+              required:
+              - email
+              - first_name
+              - last_name
+              - provider_code
+              - imap_username
+              - imap_password
+              - imap_host
+              - imap_port
+              - smtp_username
+              - smtp_password
+              - smtp_host
+              - smtp_port
+              additionalProperties: false
+        required: true
+        description: The Account to create
+      responses:
+        '200':
+          description: The Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listAccount
+      summary: List account
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:read`, `accounts:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 2026-01-01T00:00:00.000Z&jon@doe.com
+        example: 2026-01-01T00:00:00.000Z&jon@doe.com
+        in: query
+        name: starting_after
+        required: false
+        description: Pagination cursor from `next_starting_after`, in `timestamp_created&email` format. Legacy ISO date-time cursor is still supported.
+      - schema:
+          type: string
+          example: gmail.com
+        example: gmail.com
+        in: query
+        name: search
+        required: false
+      - schema:
+          type: number
+          enum:
+          - 1
+          - 2
+          - 3
+          - -1
+          - -2
+          - -3
+          x-enumDescriptions:
+            '1': Active
+            '2': Paused
+            '3': Temporarily paused for maintenance; will be automatically resumed shortly
+            '-1': Connection Error
+            '-2': Soft Bounce Error
+            '-3': Sending Error
+          example: 1
+        example: 1
+        in: query
+        name: status
+        required: false
+      - schema:
+          type: number
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 8
+          - 11
+          x-enumDescriptions:
+            '1': Custom IMAP/SMTP
+            '2': Google
+            '3': Microsoft
+            '4': AWS
+            '8': AirMail
+            '11': Airmail Instant
+          example: 2
+        example: 2
+        in: query
+        name: provider_code
+        required: false
+      - schema:
+          type: string
+          example: 019ffad2-9b14-7491-94e1-412827f38846, 019ffad2-9b14-7491-94e1-41295cf52579
+        example: 019ffad2-9b14-7491-94e1-412827f38846, 019ffad2-9b14-7491-94e1-41295cf52579
+        in: query
+        name: tag_ids
+        required: false
+        description: Filter accounts by tag ids. Returns accounts that have any of the specified tags assigned. You can specify multiple tag ids by separating them with a comma.
+      - schema:
+          type: string
+          example: 019ffad2-9b14-7491-94e1-412a55965922, 019ffad2-9b14-7491-94e1-412b9974b398
+        example: 019ffad2-9b14-7491-94e1-412a55965922, 019ffad2-9b14-7491-94e1-412b9974b398
+        in: query
+        name: tag_ids_all
+        required: false
+        description: Filter accounts by tag ids with AND logic. Returns only accounts that have all of the specified tags assigned. You can specify multiple tag ids by separating them with a comma.
+      - schema:
+          type: boolean
+          example: true
+        example: true
+        in: query
+        name: include_tags
+        required: false
+        description: Include tags in the response. If true, the response will include the tags assigned to each account.
+      - schema:
+          type: string
+          enum:
+          - ACC_FILTER_PAUSED
+          - ACC_FILTER_ERROR
+          - ACC_FILTER_NO_CTD
+          - ACC_FILTER_PW_ACCOUNTS
+          - ACC_FILTER_DFY
+          - ACC_FILTER_DFY_SETUP_PENDING
+          - ACC_FILTER_W_ACTIVE
+          - ACC_FILTER_W_PAUSED
+          - ACC_FILTER_W_ERROR
+          x-enumDescriptions:
+            ACC_FILTER_PAUSED: Paused
+            ACC_FILTER_ERROR: Has errors
+            ACC_FILTER_NO_CTD: No custom tracking domain
+            ACC_FILTER_PW_ACCOUNTS: Pre-warmed accounts
+            ACC_FILTER_DFY: DFY accounts
+            ACC_FILTER_DFY_SETUP_PENDING: DFY Setup Pending
+            ACC_FILTER_W_ACTIVE: Warmup active
+            ACC_FILTER_W_PAUSED: Warmup paused
+            ACC_FILTER_W_ERROR: Warmup has errors
+          example: ACC_FILTER_PAUSED
+        examples:
+          ACC_FILTER_PAUSED:
+            value: ACC_FILTER_PAUSED
+          ACC_FILTER_ERROR:
+            value: ACC_FILTER_ERROR
+          ACC_FILTER_NO_CTD:
+            value: ACC_FILTER_NO_CTD
+          ACC_FILTER_PW_ACCOUNTS:
+            value: ACC_FILTER_PW_ACCOUNTS
+          ACC_FILTER_DFY:
+            value: ACC_FILTER_DFY
+          ACC_FILTER_DFY_SETUP_PENDING:
+            value: ACC_FILTER_DFY_SETUP_PENDING
+          ACC_FILTER_W_ACTIVE:
+            value: ACC_FILTER_W_ACTIVE
+          ACC_FILTER_W_PAUSED:
+            value: ACC_FILTER_W_PAUSED
+          ACC_FILTER_W_ERROR:
+            value: ACC_FILTER_W_ERROR
+        in: query
+        name: filter
+        required: false
+        description: The filter to apply to the accounts.
+      - schema:
+          type: string
+          enum:
+          - timestamp_created
+          - email
+          - stat_warmup_score
+          - status
+          example: stat_warmup_score
+        example: stat_warmup_score
+        in: query
+        name: sort_by
+        required: false
+        description: Column to sort results by.
+      - schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          example: desc
+        example: desc
+        in: query
+        name: sort_order
+        required: false
+        description: Sort direction. Defaults to `desc` when `sort_by` is provided.
+      - schema:
+          type: integer
+          minimum: 0
+          example: 0
+        example: 0
+        in: query
+        name: skip
+        required: false
+        description: Number of items to skip for offset-based pagination. Used with `sort_by` when cursor pagination is not available.
+      responses:
+        '200':
+          description: The list of Account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Account
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/Account'
+                      - type: object
+                        properties:
+                          tags:
+                            type:
+                            - array
+                            - 'null'
+                            description: Tags associated with the account, set to `include_tags` to populate
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: Unique identifier for the custom tag
+                                  examples:
+                                  - 019ffad2-9b14-7491-94e1-412c61f2fe27
+                                  example: 019ffad2-9b14-7491-94e1-412c61f2fe27
+                                label:
+                                  type: string
+                                  description: Display label for the custom tag
+                                  examples:
+                                  - Important tag
+                                  example: Important tag
+                                description:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Detailed description of the custom tag purpose
+                                  examples:
+                                  - null
+                                  example: null
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9b15-755e-8b3d-9a147b6321a1
+                    - '2026-08-13T11:12:14.101Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9b15-755e-8b3d-9a147b6321a1
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/{email}:
+    get:
+      operationId: getAccount
+      summary: Get account
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:read`, `accounts:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: jon@doe.com
+        example: jon@doe.com
+        in: path
+        name: email
+        required: true
+        description: The email of the account to get
+      responses:
+        '200':
+          description: The requested Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchAccount
+      summary: Patch account
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:update`, `accounts:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: First name associated with the account
+                  example: John
+                last_name:
+                  type: string
+                  description: Last name associated with the account
+                  example: Doe
+                warmup:
+                  type: object
+                  description: Warmup configuration for the account
+                  properties:
+                    limit:
+                      type: number
+                      description: Email sending limit for the account
+                      example: 100
+                    advanced:
+                      type: object
+                      description: Advanced settings for the account
+                      properties:
+                        warm_ctd:
+                          type: boolean
+                          description: Whether the account is in warm CTD mode
+                          example: false
+                        open_rate:
+                          type: number
+                          description: Email open rate for the account
+                          example: 0.95
+                        important_rate:
+                          type: number
+                          description: Important email rate for the account
+                          example: 0.8
+                        read_emulation:
+                          type: boolean
+                          description: Whether read emulation is enabled
+                          example: true
+                        spam_save_rate:
+                          type: number
+                          description: Spam save rate for the account
+                          example: 0.02
+                        weekday_only:
+                          type: boolean
+                          description: Whether to send emails only on weekdays
+                          example: true
+                    warmup_custom_ftag:
+                      type: string
+                      description: Custom tag for the account
+                      example: warmup
+                    increment:
+                      type: string
+                      enum:
+                      - disabled
+                      - '0'
+                      - '1'
+                      - '2'
+                      - '3'
+                      - '4'
+                      x-enumDescriptions:
+                        '0': '0'
+                        '1': '1'
+                        '2': '2'
+                        '3': '3'
+                        '4': '4'
+                        disabled: Disabled
+                      description: Daily increment added to the sending limit, starting from 0, until the full daily limit is reached (slow ramp). Gradually increases sending volume to improve deliverability. Set to `disabled` to send at the full daily limit from day one.
+                      example: disabled
+                    reply_rate:
+                      type: number
+                      description: Reply rate for the account
+                      example: 0.1
+                daily_limit:
+                  type:
+                  - number
+                  - 'null'
+                  description: Daily email sending limit
+                  example: 100
+                tracking_domain_name:
+                  type:
+                  - string
+                  - 'null'
+                  description: Tracking domain
+                  example: example.com
+                tracking_domain_status:
+                  type:
+                  - string
+                  - 'null'
+                  description: Tracking domain status
+                  example: active
+                enable_slow_ramp:
+                  type:
+                  - boolean
+                  - 'null'
+                  description: Whether to enable slow ramp up for sending limits
+                  example: false
+                inbox_placement_test_limit:
+                  type:
+                  - number
+                  - 'null'
+                  description: The limit for inbox placement tests
+                  minimum: 0
+                  example: 10
+                sending_gap:
+                  type: number
+                  description: The gap between emails sent from this account in minutes (minimum wait time when used with multiple campaigns)
+                  minimum: 0
+                  maximum: 1440
+                  example: 10
+                signature:
+                  type:
+                  - string
+                  - 'null'
+                  description: Email signature for the account
+                  example: Best regards, John Doe
+                reply_to:
+                  type:
+                  - string
+                  - 'null'
+                  description: Custom reply-to email address for the account
+                  format: email
+                  example: reply@example.com
+                skip_cname_check:
+                  type: boolean
+                  example: false
+                remove_tracking_domain:
+                  type: boolean
+                  example: false
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          example: jon@doe.com
+        example: jon@doe.com
+        in: path
+        name: email
+        required: true
+        description: The email of the account to update
+      responses:
+        '200':
+          description: The updated Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteAccount
+      summary: Delete account
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:delete`, `accounts:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          example: jon@doe.com
+        example: jon@doe.com
+        in: path
+        name: email
+        required: true
+        description: The email of the account to get
+      responses:
+        '200':
+          description: The deleted Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/warmup/enable:
+    post:
+      operationId: enableWarmupForAccounts
+      summary: Enable warmup for accounts
+      tags:
+      - Account
+      description: 'Initiates a background job to enable warmup for the specified accounts. The response will contain the initial background job object. You can monitor the job''s progress by polling the `GET: /api/v2/background-jobs/:id` endpoint.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+                  maxItems: 100
+                  description: List of emails to enable warmup accounts for. The emails should be attached to accounts in your workspace.
+                include_all_emails:
+                  type: boolean
+                  description: If true, it will enable warmup to all accounts
+                  example: true
+                excluded_emails:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+                  maxItems: 100
+                  description: List of emails to exclude when `include_all_emails` is `true`.
+                filter:
+                  type:
+                  - object
+                  - 'null'
+                  description: Optional filter to apply when `include_all_emails` is `true`. Can contain tag_id or other filter criteria.
+                  properties:
+                    tag_id:
+                      type: string
+                      description: The ID of the tag to filter accounts by.
+                      examples:
+                      - 019ffad2-9b17-780f-b2d3-34839d49bf0b
+                      example: 019ffad2-9b17-780f-b2d3-34839d49bf0b
+                    filter:
+                      type:
+                      - string
+                      - 'null'
+                      description: The filter to apply to the accounts.
+                      examples:
+                      - ACC_FILTER_PAUSED
+                      enum:
+                      - ACC_FILTER_PAUSED
+                      - ACC_FILTER_ERROR
+                      - ACC_FILTER_NO_CTD
+                      - ACC_FILTER_PW_ACCOUNTS
+                      - ACC_FILTER_DFY
+                      - ACC_FILTER_DFY_SETUP_PENDING
+                      - ACC_FILTER_W_ACTIVE
+                      - ACC_FILTER_W_PAUSED
+                      - ACC_FILTER_W_ERROR
+                      - null
+                      x-enumDescriptions:
+                        ACC_FILTER_PAUSED: Paused
+                        ACC_FILTER_ERROR: Has errors
+                        ACC_FILTER_NO_CTD: No custom tracking domain
+                        ACC_FILTER_PW_ACCOUNTS: Pre-warmed accounts
+                        ACC_FILTER_DFY: DFY accounts
+                        ACC_FILTER_DFY_SETUP_PENDING: DFY Setup Pending
+                        ACC_FILTER_W_ACTIVE: Warmup active
+                        ACC_FILTER_W_PAUSED: Warmup paused
+                        ACC_FILTER_W_ERROR: Warmup has errors
+                        'null': No filter
+                      example: ACC_FILTER_PAUSED
+                search:
+                  type: string
+                  description: Optional search query to filter accounts when `include_all_emails` is `true`.
+                  example: gmail.com
+      responses:
+        '200':
+          description: The requested Background Job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundJob'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/warmup/disable:
+    post:
+      operationId: disableWarmupForAccounts
+      summary: Disable warmup for accounts
+      tags:
+      - Account
+      description: 'Initiates a background job to disable warmup for the specified accounts. The response will contain the initial background job object. You can monitor the job''s progress by polling the `GET: /api/v2/background-jobs/:id` endpoint.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+                  maxItems: 100
+                  description: List of emails to disable warmup accounts for. The emails should be attached to accounts in your workspace.
+                include_all_emails:
+                  type: boolean
+                  description: If true, it will disable warmup to all accounts
+                  example: true
+                excluded_emails:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+                  maxItems: 100
+                  description: List of emails to exclude when `include_all_emails` is `true`.
+                filter:
+                  type:
+                  - object
+                  - 'null'
+                  description: Optional filter to apply when `include_all_emails` is `true`. Can contain tag_id or other filter criteria.
+                  additionalProperties: true
+                  properties:
+                    tag_id:
+                      type: string
+                      description: The ID of the tag to filter accounts by.
+                      examples:
+                      - 019ffad2-9b17-780f-b2d3-3485e1c2623a
+                      example: 019ffad2-9b17-780f-b2d3-3485e1c2623a
+                    filter:
+                      type:
+                      - string
+                      - 'null'
+                      description: The filter to apply to the accounts.
+                      examples:
+                      - ACC_FILTER_PAUSED
+                      enum:
+                      - ACC_FILTER_PAUSED
+                      - ACC_FILTER_ERROR
+                      - ACC_FILTER_NO_CTD
+                      - ACC_FILTER_PW_ACCOUNTS
+                      - ACC_FILTER_DFY
+                      - ACC_FILTER_DFY_SETUP_PENDING
+                      - ACC_FILTER_W_ACTIVE
+                      - ACC_FILTER_W_PAUSED
+                      - ACC_FILTER_W_ERROR
+                      - null
+                      x-enumDescriptions:
+                        ACC_FILTER_PAUSED: Paused
+                        ACC_FILTER_ERROR: Has errors
+                        ACC_FILTER_NO_CTD: No custom tracking domain
+                        ACC_FILTER_PW_ACCOUNTS: Pre-warmed accounts
+                        ACC_FILTER_DFY: DFY accounts
+                        ACC_FILTER_DFY_SETUP_PENDING: DFY Setup Pending
+                        ACC_FILTER_W_ACTIVE: Warmup active
+                        ACC_FILTER_W_PAUSED: Warmup paused
+                        ACC_FILTER_W_ERROR: Warmup has errors
+                        'null': No filter
+                      example: ACC_FILTER_PAUSED
+                search:
+                  type: string
+                  description: Optional search query to filter accounts when `include_all_emails` is `true`.
+                  example: gmail.com
+      responses:
+        '200':
+          description: The requested Background Job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundJob'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/warmup-analytics:
+    post:
+      operationId: getWarmupAnalytics
+      summary: Get warmup analytics
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:read`, `accounts:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+                  maxItems: 100
+                  minItems: 1
+                  description: List of emails to get warmup analytics for. The emails should be attached to accounts in your workspace.
+              required:
+              - emails
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email_date_data:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          sent:
+                            type: number
+                            example: 100
+                          landed_inbox:
+                            type: number
+                            example: 50
+                          landed_spam:
+                            type: number
+                            example: 10
+                          received:
+                            type: number
+                            example: 100
+                  aggregate_data:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        sent:
+                          type: number
+                          examples:
+                          - 100
+                          example: 100
+                        received:
+                          type: number
+                          examples:
+                          - 100
+                          example: 100
+                        landed_inbox:
+                          type: number
+                          examples:
+                          - 50
+                          example: 50
+                        landed_spam:
+                          type: number
+                          examples:
+                          - 10
+                          example: 10
+                        health_score_label:
+                          type: string
+                          examples:
+                          - Good
+                          example: Good
+                        health_score:
+                          type: number
+                          examples:
+                          - 90
+                          example: 90
+              example:
+                email_date_data:
+                  example1@example.com:
+                    '2023-10-01':
+                      sent: 10
+                      landed_inbox: 8
+                      landed_spam: 2
+                      received: 10
+                    '2023-10-02':
+                      sent: 5
+                      landed_inbox: 5
+                      received: 5
+                  example2@example.com:
+                    '2023-10-01':
+                      sent: 7
+                      landed_inbox: 7
+                      received: 7
+                aggregate_data:
+                  example1@example.com:
+                    sent: 15
+                    landed_inbox: 13
+                    landed_spam: 2
+                    received: 15
+                    health_score_label: 87%
+                    health_score: 87
+                  example2@example.com:
+                    sent: 7
+                    landed_inbox: 7
+                    health_score_label: 100%
+                    health_score: 100
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/analytics/daily:
+    get:
+      operationId: getDailyAccountAnalytics
+      summary: Get daily account analytics
+      tags:
+      - Account
+      description: Get daily account analytics showing the number of emails sent per day for each email account. Useful for tracking daily sending activity across your accounts.
+      parameters:
+      - schema:
+          type: string
+          example: '2024-01-01'
+        examples:
+          '2024-01-01':
+            value: '2024-01-01'
+          '2024-01-01T00:00:00.000Z':
+            value: '2024-01-01T00:00:00.000Z'
+        in: query
+        name: start_date
+        required: false
+        description: Start date for the analytics period. Defaults to a 30-day window ending at end_date. The maximum range is 31 days.
+      - schema:
+          type: string
+          example: '2024-01-31'
+        examples:
+          '2024-01-31':
+            value: '2024-01-31'
+          '2024-01-31T00:00:00.000Z':
+            value: '2024-01-31T00:00:00.000Z'
+        in: query
+        name: end_date
+        required: false
+        description: End date for the analytics period. Defaults to the current date.
+      - schema:
+          type: array
+          minItems: 1
+          maxItems: 200
+          items:
+            type: string
+            examples:
+            - user@example.com
+            example: user@example.com
+        in: query
+        name: emails
+        required: false
+        description: Email accounts to include. This filter is required and accepts at most 200 unique accounts.
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      description: The date of the analytics entry, in YYYY-MM-DD format
+                      example: '2024-01-15'
+                    email_account:
+                      type: string
+                      description: The email account that sent the emails
+                      example: user@example.com
+                    sent:
+                      type: integer
+                      description: The total number of campaign emails sent on this date by this account, including emails for subsequences
+                      example: 150
+                    bounced:
+                      type: integer
+                      description: The number of emails that bounced on this date for this account for campaigns - including subsequences
+                      example: 3
+                    contacted:
+                      type: integer
+                      description: The total number of unique contacts who received an email on this date from this account
+                      example: 120
+                    new_leads_contacted:
+                      type: integer
+                      description: The total number of new leads contacted on this date from this account
+                      example: 50
+                    opened:
+                      type: integer
+                      description: The total number of opened emails on this date for this account
+                      example: 99
+                    unique_opened:
+                      type: integer
+                      description: The total number of unique opened emails on this date for this account
+                      example: 60
+                    replies:
+                      type: integer
+                      description: The total number of replies received on this date for this account
+                      example: 8
+                    unique_replies:
+                      type: integer
+                      description: The total number of unique replies received on this date for this account
+                      example: 7
+                    replies_automatic:
+                      type: integer
+                      description: The total number of automatic replies detected on this date for this account
+                      example: 2
+                    unique_replies_automatic:
+                      type: integer
+                      description: The total number of unique automatic replies detected on this date for this account
+                      example: 1
+                    clicks:
+                      type: integer
+                      description: The total number of links clicked on this date for this account
+                      example: 30
+                    unique_clicks:
+                      type: integer
+                      description: The total number of unique links clicked on this date for this account. Unique meaning from unique leads, not unique links
+                      example: 20
+                  required:
+                  - date
+                  - email_account
+                  - sent
+                  - bounced
+                  - contacted
+                  - new_leads_contacted
+                  - opened
+                  - unique_opened
+                  - replies
+                  - unique_replies
+                  - replies_automatic
+                  - unique_replies_automatic
+                  - clicks
+                  - unique_clicks
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: The error message
+                    example: Start Date must be earlier than End Date
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '413':
+          description: The analytics request is too large for the requested workspace or date range.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 413
+                    examples:
+                    - 413
+                    example: 413
+                  error:
+                    type: string
+                    enum:
+                    - Payload Too Large
+                    examples:
+                    - Payload Too Large
+                    example: Payload Too Large
+                  message:
+                    type: string
+                    examples:
+                    - Analytics request is too large for this workspace. Add an emails filter or request a smaller date range.
+                    example: Analytics request is too large for this workspace. Add an emails filter or request a smaller date range.
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/pause:
+    post:
+      operationId: pauseAccounts
+      summary: Pause multiple accounts
+      tags:
+      - Account
+      description: 'Pauses up to 100 email accounts in the authenticated workspace. Each unique email is returned in either `paused_emails` or `failed_emails`.
+
+
+
+        Requires one of the following scopes: `accounts:update`, `accounts:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                emails:
+                  type: array
+                  description: Email addresses to pause. Duplicate values are ignored.
+                  items:
+                    type: string
+                    example: user@example.com
+                  minItems: 1
+                  maxItems: 100
+              required:
+              - emails
+        required: true
+      responses:
+        '200':
+          description: The result of the bulk pause operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                description: The result of the bulk pause operation.
+                properties:
+                  paused_emails:
+                    type: array
+                    description: Email addresses whose accounts were successfully paused.
+                    items:
+                      type: string
+                      example: paused@example.com
+                  failed_emails:
+                    type: array
+                    description: Email addresses that were invalid or whose account status was not changed.
+                    items:
+                      type: string
+                      example: failed@example.com
+                required:
+                - paused_emails
+                - failed_emails
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/{email}/pause:
+    post:
+      operationId: pauseAccount
+      summary: Pause an account
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:update`, `accounts:all`, `all:update`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: user@example.com
+        example: user@example.com
+        in: path
+        name: email
+        required: true
+        description: The email of the account to pause
+      responses:
+        '200':
+          description: The requested Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/{email}/resume:
+    post:
+      operationId: resumeAccount
+      summary: Resume a paused account
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:update`, `accounts:all`, `all:update`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: user@example.com
+        example: user@example.com
+        in: path
+        name: email
+        required: true
+        description: Account email
+      responses:
+        '200':
+          description: The requested Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/{email}/mark-fixed:
+    post:
+      operationId: markAccountFixed
+      summary: Mark an account as fixed
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:update`, `accounts:all`, `all:update`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: user@example.com
+        example: user@example.com
+        in: path
+        name: email
+        required: true
+        description: Account email
+      responses:
+        '200':
+          description: The requested Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/ctd/status:
+    get:
+      operationId: getCtdStatus
+      summary: Get custom tracking domain status
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:read`, `accounts:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: string
+          example: example.com
+        example: example.com
+        in: query
+        name: host
+        required: true
+        description: Custom tracking domain host
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  ssl:
+                    type: boolean
+                    example: true
+                  cname:
+                    type: boolean
+                    example: true
+                  host:
+                    type: string
+                    example: example.com
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error message
+                  host:
+                    type: string
+                    example: example.com
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/test/vitals:
+    post:
+      operationId: testAccountVitals
+      summary: Test account vitals
+      tags:
+      - Account
+      description: 'Requires one of the following scopes: `accounts:read`, `accounts:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accounts:
+                  type: array
+                  items:
+                    type: string
+                    example: user@example.com
+              required: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  success_list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          example: example.com
+                        allPass:
+                          type: boolean
+                          example: true
+                        mx:
+                          type: boolean
+                          example: true
+                        spf:
+                          type: boolean
+                          example: true
+                        dkim:
+                          type: boolean
+                          example: true
+                        dmarc:
+                          type: boolean
+                          example: true
+                  failure_list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          example: example.com
+                        allPass:
+                          type: boolean
+                          example: false
+                        mx:
+                          type: boolean
+                          example: false
+                        spf:
+                          type: boolean
+                          example: false
+                        dkim:
+                          type: boolean
+                          example: false
+                        dmarc:
+                          type: boolean
+                          example: false
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad request - no emails sent
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/accounts/move:
+    post:
+      operationId: moveAccounts
+      summary: Move accounts between workspaces
+      tags:
+      - Account
+      description: 'Move accounts between workspaces. IMPORTANT: this endpoint should be called ONLY with an ADMIN workspace API key (check the workspace group docs: https://developer.instantly.ai/workspace-group), and both the source and destination workspaces must have the same admin workspace.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  description: Array of email addresses of the accounts to move
+                  items:
+                    type: string
+                    description: Email address of the account to move
+                    example: user@example.com
+                  minItems: 1
+                source_workspace_id:
+                  type: string
+                  description: ID of the source workspace (the workspace that the accounts are currently in)
+                  example: 019ffad2-9b1e-7b67-98a0-1fe266b16991
+                destination_workspace_id:
+                  type: string
+                  description: ID of the destination workspace (the workspace that the accounts will be moved to)
+                  example: 019ffad2-9b1e-7b67-98a0-1fe35b1c0040
+              required:
+              - emails
+              - source_workspace_id
+              - destination_workspace_id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - success
+                    x-enumDescriptions:
+                      success: 'The accounts were moved successfully '
+                    example: success
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    BackgroundJob:
+      title: Background Job
+      description: A background job that can be used to perform long-running tasks
+      x-tags:
+      - Schemas
+      - BackgroundJob
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the background job
+          readOnly: true
+          example: 675266e304a8e55b17f0228b
+        workspace_id:
+          type: string
+          description: Workspace ID
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2d0ca3333c
+        user_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the user that triggered the action that created the job
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2e0ec0b7f1
+        type:
+          type: string
+          description: Type of background job
+          enum:
+          - move-leads
+          - import-leads
+          - export-leads
+          - update-warmup-accounts
+          - rename-variable
+          - broadcast-ai-generate
+          - broadcast-website-scrape
+          - import-subscribers-from-crm
+          - resync-subscriber-crm-tags
+          x-enumDescriptions:
+            move-leads: Move Leads
+            import-leads: Import Leads
+            export-leads: Export Leads
+            update-warmup-accounts: Update Warmup Accounts
+            rename-variable: Rename Variable
+            broadcast-ai-generate: AI broadcast generation
+            broadcast-website-scrape: Broadcast website analysis
+            import-subscribers-from-crm: Import Subscribers From CRM
+            resync-subscriber-crm-tags: Re-sync Subscriber CRM Tags
+          example: move-leads
+        entity_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the entity that the job is related to
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2f7b30b3ce
+        entity_type:
+          type: string
+          description: Type of entity
+          enum:
+          - list
+          - campaign
+          - workspace
+          - broadcast
+          - subscriber-group-sync
+          - subscriber-group
+          x-enumDescriptions:
+            list: The entity is a lead list
+            campaign: The entity is a campaign
+            workspace: The entity is a workspace
+            broadcast: The entity is an email-marketing broadcast
+            subscriber-group-sync: The entity is a subscriber-group sync
+            subscriber-group: The entity is a subscriber group
+          example: list
+        data:
+          type: object
+          description: Data about the job, used to store any additional information we need to process the job
+          properties:
+            moved_lead_emails:
+              type: array
+              description: For `move-leads` jobs, up to the first 10,000 email addresses of leads that actually moved or copied to the destination after all filters were applied. Use `moved_leads` for the full count.
+              items:
+                type: string
+                format: email
+                example: jane@example.com
+              example:
+              - jane@example.com
+              - john@example.com
+          additionalProperties: true
+        progress:
+          type: number
+          description: Progress of the job as a percentage (from 0 to 100)
+          minimum: 0
+          maximum: 100
+          example: 0
+        status:
+          type: string
+          description: Job status
+          enum:
+          - pending
+          - in-progress
+          - success
+          - failed
+          - draining
+          - paused
+          - cancelled
+          x-enumDescriptions:
+            pending: The background job is waiting in the queue to be processed
+            in-progress: The background job is being processed
+            success: The background job has been successfully processed
+            failed: The background job has failed
+            draining: The background job is replaying deferred live events
+            paused: The background job is paused (e.g. waiting for quota or auth)
+            cancelled: The background job was cancelled by the user
+          example: pending
+        created_at:
+          type: string
+          description: Timestamp when the job was created
+          example: '2026-08-13T11:11:58.077Z'
+        updated_at:
+          type: string
+          description: Timestamp when the job was last updated
+          example: '2026-08-13T11:11:58.077Z'
+      required:
+      - id
+      - workspace_id
+      - type
+      - progress
+      - status
+      - created_at
+      - updated_at
+      additionalProperties: false
+    Account:
+      title: Account
+      description: An email account that can be used to send campaigns
+      x-tags:
+      - Schemas
+      - Account
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email address of the account
+          format: email
+          example: user@example.com
+        timestamp_created:
+          type: string
+          description: Timestamp when the account was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.093Z'
+        timestamp_updated:
+          type: string
+          description: Timestamp when the account was last updated
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.093Z'
+        first_name:
+          type: string
+          description: First name associated with the account
+          example: John
+        last_name:
+          type: string
+          description: Last name associated with the account
+          example: Doe
+        warmup:
+          type: object
+          description: Warmup configuration for the account
+          properties:
+            limit:
+              type: number
+              description: Email sending limit for the account
+              example: 100
+            advanced:
+              type: object
+              description: Advanced settings for the account
+              properties:
+                warm_ctd:
+                  type: boolean
+                  description: Whether the account is in warm CTD mode
+                  example: false
+                open_rate:
+                  type: number
+                  description: Email open rate for the account
+                  example: 0.95
+                important_rate:
+                  type: number
+                  description: Important email rate for the account
+                  example: 0.8
+                read_emulation:
+                  type: boolean
+                  description: Whether read emulation is enabled
+                  example: true
+                spam_save_rate:
+                  type: number
+                  description: Spam save rate for the account
+                  example: 0.02
+                weekday_only:
+                  type: boolean
+                  description: Whether to send emails only on weekdays
+                  example: true
+            warmup_custom_ftag:
+              type: string
+              description: Custom tag for the account
+              example: warmup
+            increment:
+              type: string
+              enum:
+              - disabled
+              - '0'
+              - '1'
+              - '2'
+              - '3'
+              - '4'
+              x-enumDescriptions:
+                '0': '0'
+                '1': '1'
+                '2': '2'
+                '3': '3'
+                '4': '4'
+                disabled: Disabled
+              description: Daily increment added to the sending limit, starting from 0, until the full daily limit is reached (slow ramp). Gradually increases sending volume to improve deliverability. Set to `disabled` to send at the full daily limit from day one.
+              example: disabled
+            reply_rate:
+              type: number
+              description: Reply rate for the account
+              example: 0.1
+        added_by:
+          type:
+          - 'null'
+          - string
+          description: User ID who added the account
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c8d-7f3d-bee3-56986ea16c41
+        daily_limit:
+          type:
+          - 'null'
+          - number
+          description: Daily email sending limit
+          example: 100
+        daily_limit_max:
+          type:
+          - 'null'
+          - number
+          description: Maximum daily email sending limit for AirMail accounts
+          readOnly: true
+          example: 100
+        warmup_limit_max:
+          type:
+          - 'null'
+          - number
+          description: Maximum daily warmup sending limit for AirMail accounts
+          readOnly: true
+          example: 100
+        modified_by:
+          type:
+          - 'null'
+          - string
+          description: User ID who last modified the account
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c8d-7f3d-bee3-56990262e845
+        tracking_domain_name:
+          type:
+          - 'null'
+          - string
+          description: Tracking domain
+          example: example.com
+        tracking_domain_status:
+          type:
+          - 'null'
+          - string
+          description: Tracking domain status
+          example: active
+        status:
+          type: number
+          description: Current status of the account
+          readOnly: true
+          enum:
+          - 1
+          - 2
+          - 3
+          - -1
+          - -2
+          - -3
+          x-enumDescriptions:
+            '1': Active
+            '2': Paused
+            '3': Temporarily paused for maintenance; will be automatically resumed shortly
+            '-1': Connection Error
+            '-2': Soft Bounce Error
+            '-3': Sending Error
+          example: 1
+        enable_slow_ramp:
+          type:
+          - 'null'
+          - boolean
+          description: Whether to enable slow ramp up for sending limits
+          example: false
+        inbox_placement_test_limit:
+          type:
+          - 'null'
+          - number
+          description: The limit for inbox placement tests
+          minimum: 0
+          example: 10
+        organization:
+          type: string
+          description: Organization ID that owns this account
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c8d-7f3d-bee3-569acb8bcc4f
+        warmup_status:
+          type: number
+          description: Current warmup status of the account
+          readOnly: true
+          enum:
+          - 0
+          - 1
+          - -1
+          - -2
+          - -3
+          x-enumDescriptions:
+            '0': Paused
+            '1': Active
+            '-1': Banned
+            '-2': Spam Folder Unknown
+            '-3': Permanent Suspension
+          example: 1
+        status_message:
+          type: object
+          description: Status message for the account
+          readOnly: true
+          properties:
+            code:
+              type: string
+              example: EENVELOPE
+            command:
+              type: string
+              example: DATA
+            response:
+              type: string
+              example: 550-5.4.5 Daily user sending limit exceeded. For more information on Gmai
+            e_message:
+              type: string
+              example: 'error: data command failed: 550-5.4.5 daily user sending limit exceeded'
+            responseCode:
+              type: number
+              example: 550
+          additionalProperties: true
+        timestamp_warmup_start:
+          type:
+          - 'null'
+          - string
+          description: Timestamp when warmup was started
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.093Z'
+        provider_code:
+          type: number
+          description: Provider code for the account. Please make sure to specify the right provider code, otherwise your account will not work.
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 8
+          - 11
+          x-enumDescriptions:
+            '1': Custom IMAP/SMTP
+            '2': Google
+            '3': Microsoft
+            '4': AWS
+            '8': AirMail
+            '11': Airmail Instant
+          example: 2
+        setup_pending:
+          type: boolean
+          description: Whether account setup is pending
+          readOnly: true
+          example: false
+        is_managed_account:
+          type: boolean
+          description: Whether this is a managed account
+          readOnly: true
+          example: false
+        stat_warmup_score:
+          type:
+          - 'null'
+          - number
+          description: Warmup score for the account
+          readOnly: true
+          example: 85
+        sending_gap:
+          type: number
+          description: The gap between emails sent from this account in minutes (minimum wait time when used with multiple campaigns)
+          minimum: 0
+          maximum: 1440
+          example: 10
+        signature:
+          type:
+          - 'null'
+          - string
+          description: Email signature for the account
+          example: Best regards, John Doe
+        reply_to:
+          type:
+          - 'null'
+          - string
+          description: Custom reply-to email address for the account
+          format: email
+          example: reply@example.com
+        autofix_failed:
+          type:
+          - 'null'
+          - boolean
+          description: Whether automatic reconnection attempts have failed. null = in progress, true = failed, false = succeeded.
+          readOnly: true
+          example: false
+      required:
+      - email
+      - timestamp_created
+      - timestamp_updated
+      - first_name
+      - last_name
+      - organization
+      - warmup_status
+      - provider_code
+      - setup_pending
+      - is_managed_account
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

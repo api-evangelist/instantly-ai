@@ -1,0 +1,1977 @@
+openapi: 3.2.0
+info:
+  title: Explorer DFY Email Account Order API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: DFYEmailAccountOrder
+  description: A Done-For-You email account order
+  x-group: DFY Email Account Order
+paths:
+  /api/v2/dfy-email-account-orders:
+    post:
+      operationId: createDFYEmailAccountOrder
+      summary: Place a DFY email account order
+      tags:
+      - DFYEmailAccountOrder
+      description: 'Place a Done-For-You (DFY) email account order for your workspace.
+
+
+        **Order types**
+
+        - `dfy`: Buy new DFY accounts on new custom domains.
+
+        - `pre_warmed_up`: Buy available pre-warmed domains returned by `/dfy-email-account-orders/domains/pre-warmed-up-list`.
+
+        - `extra_accounts`: Add mailboxes to domains you already ordered. All active accounts on a domain must use the same `email_provider`.
+
+
+        **Provider limits and pricing**
+
+        - `1` Google: up to 5 mailboxes per domain; per-mailbox monthly pricing.
+
+        - `2` AirMail: up to 5 mailboxes per domain; per-mailbox monthly pricing.
+
+        - `3` Microsoft/Outlook: 50-100 mailboxes per new DFY domain; per-domain monthly pricing; extra-account orders are not supported.
+
+
+        **Before ordering**
+
+        - Regular DFY domains must use supported TLDs: .com, .org.
+
+        - Check new-domain availability with `/dfy-email-account-orders/domains/check`.
+
+        - Domains containing trademarks of well-known companies are restricted and cannot be ordered.
+
+        - For pre-warmed orders, choose a domain from `/dfy-email-account-orders/domains/pre-warmed-up-list`; if none are available, use a regular `dfy` order instead.
+
+        - The workspace must have an active free trial, paid CRM plan, or Outreach entitlement, and a default payment method.
+
+
+
+        Requires one of the following scopes: `dfy_email_account_orders:create`, `dfy_email_account_orders:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  description: List of domains and accounts to order
+                  items:
+                    type: object
+                    properties:
+                      domain:
+                        type: string
+                        description: The domain to use for the email accounts.For regular DFY accounts the only allowed domain extensions (tlds) are .com and .org.For regular DFY accounts - you can check the domain availability using the /dfy-email-account-orders/domains/check endpoint before placing an order.For pre-warmed up domains - use the /dfy-email-account-orders/domains endpoint to get a list of available domains.Domains containing trademarks of well-known companies are restricted and cannot be ordered.
+                        example: example.com
+                      email_provider:
+                        type: number
+                        description: 'The mailbox product to order. Defaults to Google when omitted.
+
+
+                          Options:
+
+                          - 1: Google. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                          - 2: AirMail. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                          - 3: Microsoft/Outlook. 50-100 mailboxes per new DFY domain; priced per domain monthly.'
+                        enum:
+                        - 1
+                        - 2
+                        - 3
+                        x-enumDescriptions:
+                          '1': Google
+                          '2': AirMail
+                          '3': Microsoft/Outlook
+                        default: 1
+                        example: 1
+                      forwarding_domain:
+                        type: string
+                        description: An optional domain to forward emails to. This domain must be different from the main domain.
+                        example: forward-to-this-domain.com
+                      accounts:
+                        type: array
+                        description: List of email accounts to create (only if `pre_warmed_up` field is false). For pre-warmed up domains this field will be ignored because the accounts are already created and can't be changed. Please provide minimum 1 and maximum 5 accounts per domain for Google or AirMail, or 50-100 for Microsoft/Outlook.
+                        items:
+                          type: object
+                          properties:
+                            email_address_prefix:
+                              type: string
+                              description: The prefix for the email address (the part before the @). For instance, if the email address is "john.doe@example.com", then the email_address_prefix is "john.doe".
+                              example: john.doe
+                            first_name:
+                              type: string
+                              description: The first name of the account owner
+                              example: John
+                            last_name:
+                              type: string
+                              description: The last name of the account owner
+                              example: Doe
+                          required:
+                          - email_address_prefix
+                          - first_name
+                          - last_name
+                        default: []
+                        maxItems: 100
+                    required:
+                    - domain
+                order_type:
+                  type: string
+                  description: The type of order to place. Please check the docs because this endpoint performs different actions based on the order type.
+                  enum:
+                  - dfy
+                  - pre_warmed_up
+                  - extra_accounts
+                  x-enumDescriptions:
+                    dfy: Regular DFY accounts - it will place an order to buy new DFY accounts
+                    pre_warmed_up: Pre-warmed up accounts - it will place an order to buy new pre-warmed up accounts
+                    extra_accounts: Extra accounts - it will place an order to add extra accounts to already ordered domains
+                  example: dfy
+                simulation:
+                  type: boolean
+                  description: Whether to run a simulation of the order ot not. If set to true, the order will NOT be placed, your card will NOT be charged, and only a price quote will be returned. We will still check the validity of the order and the accounts, and return the results of the validation (if the order_is_valid field is true, then the order would be valid and could be placed).
+                  default: false
+                  example: false
+              required:
+              - items
+              - order_type
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_placed:
+                    type: boolean
+                    description: Whether the order was placed or not. If true, then the order was placed successfully. If false, then the order was not placed due to an error or simulation mode was enabled.
+                    example: true
+                  order_is_valid:
+                    type: boolean
+                    description: Whether the order is valid or not. If true, then the order is valid and can be placed. If false, then the order is not valid and cannot be placed. Use this field when you run a simulation to understand whether a real order would be valid.
+                    example: true
+                  order_error:
+                    type: string
+                    description: The error that occurred if the order was not placed. If the order was placed successfully, then this field will be omitted.
+                    enum:
+                    - unavailable_domains
+                    - blacklist_domains
+                    - invalid_domains
+                    - invalid_forwarding_domains
+                    - invalid_accounts
+                    - payment_failed
+                    - missing_domain_orders
+                    - domains_without_accounts
+                    - provider_mismatch
+                    - unsupported_provider
+                    - provider_unavailable
+                    x-enumDescriptions:
+                      unavailable_domains: Some domains are not available for order - check the `unavailable_domains` field
+                      blacklist_domains: Some domains are blacklisted - check the `blacklist_domains` field
+                      invalid_domains: Some domains are invalid - check the `invalid_domains` field
+                      invalid_forwarding_domains: Some forwarding domains are invalid - check the `invalid_forwarding_domains` field
+                      invalid_accounts: Some accounts are invalid - check the `invalid_accounts` field the list of invalid accounts
+                      payment_failed: The payment failed - please make sure you have enough funds in your payment method
+                      missing_domain_orders: Some domains are missing orders (when you set the `order_type` to `extra_accounts`, all the domains you want to add extra accounts to must be already ordered) - check the `missing_domain_orders` field
+                      domains_without_accounts: Some domains are missing accounts - check the `domains_without_accounts` field
+                      provider_mismatch: Some domains received an `email_provider` that does not match the existing accounts on that domain, or the domain is in a mixed provider state — check the `provider_mismatch_domains` field. All accounts for a domain must use the same provider.
+                      unsupported_provider: Some domains use an existing provider that does not support extra-account orders through this endpoint - check the `unsupported_provider_domains` field.
+                      provider_unavailable: One or more requested email providers are not available for ordering right now - check the `unavailable_email_providers` field.
+                    example: unavailable_domains
+                  payment_failure_reason:
+                    type: string
+                    description: A safe, provider-independent payment failure reason. Present only when a payment attempt failed.
+                    enum:
+                    - payment_method_not_supported
+                    - authentication_required
+                    - card_expired
+                    - generic_decline
+                    example: payment_method_not_supported
+                  unavailable_domains:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of unavailable domains (if any)
+                  blacklist_domains:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of blacklisted domains (if any)
+                    example:
+                    - example.com
+                    - acme.com
+                  blacklist_keywords:
+                    type: array
+                    items:
+                      type: string
+                      example: google
+                    description: The restricted keywords matched in `blacklist_domains` (if any)
+                    example:
+                    - google
+                    - equifax
+                  invalid_domains:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of invalid domains (if any)
+                    example:
+                    - example.com
+                    - acme.com
+                  invalid_forwarding_domains:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of invalid forwarding domains (if any)
+                    example:
+                    - example.com
+                    - acme.com
+                  missing_domain_orders:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of domains that are missing order (if any). Can happen when you order extra accounts for domains that you didn't order before.
+                  provider_mismatch_domains:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of domains whose requested `email_provider` does not match the existing active provider for that domain, or that are already in a mixed provider state in our records. All accounts for a domain must use the same provider.
+                  unsupported_provider_domains:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of domains that cannot receive extra accounts through this endpoint because their existing provider is not supported for public API extra-account orders.
+                  unavailable_email_providers:
+                    type: array
+                    items:
+                      type: number
+                      enum:
+                      - 1
+                      - 2
+                      - 3
+                      x-enumDescriptions:
+                        '1': Google
+                        '2': AirMail
+                        '3': Microsoft/Outlook
+                      example: 2
+                    description: The requested email providers that are not available for ordering right now.
+                    example:
+                    - 2
+                  domains_without_accounts:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of domains without accounts (if any). The `accounts` field for items in the `items` array for these domains was empty.
+                    example:
+                    - example.com
+                    - acme.com
+                  invalid_accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          description: The domain
+                          example: example.com
+                        first_name:
+                          type: string
+                          description: The account first name
+                          example: John
+                        last_name:
+                          type: string
+                          description: The account last name
+                          example: Doe
+                        email:
+                          type: string
+                          description: The account email
+                          example: john.doe@example.com
+                        reason:
+                          type: string
+                          description: The reason why the account is invalid
+                          example: First name is required
+                      required:
+                      - domain
+                      - first_name
+                      - last_name
+                      - email
+                      - reason
+                    description: The list of invalid accounts (if any)
+                  free_domains:
+                    type: array
+                    items:
+                      type: string
+                      example: example.com
+                    description: The list of domains that are free (domains can be free during promotions)
+                    example:
+                    - example.com
+                    - acme.com
+                  number_of_domains_ordered:
+                    type: number
+                    description: The number of domains ordered
+                    example: 1
+                  number_of_accounts_ordered:
+                    type: number
+                    description: The number of accounts ordered
+                    example: 1
+                  price_per_account_per_month:
+                    type:
+                    - 'null'
+                    - number
+                    description: Legacy monthly price charged per mailbox. Null for mixed mailbox-provider orders; use `price_per_account_per_month_by_account_type` and `order_items[].accounts[].price` for provider-specific prices. For Microsoft/Outlook orders mailboxes are NOT charged individually — see `price_per_domain_per_month` instead.
+                    example: null
+                  price_per_account_per_month_by_account_type:
+                    type: object
+                    additionalProperties:
+                      type: number
+                      examples:
+                      - 4
+                      example: 4
+                    description: Provider-specific monthly mailbox prices keyed by account type. Present when the order contains per-account providers with different mailbox prices.
+                    example:
+                      '1': 5
+                      '2': 4
+                  price_per_domain_per_month:
+                    type:
+                    - 'null'
+                    - number
+                    description: 'The monthly price charged per domain. Populated only when the order contains Microsoft/Outlook items (domain-level billing: $20/month/domain for 50-100 mailboxes). Null for Google / AirMail-only orders.'
+                    example: 20
+                  price_per_domain_per_year:
+                    type: number
+                    description: The price per domain per year
+                    example: 100
+                  total_domains_price_per_year:
+                    type: number
+                    description: The total price per domain per year
+                    example: 100
+                  total_accounts_price_per_month:
+                    type: number
+                    description: The total monthly price charged for accounts in the order. For Google / AirMail this is `per-account price × mailbox count`. For Microsoft/Outlook it is `$20 × domain count` (domain-level billing for 50-100 mailboxes per domain).
+                    example: 10
+                  total_price_per_month:
+                    type: number
+                    description: The total price per month you will have to pay for the order
+                    example: 100
+                  total_price_per_year:
+                    type: number
+                    description: The total price per year you will have to pay for the order
+                    example: 100
+                  total_price:
+                    type: number
+                    description: The total price you will have to pay for the order at the moment. This is the sum of the `total_accounts_price_per_month` and the `total_domains_price_per_year` fields.
+                    example: 100
+                  total_discount:
+                    type: number
+                    description: The total discount you will get for the order at the moment. Discounts are applied automatically when we're running promotions.
+                    example: 100
+                  payment_method_last_4_digits:
+                    type: string
+                    description: The last 4 digits of the payment method used for the order
+                    example: '1234'
+                  payment_method_brand:
+                    type: string
+                    description: The brand of the payment method used for the order
+                    example: Visa
+                  payment_method_name_on_card:
+                    type: string
+                    description: The name on the card used for the order
+                    example: John Doe
+                  checkout_required:
+                    type: boolean
+                    description: Whether the order requires payment through a hosted checkout before it can be placed.
+                    example: true
+                  checkout_url:
+                    type: string
+                    description: The hosted checkout URL. Returned only for browser-authenticated orders that require a payment method.
+                    example: https://checkout.stripe.com/c/pay/example
+                  cart_order_id:
+                    type: string
+                    description: The identifier used to fulfill the order after hosted checkout payment succeeds.
+                    example: 123e4567-e89b-12d3-a456-426614174000
+                  simulation:
+                    type: boolean
+                    description: Whether to run the request in simulation mode or not. If set to true, the order will NOT be placed, your card will NOT be charged, and only a price quote will be returned. We will still check the validity of the order and the accounts, and return the results of the validation (if the order_is_valid field is true, then the order would be valid and could be placed).
+                    example: true
+                  order_items:
+                    type: array
+                    description: The list of items that were ordered, with the pricing information for each item.
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          description: The domain to use for the email accounts.
+                          example: example.com
+                        accounts:
+                          type: array
+                          description: The list of accounts that were ordered for the domain.
+                          items:
+                            type: object
+                            properties:
+                              email_address_prefix:
+                                type: string
+                                description: The email address prefix of the account.
+                                example: john.doe
+                              first_name:
+                                type: string
+                                description: The account first name.
+                                example: John
+                              last_name:
+                                type: string
+                                description: The account last name.
+                                example: Doe
+                            required:
+                            - email_address_prefix
+                            - first_name
+                            - last_name
+                        email_provider:
+                          type: number
+                          description: 'The mailbox product to order. Defaults to Google when omitted.
+
+
+                            Options:
+
+                            - 1: Google. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 2: AirMail. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 3: Microsoft/Outlook. 50-100 mailboxes per new DFY domain; priced per domain monthly.'
+                          enum:
+                          - 1
+                          - 2
+                          - 3
+                          x-enumDescriptions:
+                            '1': Google
+                            '2': AirMail
+                            '3': Microsoft/Outlook
+                          example: 1
+                        forwarding_domain:
+                          type: string
+                          description: The forwarding domain to use for the domain.
+                          example: example.com
+                        domain_price:
+                          type: number
+                          description: The price for the domain.
+                          example: 100
+                        accounts_price:
+                          type: number
+                          description: The total price for the accounts in the item. For Google / AirMail this is `per-account price × mailbox count`. For Microsoft/Outlook it is the flat `$20` per-domain bundle.
+                          example: 20
+                        domain_monthly_price:
+                          type:
+                          - 'null'
+                          - number
+                          description: The monthly price for the domain bundle. Populated only for providers whose billing is domain-level (Microsoft/Outlook — $20/month/domain, 50-100 mailboxes). Null for per-account providers.
+                          example: 20
+                        total_price:
+                          type: number
+                          description: The total price for the item.
+                          example: 100
+                        total_discount:
+                          type: number
+                          description: The total discount for the item.
+                          example: 100
+                      required:
+                      - domain
+                      - accounts
+                      - email_provider
+                      - domain_price
+                      - accounts_price
+                      - total_price
+                      - total_discount
+                required:
+                - order_placed
+                - order_is_valid
+                - unavailable_domains
+                - blacklist_domains
+                - invalid_domains
+                - invalid_forwarding_domains
+                - invalid_accounts
+                - missing_domain_orders
+                - provider_mismatch_domains
+                - unsupported_provider_domains
+                - unavailable_email_providers
+                - domains_without_accounts
+                - free_domains
+                - number_of_domains_ordered
+                - number_of_accounts_ordered
+                - price_per_account_per_month
+                - price_per_domain_per_year
+                - total_domains_price_per_year
+                - total_accounts_price_per_month
+                - total_price_per_month
+                - total_price_per_year
+                - total_price
+                - total_discount
+                - simulation
+                - order_items
+                - payment_method_last_4_digits
+                - payment_method_brand
+                - payment_method_name_on_card
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listDFYEmailAccountOrder
+      summary: List dfy email account order
+      tags:
+      - DFYEmailAccountOrder
+      description: 'Requires one of the following scopes: `dfy_email_account_orders:read`, `dfy_email_account_orders:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      responses:
+        '200':
+          description: The list of DFY Email Account Order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of DFY Email Account Order
+                    items:
+                      $ref: '#/components/schemas/DFYEmailAccountOrder'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9be6-7dfb-9fd5-eb4f69b27f33
+                    - '2026-08-13T11:12:14.310Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9be6-7dfb-9fd5-eb4f69b27f33
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/dfy-email-account-orders/domains/similar:
+    post:
+      operationId: generateSimilarDomains
+      summary: Generate similar available domains
+      tags:
+      - DFYEmailAccountOrder
+      description: 'This endpoint will generate a list of similar AND available domains based on the provided domain.. It will return a maximum number of 67 suggestions per extension (tld) requested.. All the returned domains will be available for order.. Domains containing trademarks of well-known companies are restricted and cannot be ordered.
+
+
+
+        Requires one of the following scopes: `dfy_email_account_orders:create`, `dfy_email_account_orders:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domain:
+                  type: string
+                  description: The domain to base the suggestions on
+                  example: example.com
+                tlds:
+                  type: array
+                  description: The extensions (tlds) to use for generating similar domains. By default, we will use com and org.
+                  items:
+                    type: string
+                    enum:
+                    - com
+                    - org
+                    maximum: 2
+                    x-enumDescriptions:
+                      com: .com domain
+                      org: .org domain
+                    example: com
+                  default:
+                  - com
+                  - org
+              required:
+              - domain
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domains:
+                    type: array
+                    items:
+                      type: string
+                      example: acme.com
+                    description: List of similar and available domains
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  error:
+                    type: string
+                    example: Bad Request
+                  message:
+                    type: string
+                    example: 'The provided domain contains a restricted keyword: "example". Please choose another domain.'
+                  code:
+                    type: string
+                    enum:
+                    - restricted_domain
+                    example: restricted_domain
+                  keyword:
+                    type: string
+                    example: example
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/dfy-email-account-orders/domains/check:
+    post:
+      operationId: checkDomainsAvailability
+      summary: Check domains availability
+      tags:
+      - DFYEmailAccountOrder
+      description: 'This endpoint will check the availability of the provided domains.. It will return a list of domains with their availability status.
+
+
+        . The only supported extensions (tlds) are: .com, .org.
+
+
+        . Domains containing trademarks of well-known companies are restricted and cannot be ordered.
+
+
+        . Please do not abuse this endpoint and do not use it for anything other than checking availability before ordering a domain.. This request has a rate limit of 30 request per minute, or 900 requests per hour.
+
+
+
+        Requires one of the following scopes: `dfy_email_account_orders:create`, `dfy_email_account_orders:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domains:
+                  type: array
+                  description: List of domains to check
+                  items:
+                    type: string
+                    example: example.com
+                  maxItems: 50
+              required:
+              - domains
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          description: The domain name
+                          example: example.com
+                        available:
+                          type: boolean
+                          description: Whether the domain is available or not
+                          example: true
+                        unavailable_reason:
+                          type: string
+                          enum:
+                          - restricted
+                          description: Present when a domain is unavailable because it is restricted
+                          example: restricted
+                        restricted_keyword:
+                          type: string
+                          description: The restricted keyword matched when `unavailable_reason` is `restricted`
+                          example: equifax
+                    description: List of domains with their availability status
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/dfy-email-account-orders/domains/pre-warmed-up-list:
+    post:
+      operationId: preWarmedUpDomainsList
+      summary: Get pre-warmed up domains
+      tags:
+      - DFYEmailAccountOrder
+      description: 'This endpoint will return a list of pre-warmed up domains available for order.<br/>These domains are set up and configured in advance, allowing for quick deployment of email services.<br/>Use this endpoint to retrieve available pre-warmed up domains before placing an order.<br/><br/><b>IMPORTANT: if the endpoint returns a list of empty domains - it''s not a bug, please don''t retry right away or report this as a bug - it simply means that there are no available pre-warmed up domains at the moment.</b>
+
+
+
+        Requires one of the following scopes: `dfy_email_account_orders:read`, `dfy_email_account_orders:all`, `all:read`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                extensions:
+                  type: array
+                  description: A list of domain extensions to filter the results by. If not provided, all available extensions will be returned.
+                  items:
+                    type: string
+                    enum:
+                    - com
+                    - org
+                    - co
+                    x-enumDescriptions:
+                      com: .com domain
+                      org: .org domain
+                      co: .co domain
+                    example: com
+                  default:
+                  - com
+                  - org
+                  - co
+                search:
+                  type: string
+                  description: A search string to filter the domains by. This can be a partial or full domain name.
+                  example: acme.com
+              description: This endpoint does not require any parameters in the request body.
+        description: This endpoint does not require any parameters in the request body.
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domains:
+                    type: array
+                    items:
+                      type: string
+                      example: acme.com
+                    description: List of pre-warmed up domains available for order
+                  domains_with_type:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          example: acme.com
+                        account_type:
+                          type: number
+                          description: 'The mailbox product to order. Defaults to Google when omitted.
+
+
+                            Options:
+
+                            - 1: Google. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 2: AirMail. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 3: Microsoft/Outlook. 50-100 mailboxes per new DFY domain; priced per domain monthly.'
+                          enum:
+                          - 1
+                          - 2
+                          - 3
+                          x-enumDescriptions:
+                            '1': Google
+                            '2': AirMail
+                            '3': Microsoft/Outlook
+                          example: 2
+                      required:
+                      - domain
+                      - account_type
+                    description: Pre-warmed up domains annotated with their underlying email provider
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/dfy-email-account-orders/accounts:
+    get:
+      operationId: listDFYEmailAccountOrdersAccounts
+      summary: List DFY ordered email accounts
+      tags:
+      - DFYEmailAccountOrder
+      description: 'This endpoint will return a list of DFY email accounts ordered
+
+
+
+        Requires one of the following scopes: `dfy_email_account_orders:read`, `dfy_email_account_orders:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: boolean
+          example: true
+        examples:
+          'true':
+            value: true
+          'false':
+            value: false
+        in: query
+        name: with_passwords
+        required: false
+        description: Whether to include passwords in the response
+      responses:
+        '200':
+          description: The list of accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of accounts
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier of the email account order
+                          examples:
+                          - 123e4567-e89b-12d3-a456-426614174000
+                          example: 123e4567-e89b-12d3-a456-426614174000
+                        domain:
+                          type: string
+                          description: The domain associated with the email account
+                          examples:
+                          - example.com
+                          example: example.com
+                        email:
+                          type: string
+                          description: The email address of the account
+                          examples:
+                          - user@example.com
+                          example: user@example.com
+                        email_provider:
+                          type: number
+                          description: 'The mailbox product to order. Defaults to Google when omitted.
+
+
+                            Options:
+
+                            - 1: Google. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 2: AirMail. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 3: Microsoft/Outlook. 50-100 mailboxes per new DFY domain; priced per domain monthly.'
+                          enum:
+                          - 1
+                          - 2
+                          - 3
+                          x-enumDescriptions:
+                            '1': Google
+                            '2': AirMail
+                            '3': Microsoft/Outlook
+                          examples:
+                          - 1
+                          example: 1
+                        first_name:
+                          type: string
+                          description: The first name of the account
+                          examples:
+                          - John
+                          example: John
+                        last_name:
+                          type: string
+                          description: The last name of the account
+                          examples:
+                          - Doe
+                          example: Doe
+                        is_pre_warmed_up:
+                          type: boolean
+                          description: Whether the account is pre-warmed up
+                          examples:
+                          - true
+                          - false
+                          example: true
+                        timestamp_cancelled:
+                          type: string
+                          description: The timestamp when the account was cancelled
+                          examples:
+                          - '2025-01-01T00:00:00.000Z'
+                          example: '2025-01-01T00:00:00.000Z'
+                        timestamp_created:
+                          type: string
+                          description: The timestamp when the account was created
+                          examples:
+                          - '2025-01-01T00:00:00.000Z'
+                          example: '2025-01-01T00:00:00.000Z'
+                        password:
+                          type: string
+                          description: The password of the account (returned only if `with_passwords` is true). This field can be empty if the accounts are not ready yet.
+                          examples:
+                          - password
+                          example: password
+                      required:
+                      - id
+                      - domain
+                      - email
+                      - email_provider
+                      - first_name
+                      - last_name
+                      - is_pre_warmed_up
+                      - timestamp_cancelled
+                      - timestamp_created
+                  next_starting_after:
+                    type: string
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    examples:
+                    - 123e4567-e89b-12d3-a456-426614174000:2025-01-01T00:00:00.000Z
+                    example: 123e4567-e89b-12d3-a456-426614174000:2025-01-01T00:00:00.000Z
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/dfy-email-account-orders/accounts/cancel:
+    post:
+      operationId: cancelDFYEmailAccounts
+      summary: Cancel dfy email accounts
+      tags:
+      - DFYEmailAccountOrder
+      description: 'This endpoint will cancel the DFY email accounts based on the provided email addresses. Cancelling permanently deletes all Unibox emails and conversations associated with the cancelled accounts. This cannot be undone.
+
+
+
+        Requires one of the following scopes: `dfy_email_account_orders:delete`, `dfy_email_account_orders:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accounts:
+                  type: array
+                  items:
+                    type: string
+                    example: test@test.com
+                  minItems: 1
+                  description: List of emails to cancel the DFY email accounts for.
+              required:
+              - accounts
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of cancelled email accounts.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier of the email account order
+                          example: 123e4567-e89b-12d3-a456-426614174000
+                        domain:
+                          type: string
+                          description: The domain associated with the email account
+                          example: example.com
+                        email:
+                          type: string
+                          description: The email address of the account
+                          example: user@example.com
+                        email_provider:
+                          type: number
+                          description: 'The mailbox product to order. Defaults to Google when omitted.
+
+
+                            Options:
+
+                            - 1: Google. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 2: AirMail. Up to 5 mailboxes per domain; priced per mailbox monthly.
+
+                            - 3: Microsoft/Outlook. 50-100 mailboxes per new DFY domain; priced per domain monthly.'
+                          enum:
+                          - 1
+                          - 2
+                          - 3
+                          x-enumDescriptions:
+                            '1': Google
+                            '2': AirMail
+                            '3': Microsoft/Outlook
+                          example: 1
+                        first_name:
+                          type: string
+                          description: The first name of the account
+                          example: John
+                        last_name:
+                          type: string
+                          description: The last name of the account
+                          example: Doe
+                        is_pre_warmed_up:
+                          type: boolean
+                          description: Whether the account is pre-warmed up
+                          example: true
+                        timestamp_cancelled:
+                          type: string
+                          description: The timestamp when the account was cancelled
+                          example: '2025-01-01T00:00:00.000Z'
+                        timestamp_created:
+                          type: string
+                          description: The timestamp when the account was created
+                          example: '2025-01-01T00:00:00.000Z'
+                      required:
+                      - id
+                      - domain
+                      - email
+                      - email_provider
+                      - first_name
+                      - last_name
+                      - is_pre_warmed_up
+                      - timestamp_cancelled
+                      - timestamp_created
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    DFYEmailAccountOrder:
+      title: DFY Email Account Order
+      description: A Done-For-You email account order
+      x-tags:
+      - Schemas
+      - DFYEmailAccountOrder
+      type: object
+      properties:
+        workspace_id:
+          type: string
+          description: ID of the workspace associated with the email account order
+          readOnly: true
+          example: workspace_12345
+        domain:
+          type: string
+          description: Domain of the email account
+          readOnly: true
+          example: example.com
+        forwarding_domain:
+          type:
+          - 'null'
+          - string
+          description: Forwarding domain for the email account, if any
+          example: forward.example.com
+        forwarding_mode:
+          type:
+          - 'null'
+          - string
+          description: How the forwarding domain is applied. Null when no forwarding is configured.
+          enum:
+          - redirect
+          - stealth
+          - null
+          x-enumDescriptions:
+            redirect: Visitors are redirected and the browser URL changes to the forwarding domain
+            stealth: Visitors stay on this domain while the content is proxied from the forwarding domain
+          example: redirect
+        is_pre_warmed_up:
+          type:
+          - 'null'
+          - boolean
+          description: Indicates if the account is pre-warmed up
+          example: true
+        timestamp_cancelled:
+          type:
+          - 'null'
+          - string
+          description: Timestamp when the order was cancelled, if applicable
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.212Z'
+        timestamp_created:
+          type: string
+          description: Timestamp when the order was created
+          readOnly: true
+          format: date-time
+          example: '2026-08-13T11:11:58.212Z'
+      required:
+      - workspace_id
+      - domain
+      - timestamp_created
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer

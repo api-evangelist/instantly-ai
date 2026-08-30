@@ -1,0 +1,2557 @@
+openapi: 3.2.0
+info:
+  title: Explorer Inbox Placement Test API
+  description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
+  version: 2.0.0
+servers:
+- url: https://api.instantly.ai
+  description: Instantly API Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: InboxPlacementTest
+  description: An inbox placement test
+  x-group: Inbox Placement Test
+paths:
+  /api/v2/inbox-placement-tests:
+    post:
+      operationId: createInboxPlacementTest
+      summary: Create inbox placement test
+      tags:
+      - InboxPlacementTest
+      description: 'Requires one of the following scopes: `inbox_placement_tests:create`, `inbox_placement_tests:all`, `all:create`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreateInbox Placement Test
+              description: The Inbox Placement Test to create
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the inbox placement test
+                  example: My Inbox Placement Test
+                delivery_mode:
+                  type:
+                  - 'null'
+                  - number
+                  description: Whether to send emails one by one or all together
+                  enum:
+                  - 1
+                  - 2
+                  - null
+                  x-enumDescriptions:
+                    '1': One by one
+                    '2': All together
+                  example: 1
+                description:
+                  type:
+                  - string
+                  - 'null'
+                  description: Description of the inbox placement test
+                  example: This is a test description
+                schedule:
+                  type: object
+                  description: Specifies the date and time when the automated inbox placement tests will be sent.
+                  properties:
+                    days:
+                      type: object
+                      description: Days of the week when the test will run, where keys are integers (0-6, 0 = Sunday) and values are booleans indicating active days.
+                      additionalProperties:
+                        type: boolean
+                        examples:
+                        - false
+                        example: false
+                      example:
+                        '0': false
+                        '1': false
+                        '2': true
+                        '3': true
+                        '4': false
+                        '5': false
+                        '6': false
+                    timing:
+                      type: object
+                      properties:
+                        from:
+                          type: string
+                          description: The time of day when the test will start (24-hour format).
+                          example: 02:30
+                      description: Timing configuration for the scheduled test.
+                    timezone:
+                      type: string
+                      enum:
+                      - Etc/GMT+12
+                      - Etc/GMT+11
+                      - Etc/GMT+10
+                      - America/Anchorage
+                      - America/Dawson
+                      - America/Creston
+                      - America/Chihuahua
+                      - America/Boise
+                      - America/Belize
+                      - America/Chicago
+                      - America/Bahia_Banderas
+                      - America/Regina
+                      - America/Bogota
+                      - America/Detroit
+                      - America/Indiana/Marengo
+                      - America/Caracas
+                      - America/Asuncion
+                      - America/Glace_Bay
+                      - America/Campo_Grande
+                      - America/Anguilla
+                      - America/Santiago
+                      - America/St_Johns
+                      - America/Sao_Paulo
+                      - America/Argentina/La_Rioja
+                      - America/Araguaina
+                      - America/Godthab
+                      - America/Montevideo
+                      - America/Bahia
+                      - America/Noronha
+                      - America/Scoresbysund
+                      - Atlantic/Cape_Verde
+                      - Africa/Casablanca
+                      - America/Danmarkshavn
+                      - Europe/Isle_of_Man
+                      - Atlantic/Canary
+                      - Africa/Abidjan
+                      - Arctic/Longyearbyen
+                      - Europe/Belgrade
+                      - Africa/Ceuta
+                      - Europe/Sarajevo
+                      - Africa/Algiers
+                      - Africa/Windhoek
+                      - Asia/Nicosia
+                      - Asia/Beirut
+                      - Africa/Cairo
+                      - Asia/Damascus
+                      - Europe/Bucharest
+                      - Africa/Blantyre
+                      - Europe/Helsinki
+                      - Europe/Istanbul
+                      - Asia/Jerusalem
+                      - Africa/Tripoli
+                      - Asia/Amman
+                      - Asia/Baghdad
+                      - Europe/Kaliningrad
+                      - Asia/Aden
+                      - Africa/Addis_Ababa
+                      - Europe/Kirov
+                      - Europe/Astrakhan
+                      - Asia/Tehran
+                      - Asia/Dubai
+                      - Asia/Baku
+                      - Indian/Mahe
+                      - Asia/Tbilisi
+                      - Asia/Yerevan
+                      - Asia/Kabul
+                      - Antarctica/Mawson
+                      - Asia/Yekaterinburg
+                      - Asia/Karachi
+                      - Asia/Kolkata
+                      - Asia/Colombo
+                      - Asia/Kathmandu
+                      - Antarctica/Vostok
+                      - Asia/Dhaka
+                      - Asia/Rangoon
+                      - Antarctica/Davis
+                      - Asia/Novokuznetsk
+                      - Asia/Hong_Kong
+                      - Asia/Krasnoyarsk
+                      - Asia/Brunei
+                      - Australia/Perth
+                      - Asia/Taipei
+                      - Asia/Choibalsan
+                      - Asia/Irkutsk
+                      - Asia/Dili
+                      - Asia/Pyongyang
+                      - Australia/Adelaide
+                      - Australia/Darwin
+                      - Australia/Brisbane
+                      - Australia/Melbourne
+                      - Antarctica/DumontDUrville
+                      - Australia/Currie
+                      - Asia/Chita
+                      - Antarctica/Macquarie
+                      - Asia/Sakhalin
+                      - Pacific/Auckland
+                      - Etc/GMT-12
+                      - Pacific/Fiji
+                      - Asia/Anadyr
+                      - Asia/Kamchatka
+                      - Etc/GMT-13
+                      - Pacific/Apia
+                      description: Timezone in which the schedule is set, in IANA timezone format.
+                      example: Etc/GMT+12
+                  example:
+                    days:
+                      '2': true
+                      '3': true
+                    timing:
+                      from: 02:30
+                    timezone: America/Chihuahua
+                type:
+                  type: number
+                  description: Whether the inbox placement test is a one-time test or an automated test
+                  enum:
+                  - 1
+                  - 2
+                  example: 1
+                sending_method:
+                  type: number
+                  description: Whether the inbox placement test will be sent from Instantly or from outside Instantly
+                  enum:
+                  - 1
+                  - 2
+                  x-enumDescriptions:
+                    '1': From Instantly
+                    '2': From Outside Instantly
+                  example: 1
+                campaign_id:
+                  type:
+                  - 'null'
+                  - string
+                  description: Campaign ID
+                  format: uuid
+                  example: 019ffad2-5c60-726e-9fc3-15653478693e
+                email_subject:
+                  type: string
+                  description: Email subject of the inbox placement test
+                  example: My Email Subject
+                email_body:
+                  type: string
+                  description: Email body of the inbox placement test
+                  example: Hi, this is my email body
+                emails:
+                  type: array
+                  description: Emails to send the inbox placement test to
+                  items:
+                    type: string
+                    example: john@doe.com
+                test_code:
+                  type:
+                  - string
+                  - 'null'
+                  description: Code for identifying inbox placement tests sent from outside Instantly. Use ptid_ followed by letters, numbers, hyphens, or underscores. When creating a test, the ptid_ prefix is added automatically if omitted. The full code must be at most 50 characters.
+                  pattern: ^\s*$|^(ptid_)?(?!ptid_)[A-Za-z0-9_-]{1,45}$
+                  example: ptid_abc_DEF-123
+                tags:
+                  type:
+                  - array
+                  - 'null'
+                  description: List of tag IDs to use for sending emails
+                  items:
+                    type: string
+                    format: uuid
+                    examples:
+                    - 019ffad2-5c60-726e-9fc3-156656386a64
+                    example: 019ffad2-5c60-726e-9fc3-156656386a64
+                text_only:
+                  type:
+                  - boolean
+                  - 'null'
+                  description: Disables open tracking
+                  example: true
+                recipients_labels:
+                  type: array
+                  description: 'A list of email providers and their corresponding types to which emails will be sent. To retrieve the available options, use the `GET: /inbox-placement-tests/email-service-provider-options` endpoint'
+                  items:
+                    type: object
+                    properties:
+                      region:
+                        type: string
+                        description: The region to send emails to
+                        example: North America
+                      sub_region:
+                        type: string
+                        description: The sub-region to send emails to
+                        example: US
+                      type:
+                        type: string
+                        description: The type of email to send
+                        example: Professional
+                      esp:
+                        type: string
+                        description: The Email Service Provider (ESP) to send emails to
+                        example: Google
+                    required:
+                    - region
+                    - sub_region
+                    - type
+                    - esp
+                timestamp_next_run:
+                  type:
+                  - string
+                  - 'null'
+                  description: Timestamp when the inbox placement test will run next
+                  example: '2026-08-13T11:11:58.048Z'
+                automations:
+                  type:
+                  - 'null'
+                  - array
+                  description: Optional automations to trigger based on conditions
+                  minItems: 0
+                  items:
+                    type: object
+                    properties:
+                      when:
+                        type: object
+                        properties:
+                          condition:
+                            type: string
+                            description: Condition for automation trigger
+                            enum:
+                            - placement_goes_below
+                            - placement_goes_above
+                            - added_to_blacklists
+                            - removed_from_blacklists
+                            examples:
+                            - placement_goes_below
+                            example: placement_goes_below
+                          condition_value:
+                            type:
+                            - 'null'
+                            - number
+                            description: Value for condition, if applicable
+                            examples:
+                            - 80
+                            example: 80
+                        required:
+                        - condition
+                      then:
+                        type: object
+                        properties:
+                          webhook_url:
+                            type: string
+                            examples:
+                            - https://example.com/webhook
+                            example: https://example.com/webhook
+                          pause_sending_campaigns_for:
+                            type: number
+                            description: Number of days to pause sending campaigns for
+                            examples:
+                            - 14
+                            example: 14
+                          pause:
+                            type: boolean
+                            examples:
+                            - true
+                            example: true
+                          enable_slow_ramp:
+                            type: boolean
+                            examples:
+                            - true
+                            example: true
+                          disable_slow_ramp:
+                            type: boolean
+                            examples:
+                            - true
+                            example: true
+                          add_tags:
+                            type: array
+                            items:
+                              type: string
+                              format: uuid
+                              examples:
+                              - 019ffad2-5c60-726e-9fc3-156754df5bd1
+                              example: 019ffad2-5c60-726e-9fc3-156754df5bd1
+                            examples:
+                            - - 019ffad2-5c60-726e-9fc3-1568473f684f
+                            example:
+                            - 019ffad2-5c60-726e-9fc3-1568473f684f
+                          remove_tags:
+                            type: array
+                            items:
+                              type: string
+                              format: uuid
+                              examples:
+                              - 019ffad2-5c60-726e-9fc3-156972a16746
+                              example: 019ffad2-5c60-726e-9fc3-156972a16746
+                        minProperties: 1
+                        description: Actions to take when condition is met
+                    required:
+                    - when
+                    - then
+                status:
+                  type:
+                  - number
+                  - 'null'
+                  description: Status of the inbox placement test
+                  enum:
+                  - 1
+                  - 2
+                  - 3
+                  x-enumDescriptions:
+                    '1': Active
+                    '2': Paused
+                    '3': Completed
+                  example: 1
+                not_sending_status:
+                  type:
+                  - string
+                  - 'null'
+                  description: Why the inbox placement test is currently not sending. It will be an empty string if there are no issues.
+                  enum:
+                  - daily_limits_hit
+                  - other
+                  x-enumDescriptions:
+                    daily_limits_hit: Daily limits hit
+                    other: Other reason
+                  example: daily_limits_hit
+                run_immediately:
+                  type: boolean
+                  description: Run the test immediately after creation, as well as on the schedule
+                  example: true
+              required:
+              - name
+              - type
+              - sending_method
+              - email_subject
+              - email_body
+              - emails
+              additionalProperties: false
+        required: true
+        description: The Inbox Placement Test to create
+      responses:
+        '200':
+          description: The Inbox Placement Test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxPlacementTest'
+        '400':
+          description: Invalid request body (e.g. missing required fields, or invalid field values)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 400
+                    examples:
+                    - 400
+                    example: 400
+                  error:
+                    type: string
+                    enum:
+                    - Bad Request
+                    examples:
+                    - Bad Request
+                    example: Bad Request
+                  message:
+                    type: string
+                    examples:
+                    - body must have required property 'name'
+                    example: body must have required property 'name'
+                required:
+                - statusCode
+                - error
+                - message
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    get:
+      operationId: listInboxPlacementTest
+      summary: List inbox placement test
+      tags:
+      - InboxPlacementTest
+      description: 'Requires one of the following scopes: `inbox_placement_tests:read`, `inbox_placement_tests:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 10
+        example: 10
+        in: query
+        name: limit
+        required: false
+        description: The number of items to return
+      - schema:
+          type: string
+          example: 01956fbd-0eb1-72db-a565-82977a586084
+        example: 01956fbd-0eb1-72db-a565-82977a586084
+        in: query
+        name: starting_after
+        required: false
+        description: The ID of the last item in the previous page - used for pagination. You can use the value of the `next_starting_after` field from the previous response.
+      - schema:
+          type: string
+          example: test
+        example: test
+        in: query
+        name: search
+        required: false
+      - schema:
+          type: number
+          enum:
+          - 1
+          - 2
+          - 3
+          example: 1
+        example: 1
+        in: query
+        name: status
+        required: false
+      - schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          example: desc
+        example: desc
+        in: query
+        name: sort_order
+        required: false
+        description: Sort order for the results. Results are always sorted by id (which is timestamp-sorted due to UUIDv7).
+      responses:
+        '200':
+          description: The list of Inbox Placement Test
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    description: The list of Inbox Placement Test
+                    items:
+                      $ref: '#/components/schemas/InboxPlacementTest'
+                  next_starting_after:
+                    type: string
+                    examples:
+                    - 019ffad2-9c20-7006-b991-2c7e70d37037
+                    - '2026-08-13T11:12:14.368Z'
+                    description: The filter for getting the next items after this one, this could either be a UUID, a timestamp, on an email depending on the specific API
+                    example: 019ffad2-9c20-7006-b991-2c7e70d37037
+                additionalProperties: false
+                required:
+                - items
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/inbox-placement-tests/{id}:
+    get:
+      operationId: getInboxPlacementTest
+      summary: Get inbox placement test
+      tags:
+      - InboxPlacementTest
+      description: 'Requires one of the following scopes: `inbox_placement_tests:read`, `inbox_placement_tests:all`, `all:read`, `all:all`'
+      parameters:
+      - schema:
+          type: boolean
+          example: true
+        example: true
+        in: query
+        name: with_metadata
+        required: false
+        description: Whether to include additional metadata about the inbox placement test
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c21-77f6-8946-d2ec2874ba8d
+        example: 019ffad2-9c21-77f6-8946-d2ec2874ba8d
+        in: path
+        name: id
+        required: true
+        description: The ID of the requested item
+      responses:
+        '200':
+          description: The requested Inbox Placement Test
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier for the inbox placement test
+                    examples:
+                    - 019ffad2-5c60-726e-9fc3-156305e5dc50
+                    readOnly: true
+                    format: uuid
+                    example: 019ffad2-5c60-726e-9fc3-156305e5dc50
+                  organization_id:
+                    type: string
+                    description: Organization ID
+                    examples:
+                    - 019ffad2-5c60-726e-9fc3-1564f8d27eb8
+                    readOnly: true
+                    format: uuid
+                    example: 019ffad2-5c60-726e-9fc3-1564f8d27eb8
+                  name:
+                    type: string
+                    description: Name of the inbox placement test
+                    examples:
+                    - My Inbox Placement Test
+                    example: My Inbox Placement Test
+                  delivery_mode:
+                    type:
+                    - 'null'
+                    - number
+                    description: Whether to send emails one by one or all together
+                    examples:
+                    - 1
+                    enum:
+                    - 1
+                    - 2
+                    - null
+                    x-enumDescriptions:
+                      '1': One by one
+                      '2': All together
+                    example: 1
+                  description:
+                    type:
+                    - 'null'
+                    - string
+                    description: Description of the inbox placement test
+                    examples:
+                    - This is a test description
+                    example: This is a test description
+                  schedule:
+                    type: object
+                    description: Specifies the date and time when the automated inbox placement tests will be sent.
+                    examples:
+                    - null
+                    properties:
+                      days:
+                        type: object
+                        description: Days of the week when the test will run, where keys are integers (0-6, 0 = Sunday) and values are booleans indicating active days.
+                        additionalProperties:
+                          type: boolean
+                          examples:
+                          - false
+                          example: false
+                        example:
+                          '0': false
+                          '1': false
+                          '2': true
+                          '3': true
+                          '4': false
+                          '5': false
+                          '6': false
+                      timing:
+                        type: object
+                        properties:
+                          from:
+                            type: string
+                            description: The time of day when the test will start (24-hour format).
+                            examples:
+                            - 02:30
+                            example: 02:30
+                        description: Timing configuration for the scheduled test.
+                      timezone:
+                        type: string
+                        enum:
+                        - Etc/GMT+12
+                        - Etc/GMT+11
+                        - Etc/GMT+10
+                        - America/Anchorage
+                        - America/Dawson
+                        - America/Creston
+                        - America/Chihuahua
+                        - America/Boise
+                        - America/Belize
+                        - America/Chicago
+                        - America/Bahia_Banderas
+                        - America/Regina
+                        - America/Bogota
+                        - America/Detroit
+                        - America/Indiana/Marengo
+                        - America/Caracas
+                        - America/Asuncion
+                        - America/Glace_Bay
+                        - America/Campo_Grande
+                        - America/Anguilla
+                        - America/Santiago
+                        - America/St_Johns
+                        - America/Sao_Paulo
+                        - America/Argentina/La_Rioja
+                        - America/Araguaina
+                        - America/Godthab
+                        - America/Montevideo
+                        - America/Bahia
+                        - America/Noronha
+                        - America/Scoresbysund
+                        - Atlantic/Cape_Verde
+                        - Africa/Casablanca
+                        - America/Danmarkshavn
+                        - Europe/Isle_of_Man
+                        - Atlantic/Canary
+                        - Africa/Abidjan
+                        - Arctic/Longyearbyen
+                        - Europe/Belgrade
+                        - Africa/Ceuta
+                        - Europe/Sarajevo
+                        - Africa/Algiers
+                        - Africa/Windhoek
+                        - Asia/Nicosia
+                        - Asia/Beirut
+                        - Africa/Cairo
+                        - Asia/Damascus
+                        - Europe/Bucharest
+                        - Africa/Blantyre
+                        - Europe/Helsinki
+                        - Europe/Istanbul
+                        - Asia/Jerusalem
+                        - Africa/Tripoli
+                        - Asia/Amman
+                        - Asia/Baghdad
+                        - Europe/Kaliningrad
+                        - Asia/Aden
+                        - Africa/Addis_Ababa
+                        - Europe/Kirov
+                        - Europe/Astrakhan
+                        - Asia/Tehran
+                        - Asia/Dubai
+                        - Asia/Baku
+                        - Indian/Mahe
+                        - Asia/Tbilisi
+                        - Asia/Yerevan
+                        - Asia/Kabul
+                        - Antarctica/Mawson
+                        - Asia/Yekaterinburg
+                        - Asia/Karachi
+                        - Asia/Kolkata
+                        - Asia/Colombo
+                        - Asia/Kathmandu
+                        - Antarctica/Vostok
+                        - Asia/Dhaka
+                        - Asia/Rangoon
+                        - Antarctica/Davis
+                        - Asia/Novokuznetsk
+                        - Asia/Hong_Kong
+                        - Asia/Krasnoyarsk
+                        - Asia/Brunei
+                        - Australia/Perth
+                        - Asia/Taipei
+                        - Asia/Choibalsan
+                        - Asia/Irkutsk
+                        - Asia/Dili
+                        - Asia/Pyongyang
+                        - Australia/Adelaide
+                        - Australia/Darwin
+                        - Australia/Brisbane
+                        - Australia/Melbourne
+                        - Antarctica/DumontDUrville
+                        - Australia/Currie
+                        - Asia/Chita
+                        - Antarctica/Macquarie
+                        - Asia/Sakhalin
+                        - Pacific/Auckland
+                        - Etc/GMT-12
+                        - Pacific/Fiji
+                        - Asia/Anadyr
+                        - Asia/Kamchatka
+                        - Etc/GMT-13
+                        - Pacific/Apia
+                        examples:
+                        - Etc/GMT+12
+                        description: Timezone in which the schedule is set, in IANA timezone format.
+                        example: Etc/GMT+12
+                    example:
+                      days:
+                        '2': true
+                        '3': true
+                      timing:
+                        from: 02:30
+                      timezone: America/Chihuahua
+                  type:
+                    type: number
+                    description: Whether the inbox placement test is a one-time test or an automated test
+                    examples:
+                    - 1
+                    enum:
+                    - 1
+                    - 2
+                    example: 1
+                  sending_method:
+                    type: number
+                    description: Whether the inbox placement test will be sent from Instantly or from outside Instantly
+                    examples:
+                    - 1
+                    enum:
+                    - 1
+                    - 2
+                    x-enumDescriptions:
+                      '1': From Instantly
+                      '2': From Outside Instantly
+                    example: 1
+                  campaign_id:
+                    type:
+                    - 'null'
+                    - string
+                    description: Campaign ID
+                    examples:
+                    - 019ffad2-5c60-726e-9fc3-15653478693e
+                    format: uuid
+                    example: 019ffad2-5c60-726e-9fc3-15653478693e
+                  email_subject:
+                    type: string
+                    description: Email subject of the inbox placement test
+                    examples:
+                    - My Email Subject
+                    example: My Email Subject
+                  email_body:
+                    type: string
+                    description: Email body of the inbox placement test
+                    examples:
+                    - Hi, this is my email body
+                    example: Hi, this is my email body
+                  emails:
+                    type: array
+                    description: Emails to send the inbox placement test to
+                    examples:
+                    - null
+                    items:
+                      type: string
+                      examples:
+                      - john@doe.com
+                      example: john@doe.com
+                  test_code:
+                    type:
+                    - 'null'
+                    - string
+                    description: Code for identifying inbox placement tests sent from outside Instantly. Use ptid_ followed by letters, numbers, hyphens, or underscores. When creating a test, the ptid_ prefix is added automatically if omitted. The full code must be at most 50 characters.
+                    examples:
+                    - ptid_N6qbXRzw9CPCjgownKFUa
+                    pattern: ^ptid_(?!ptid_)[A-Za-z0-9_-]{1,45}$
+                    example: ptid_N6qbXRzw9CPCjgownKFUa
+                  tags:
+                    type:
+                    - 'null'
+                    - array
+                    description: List of tag IDs to use for sending emails
+                    examples:
+                    - null
+                    items:
+                      type: string
+                      format: uuid
+                      examples:
+                      - 019ffad2-5c60-726e-9fc3-156656386a64
+                      example: 019ffad2-5c60-726e-9fc3-156656386a64
+                  text_only:
+                    type:
+                    - 'null'
+                    - boolean
+                    description: Disables open tracking
+                    examples:
+                    - true
+                    example: true
+                  recipients:
+                    type: array
+                    examples:
+                    - null
+                    readOnly: true
+                    items:
+                      type: string
+                      examples:
+                      - johndoe@instantly.ai
+                      example: johndoe@instantly.ai
+                  recipients_labels:
+                    type: array
+                    description: 'A list of email providers and their corresponding types to which emails will be sent. To retrieve the available options, use the `GET: /inbox-placement-tests/email-service-provider-options` endpoint'
+                    examples:
+                    - null
+                    items:
+                      type: object
+                      properties:
+                        region:
+                          type: string
+                          description: The region to send emails to
+                          examples:
+                          - North America
+                          example: North America
+                        sub_region:
+                          type: string
+                          description: The sub-region to send emails to
+                          examples:
+                          - US
+                          example: US
+                        type:
+                          type: string
+                          description: The type of email to send
+                          examples:
+                          - Professional
+                          example: Professional
+                        esp:
+                          type: string
+                          description: The Email Service Provider (ESP) to send emails to
+                          examples:
+                          - Google
+                          example: Google
+                      required:
+                      - region
+                      - sub_region
+                      - type
+                      - esp
+                  timestamp_created:
+                    type: string
+                    description: Timestamp when the inbox placement test was created
+                    examples:
+                    - '2026-08-13T11:11:58.048Z'
+                    readOnly: true
+                    example: '2026-08-13T11:11:58.048Z'
+                  timestamp_next_run:
+                    type:
+                    - 'null'
+                    - string
+                    description: Timestamp when the inbox placement test will run next
+                    examples:
+                    - '2026-08-13T11:11:58.048Z'
+                    example: '2026-08-13T11:11:58.048Z'
+                  automations:
+                    type:
+                    - 'null'
+                    - array
+                    description: Optional automations to trigger based on conditions
+                    examples:
+                    - null
+                    minItems: 0
+                    items:
+                      type: object
+                      properties:
+                        when:
+                          type: object
+                          properties:
+                            condition:
+                              type: string
+                              description: Condition for automation trigger
+                              enum:
+                              - placement_goes_below
+                              - placement_goes_above
+                              - added_to_blacklists
+                              - removed_from_blacklists
+                              examples:
+                              - placement_goes_below
+                              example: placement_goes_below
+                            condition_value:
+                              type:
+                              - 'null'
+                              - number
+                              description: Value for condition, if applicable
+                              examples:
+                              - 80
+                              example: 80
+                          required:
+                          - condition
+                        then:
+                          type: object
+                          properties:
+                            webhook_url:
+                              type: string
+                              examples:
+                              - https://example.com/webhook
+                              example: https://example.com/webhook
+                            pause_sending_campaigns_for:
+                              type: number
+                              description: Number of days to pause sending campaigns for
+                              examples:
+                              - 14
+                              example: 14
+                            pause:
+                              type: boolean
+                              examples:
+                              - true
+                              example: true
+                            enable_slow_ramp:
+                              type: boolean
+                              examples:
+                              - true
+                              example: true
+                            disable_slow_ramp:
+                              type: boolean
+                              examples:
+                              - true
+                              example: true
+                            add_tags:
+                              type: array
+                              items:
+                                type: string
+                                format: uuid
+                                examples:
+                                - 019ffad2-5c60-726e-9fc3-156754df5bd1
+                                example: 019ffad2-5c60-726e-9fc3-156754df5bd1
+                              examples:
+                              - - 019ffad2-5c60-726e-9fc3-1568473f684f
+                              example:
+                              - 019ffad2-5c60-726e-9fc3-1568473f684f
+                            remove_tags:
+                              type: array
+                              items:
+                                type: string
+                                format: uuid
+                                examples:
+                                - 019ffad2-5c60-726e-9fc3-156972a16746
+                                example: 019ffad2-5c60-726e-9fc3-156972a16746
+                          minProperties: 1
+                          description: Actions to take when condition is met
+                      required:
+                      - when
+                      - then
+                  status:
+                    type:
+                    - 'null'
+                    - number
+                    description: Status of the inbox placement test
+                    examples:
+                    - 1
+                    enum:
+                    - 1
+                    - 2
+                    - 3
+                    x-enumDescriptions:
+                      '1': Active
+                      '2': Paused
+                      '3': Completed
+                    example: 1
+                  not_sending_status:
+                    type:
+                    - 'null'
+                    - string
+                    description: Why the inbox placement test is currently not sending. It will be an empty string if there are no issues.
+                    examples:
+                    - daily_limits_hit
+                    enum:
+                    - daily_limits_hit
+                    - other
+                    x-enumDescriptions:
+                      daily_limits_hit: Daily limits hit
+                      other: Other reason
+                    example: daily_limits_hit
+                  metadata:
+                    type: object
+                    description: Included only when the `with_metadata` parameter is `true`. Contains additional information about the inbox placement test as associated campaign details and tags.
+                    examples:
+                    - campaign:
+                        id: campaign-id
+                        name: Campaign Name
+                      tags:
+                        tag-id:
+                          id: tag-id
+                          label: Tag Label
+                    properties:
+                      campaign:
+                        description: The campaign associated with the inbox placement test
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            examples:
+                            - campaign-id
+                            example: campaign-id
+                          name:
+                            type: string
+                            examples:
+                            - Campaign Name
+                            example: Campaign Name
+                      tags:
+                        type: object
+                        description: The tags associated with the inbox placement test
+                        additionalProperties:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              examples:
+                              - tag-id
+                              example: tag-id
+                            label:
+                              type: string
+                              examples:
+                              - Tag Label
+                              example: Tag Label
+                          required:
+                          - id
+                          - label
+                    example:
+                      campaign:
+                        id: campaign-id
+                        name: Campaign Name
+                      tags:
+                        tag-id:
+                          id: tag-id
+                          label: Tag Label
+                type: object
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    delete:
+      operationId: deleteInboxPlacementTest
+      summary: Delete inbox placement test
+      tags:
+      - InboxPlacementTest
+      description: 'Requires one of the following scopes: `inbox_placement_tests:delete`, `inbox_placement_tests:all`, `all:delete`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: 'null'
+            example: null
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c22-74d5-9554-95835e972f0c
+        example: 019ffad2-9c22-74d5-9554-95835e972f0c
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to delete
+      responses:
+        '200':
+          description: The deleted Inbox Placement Test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxPlacementTest'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+    patch:
+      operationId: patchInboxPlacementTest
+      summary: Patch inbox placement test
+      tags:
+      - InboxPlacementTest
+      description: 'Requires one of the following scopes: `inbox_placement_tests:update`, `inbox_placement_tests:all`, `all:update`, `all:all`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the inbox placement test
+                  example: My Inbox Placement Test
+                schedule:
+                  type: object
+                  description: Specifies the date and time when the automated inbox placement tests will be sent.
+                  properties:
+                    days:
+                      type: object
+                      description: Days of the week when the test will run, where keys are integers (0-6, 0 = Sunday) and values are booleans indicating active days.
+                      additionalProperties:
+                        type: boolean
+                        examples:
+                        - false
+                        example: false
+                      example:
+                        '0': false
+                        '1': false
+                        '2': true
+                        '3': true
+                        '4': false
+                        '5': false
+                        '6': false
+                    timing:
+                      type: object
+                      properties:
+                        from:
+                          type: string
+                          description: The time of day when the test will start (24-hour format).
+                          example: 02:30
+                      description: Timing configuration for the scheduled test.
+                    timezone:
+                      type: string
+                      enum:
+                      - Etc/GMT+12
+                      - Etc/GMT+11
+                      - Etc/GMT+10
+                      - America/Anchorage
+                      - America/Dawson
+                      - America/Creston
+                      - America/Chihuahua
+                      - America/Boise
+                      - America/Belize
+                      - America/Chicago
+                      - America/Bahia_Banderas
+                      - America/Regina
+                      - America/Bogota
+                      - America/Detroit
+                      - America/Indiana/Marengo
+                      - America/Caracas
+                      - America/Asuncion
+                      - America/Glace_Bay
+                      - America/Campo_Grande
+                      - America/Anguilla
+                      - America/Santiago
+                      - America/St_Johns
+                      - America/Sao_Paulo
+                      - America/Argentina/La_Rioja
+                      - America/Araguaina
+                      - America/Godthab
+                      - America/Montevideo
+                      - America/Bahia
+                      - America/Noronha
+                      - America/Scoresbysund
+                      - Atlantic/Cape_Verde
+                      - Africa/Casablanca
+                      - America/Danmarkshavn
+                      - Europe/Isle_of_Man
+                      - Atlantic/Canary
+                      - Africa/Abidjan
+                      - Arctic/Longyearbyen
+                      - Europe/Belgrade
+                      - Africa/Ceuta
+                      - Europe/Sarajevo
+                      - Africa/Algiers
+                      - Africa/Windhoek
+                      - Asia/Nicosia
+                      - Asia/Beirut
+                      - Africa/Cairo
+                      - Asia/Damascus
+                      - Europe/Bucharest
+                      - Africa/Blantyre
+                      - Europe/Helsinki
+                      - Europe/Istanbul
+                      - Asia/Jerusalem
+                      - Africa/Tripoli
+                      - Asia/Amman
+                      - Asia/Baghdad
+                      - Europe/Kaliningrad
+                      - Asia/Aden
+                      - Africa/Addis_Ababa
+                      - Europe/Kirov
+                      - Europe/Astrakhan
+                      - Asia/Tehran
+                      - Asia/Dubai
+                      - Asia/Baku
+                      - Indian/Mahe
+                      - Asia/Tbilisi
+                      - Asia/Yerevan
+                      - Asia/Kabul
+                      - Antarctica/Mawson
+                      - Asia/Yekaterinburg
+                      - Asia/Karachi
+                      - Asia/Kolkata
+                      - Asia/Colombo
+                      - Asia/Kathmandu
+                      - Antarctica/Vostok
+                      - Asia/Dhaka
+                      - Asia/Rangoon
+                      - Antarctica/Davis
+                      - Asia/Novokuznetsk
+                      - Asia/Hong_Kong
+                      - Asia/Krasnoyarsk
+                      - Asia/Brunei
+                      - Australia/Perth
+                      - Asia/Taipei
+                      - Asia/Choibalsan
+                      - Asia/Irkutsk
+                      - Asia/Dili
+                      - Asia/Pyongyang
+                      - Australia/Adelaide
+                      - Australia/Darwin
+                      - Australia/Brisbane
+                      - Australia/Melbourne
+                      - Antarctica/DumontDUrville
+                      - Australia/Currie
+                      - Asia/Chita
+                      - Antarctica/Macquarie
+                      - Asia/Sakhalin
+                      - Pacific/Auckland
+                      - Etc/GMT-12
+                      - Pacific/Fiji
+                      - Asia/Anadyr
+                      - Asia/Kamchatka
+                      - Etc/GMT-13
+                      - Pacific/Apia
+                      description: Timezone in which the schedule is set, in IANA timezone format.
+                      example: Etc/GMT+12
+                  example:
+                    days:
+                      '2': true
+                      '3': true
+                    timing:
+                      from: 02:30
+                    timezone: America/Chihuahua
+                automations:
+                  type:
+                  - 'null'
+                  - array
+                  description: Optional automations to trigger based on conditions
+                  minItems: 0
+                  items:
+                    type: object
+                    properties:
+                      when:
+                        type: object
+                        properties:
+                          condition:
+                            type: string
+                            description: Condition for automation trigger
+                            enum:
+                            - placement_goes_below
+                            - placement_goes_above
+                            - added_to_blacklists
+                            - removed_from_blacklists
+                            examples:
+                            - placement_goes_below
+                            example: placement_goes_below
+                          condition_value:
+                            type:
+                            - 'null'
+                            - number
+                            description: Value for condition, if applicable
+                            examples:
+                            - 80
+                            example: 80
+                        required:
+                        - condition
+                      then:
+                        type: object
+                        properties:
+                          webhook_url:
+                            type: string
+                            examples:
+                            - https://example.com/webhook
+                            example: https://example.com/webhook
+                          pause_sending_campaigns_for:
+                            type: number
+                            description: Number of days to pause sending campaigns for
+                            examples:
+                            - 14
+                            example: 14
+                          pause:
+                            type: boolean
+                            examples:
+                            - true
+                            example: true
+                          enable_slow_ramp:
+                            type: boolean
+                            examples:
+                            - true
+                            example: true
+                          disable_slow_ramp:
+                            type: boolean
+                            examples:
+                            - true
+                            example: true
+                          add_tags:
+                            type: array
+                            items:
+                              type: string
+                              format: uuid
+                              examples:
+                              - 019ffad2-5c60-726e-9fc3-156754df5bd1
+                              example: 019ffad2-5c60-726e-9fc3-156754df5bd1
+                            examples:
+                            - - 019ffad2-5c60-726e-9fc3-1568473f684f
+                            example:
+                            - 019ffad2-5c60-726e-9fc3-1568473f684f
+                          remove_tags:
+                            type: array
+                            items:
+                              type: string
+                              format: uuid
+                              examples:
+                              - 019ffad2-5c60-726e-9fc3-156972a16746
+                              example: 019ffad2-5c60-726e-9fc3-156972a16746
+                        minProperties: 1
+                        description: Actions to take when condition is met
+                    required:
+                    - when
+                    - then
+                status:
+                  type:
+                  - number
+                  - 'null'
+                  description: Status of the inbox placement test
+                  enum:
+                  - 1
+                  - 2
+                  - 3
+                  x-enumDescriptions:
+                    '1': Active
+                    '2': Paused
+                    '3': Completed
+                  example: 1
+              required: []
+              additionalProperties: false
+              minProperties: 1
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 019ffad2-9c22-74d5-9554-9584bfecfdd8
+        example: 019ffad2-9c22-74d5-9554-9584bfecfdd8
+        in: path
+        name: id
+        required: true
+        description: The ID of the item to update
+      responses:
+        '200':
+          description: The updated Inbox Placement Test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxPlacementTest'
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+  /api/v2/inbox-placement-tests/email-service-provider-options:
+    get:
+      operationId: getInboxPlacementTestESPOptions
+      summary: Get ESP options
+      tags:
+      - InboxPlacementTest
+      description: Provides a list of available email service providers for inbox placement tests.
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    region:
+                      type: string
+                      example: North America
+                    sub_region:
+                      type: string
+                      example: US
+                    type:
+                      type: string
+                      example: Professional
+                    esp:
+                      type: string
+                      example: Google
+                  required:
+                  - region
+                  - sub_region
+                  - type
+                  - esp
+        '401':
+          description: This request is unauthorized (either the Authorization header is missing or invalid, or the API key has been revoked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 401
+                    examples:
+                    - 401
+                    example: 401
+                  error:
+                    type: string
+                    enum:
+                    - Unauthorized
+                    examples:
+                    - Unauthorized
+                    example: Unauthorized
+                  message:
+                    type: string
+                    examples:
+                    - Missing Authorization header
+                    example: Missing Authorization header
+                required:
+                - statusCode
+                - error
+                - message
+        '402':
+          description: This request cannot be fulfilled because the workspace does not have an active paid plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 402
+                    examples:
+                    - 402
+                    example: 402
+                  error:
+                    type: string
+                    enum:
+                    - Payment Required
+                    examples:
+                    - Payment Required
+                    example: Payment Required
+                  message:
+                    type: string
+                    examples:
+                    - Workspace does not have an active paid plan
+                    example: Workspace does not have an active paid plan
+                required:
+                - statusCode
+                - error
+                - message
+        '404':
+          description: The requested resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 404
+                    examples:
+                    - 404
+                    example: 404
+                  error:
+                    type: string
+                    enum:
+                    - Not Found
+                    examples:
+                    - Not Found
+                    example: Not Found
+                  message:
+                    type: string
+                    examples:
+                    - Resource not found
+                    example: Resource not found
+                required:
+                - statusCode
+                - error
+                - message
+        '429':
+          description: You have exceeded the rate limit. Please check the rate limit docs for more information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    enum:
+                    - 429
+                    examples:
+                    - 429
+                    example: 429
+                  error:
+                    type: string
+                    enum:
+                    - Too Many Requests
+                    examples:
+                    - Too Many Requests
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    examples:
+                    - Rate limit exceeded
+                    example: Rate limit exceeded
+                required:
+                - statusCode
+                - error
+                - message
+components:
+  schemas:
+    InboxPlacementTest:
+      title: Inbox Placement Test
+      description: An inbox placement test
+      x-tags:
+      - Schemas
+      - InboxPlacementTest
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the inbox placement test
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c60-726e-9fc3-156305e5dc50
+        organization_id:
+          type: string
+          description: Organization ID
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c60-726e-9fc3-1564f8d27eb8
+        name:
+          type: string
+          description: Name of the inbox placement test
+          example: My Inbox Placement Test
+        delivery_mode:
+          type:
+          - 'null'
+          - number
+          description: Whether to send emails one by one or all together
+          enum:
+          - 1
+          - 2
+          - null
+          x-enumDescriptions:
+            '1': One by one
+            '2': All together
+          example: 1
+        description:
+          type:
+          - 'null'
+          - string
+          description: Description of the inbox placement test
+          example: This is a test description
+        schedule:
+          type: object
+          description: Specifies the date and time when the automated inbox placement tests will be sent.
+          properties:
+            days:
+              type: object
+              description: Days of the week when the test will run, where keys are integers (0-6, 0 = Sunday) and values are booleans indicating active days.
+              additionalProperties:
+                type: boolean
+                examples:
+                - false
+                example: false
+              example:
+                '0': false
+                '1': false
+                '2': true
+                '3': true
+                '4': false
+                '5': false
+                '6': false
+            timing:
+              type: object
+              properties:
+                from:
+                  type: string
+                  description: The time of day when the test will start (24-hour format).
+                  example: 02:30
+              description: Timing configuration for the scheduled test.
+            timezone:
+              type: string
+              enum:
+              - Etc/GMT+12
+              - Etc/GMT+11
+              - Etc/GMT+10
+              - America/Anchorage
+              - America/Dawson
+              - America/Creston
+              - America/Chihuahua
+              - America/Boise
+              - America/Belize
+              - America/Chicago
+              - America/Bahia_Banderas
+              - America/Regina
+              - America/Bogota
+              - America/Detroit
+              - America/Indiana/Marengo
+              - America/Caracas
+              - America/Asuncion
+              - America/Glace_Bay
+              - America/Campo_Grande
+              - America/Anguilla
+              - America/Santiago
+              - America/St_Johns
+              - America/Sao_Paulo
+              - America/Argentina/La_Rioja
+              - America/Araguaina
+              - America/Godthab
+              - America/Montevideo
+              - America/Bahia
+              - America/Noronha
+              - America/Scoresbysund
+              - Atlantic/Cape_Verde
+              - Africa/Casablanca
+              - America/Danmarkshavn
+              - Europe/Isle_of_Man
+              - Atlantic/Canary
+              - Africa/Abidjan
+              - Arctic/Longyearbyen
+              - Europe/Belgrade
+              - Africa/Ceuta
+              - Europe/Sarajevo
+              - Africa/Algiers
+              - Africa/Windhoek
+              - Asia/Nicosia
+              - Asia/Beirut
+              - Africa/Cairo
+              - Asia/Damascus
+              - Europe/Bucharest
+              - Africa/Blantyre
+              - Europe/Helsinki
+              - Europe/Istanbul
+              - Asia/Jerusalem
+              - Africa/Tripoli
+              - Asia/Amman
+              - Asia/Baghdad
+              - Europe/Kaliningrad
+              - Asia/Aden
+              - Africa/Addis_Ababa
+              - Europe/Kirov
+              - Europe/Astrakhan
+              - Asia/Tehran
+              - Asia/Dubai
+              - Asia/Baku
+              - Indian/Mahe
+              - Asia/Tbilisi
+              - Asia/Yerevan
+              - Asia/Kabul
+              - Antarctica/Mawson
+              - Asia/Yekaterinburg
+              - Asia/Karachi
+              - Asia/Kolkata
+              - Asia/Colombo
+              - Asia/Kathmandu
+              - Antarctica/Vostok
+              - Asia/Dhaka
+              - Asia/Rangoon
+              - Antarctica/Davis
+              - Asia/Novokuznetsk
+              - Asia/Hong_Kong
+              - Asia/Krasnoyarsk
+              - Asia/Brunei
+              - Australia/Perth
+              - Asia/Taipei
+              - Asia/Choibalsan
+              - Asia/Irkutsk
+              - Asia/Dili
+              - Asia/Pyongyang
+              - Australia/Adelaide
+              - Australia/Darwin
+              - Australia/Brisbane
+              - Australia/Melbourne
+              - Antarctica/DumontDUrville
+              - Australia/Currie
+              - Asia/Chita
+              - Antarctica/Macquarie
+              - Asia/Sakhalin
+              - Pacific/Auckland
+              - Etc/GMT-12
+              - Pacific/Fiji
+              - Asia/Anadyr
+              - Asia/Kamchatka
+              - Etc/GMT-13
+              - Pacific/Apia
+              description: Timezone in which the schedule is set, in IANA timezone format.
+              example: Etc/GMT+12
+          example:
+            days:
+              '2': true
+              '3': true
+            timing:
+              from: 02:30
+            timezone: America/Chihuahua
+        type:
+          type: number
+          description: Whether the inbox placement test is a one-time test or an automated test
+          enum:
+          - 1
+          - 2
+          example: 1
+        sending_method:
+          type: number
+          description: Whether the inbox placement test will be sent from Instantly or from outside Instantly
+          enum:
+          - 1
+          - 2
+          x-enumDescriptions:
+            '1': From Instantly
+            '2': From Outside Instantly
+          example: 1
+        campaign_id:
+          type:
+          - 'null'
+          - string
+          description: Campaign ID
+          format: uuid
+          example: 019ffad2-5c60-726e-9fc3-15653478693e
+        email_subject:
+          type: string
+          description: Email subject of the inbox placement test
+          example: My Email Subject
+        email_body:
+          type: string
+          description: Email body of the inbox placement test
+          example: Hi, this is my email body
+        emails:
+          type: array
+          description: Emails to send the inbox placement test to
+          items:
+            type: string
+            example: john@doe.com
+        test_code:
+          type:
+          - 'null'
+          - string
+          description: Code for identifying inbox placement tests sent from outside Instantly. Use ptid_ followed by letters, numbers, hyphens, or underscores. When creating a test, the ptid_ prefix is added automatically if omitted. The full code must be at most 50 characters.
+          pattern: ^ptid_(?!ptid_)[A-Za-z0-9_-]{1,45}$
+          example: ptid_N6qbXRzw9CPCjgownKFUa
+        tags:
+          type:
+          - 'null'
+          - array
+          description: List of tag IDs to use for sending emails
+          items:
+            type: string
+            format: uuid
+            examples:
+            - 019ffad2-5c60-726e-9fc3-156656386a64
+            example: 019ffad2-5c60-726e-9fc3-156656386a64
+        text_only:
+          type:
+          - 'null'
+          - boolean
+          description: Disables open tracking
+          example: true
+        recipients:
+          type: array
+          readOnly: true
+          items:
+            type: string
+            example: johndoe@instantly.ai
+        recipients_labels:
+          type: array
+          description: 'A list of email providers and their corresponding types to which emails will be sent. To retrieve the available options, use the `GET: /inbox-placement-tests/email-service-provider-options` endpoint'
+          items:
+            type: object
+            properties:
+              region:
+                type: string
+                description: The region to send emails to
+                example: North America
+              sub_region:
+                type: string
+                description: The sub-region to send emails to
+                example: US
+              type:
+                type: string
+                description: The type of email to send
+                example: Professional
+              esp:
+                type: string
+                description: The Email Service Provider (ESP) to send emails to
+                example: Google
+            required:
+            - region
+            - sub_region
+            - type
+            - esp
+        timestamp_created:
+          type: string
+          description: Timestamp when the inbox placement test was created
+          readOnly: true
+          example: '2026-08-13T11:11:58.048Z'
+        timestamp_next_run:
+          type:
+          - 'null'
+          - string
+          description: Timestamp when the inbox placement test will run next
+          example: '2026-08-13T11:11:58.048Z'
+        automations:
+          type:
+          - 'null'
+          - array
+          description: Optional automations to trigger based on conditions
+          minItems: 0
+          items:
+            type: object
+            properties:
+              when:
+                type: object
+                properties:
+                  condition:
+                    type: string
+                    description: Condition for automation trigger
+                    enum:
+                    - placement_goes_below
+                    - placement_goes_above
+                    - added_to_blacklists
+                    - removed_from_blacklists
+                    examples:
+                    - placement_goes_below
+                    example: placement_goes_below
+                  condition_value:
+                    type:
+                    - 'null'
+                    - number
+                    description: Value for condition, if applicable
+                    examples:
+                    - 80
+                    example: 80
+                required:
+                - condition
+              then:
+                type: object
+                properties:
+                  webhook_url:
+                    type: string
+                    examples:
+                    - https://example.com/webhook
+                    example: https://example.com/webhook
+                  pause_sending_campaigns_for:
+                    type: number
+                    description: Number of days to pause sending campaigns for
+                    examples:
+                    - 14
+                    example: 14
+                  pause:
+                    type: boolean
+                    examples:
+                    - true
+                    example: true
+                  enable_slow_ramp:
+                    type: boolean
+                    examples:
+                    - true
+                    example: true
+                  disable_slow_ramp:
+                    type: boolean
+                    examples:
+                    - true
+                    example: true
+                  add_tags:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                      examples:
+                      - 019ffad2-5c60-726e-9fc3-156754df5bd1
+                      example: 019ffad2-5c60-726e-9fc3-156754df5bd1
+                    examples:
+                    - - 019ffad2-5c60-726e-9fc3-1568473f684f
+                    example:
+                    - 019ffad2-5c60-726e-9fc3-1568473f684f
+                  remove_tags:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                      examples:
+                      - 019ffad2-5c60-726e-9fc3-156972a16746
+                      example: 019ffad2-5c60-726e-9fc3-156972a16746
+                minProperties: 1
+                description: Actions to take when condition is met
+            required:
+            - when
+            - then
+        status:
+          type:
+          - 'null'
+          - number
+          description: Status of the inbox placement test
+          enum:
+          - 1
+          - 2
+          - 3
+          x-enumDescriptions:
+            '1': Active
+            '2': Paused
+            '3': Completed
+          example: 1
+        not_sending_status:
+          type:
+          - 'null'
+          - string
+          description: Why the inbox placement test is currently not sending. It will be an empty string if there are no issues.
+          enum:
+          - daily_limits_hit
+          - other
+          x-enumDescriptions:
+            daily_limits_hit: Daily limits hit
+            other: Other reason
+          example: daily_limits_hit
+      required:
+      - id
+      - organization_id
+      - name
+      - type
+      - sending_method
+      - email_subject
+      - email_body
+      - emails
+      - recipients
+      - timestamp_created
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
