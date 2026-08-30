@@ -140,6 +140,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - APIKeys
+  tags_raw:
   - APIKey
   properties:
   - type: OpenAPI
@@ -154,6 +156,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - Audit Log
+  tags_raw:
   - AuditLog
   properties:
   - type: OpenAPI
@@ -301,6 +305,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - Email Verification
+  tags_raw:
   - EmailVerification
   properties:
   - type: OpenAPI
@@ -399,6 +405,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - Authentication
+  tags_raw:
   - OAuth
   properties:
   - type: OpenAPI
