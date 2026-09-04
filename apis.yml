@@ -519,6 +519,9 @@ apis:
   - type: Documentation
     url: https://developer.instantly.ai
 common:
+- type: CapabilityMap
+  url: capabilities/instantly-ai-capability-edges.yml
+  name: Instantly Business Capability Map
 - type: AgenticAccess
   url: agentic-access/instantly-ai-agentic-access.yml
 - type: DomainSecurity
