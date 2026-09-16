@@ -64,34 +64,6 @@ created: '2026-05-23'
 modified: '2026-08-13'
 specificationVersion: '0.23'
 apis:
-- aid: instantly-ai:instantly-ai-campaigns-api
-  name: Instantly Campaigns API
-  description: The Campaigns API from Instantly — 10 operation(s) for campaigns.
-  humanURL: https://developer.instantly.ai/api-reference/groups/campaign
-  baseURL: https://api.instantly.ai/api/v2/campaigns
-  tags:
-  - Campaigns
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-campaigns-api-openapi.yml
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/campaign
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/lead
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/account
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/email-verification
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/inbox-placement-test
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/webhook
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/analytics
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/api-key
-  - type: Documentation
-    url: https://developer.instantly.ai/api-reference/groups/workspace
 - aid: instantly-ai:instantly-ai-account-api
   name: Instantly Account API
   description: An email account that can be used to send campaigns
