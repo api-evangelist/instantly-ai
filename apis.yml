@@ -106,52 +106,6 @@ apis:
     url: https://developer.instantly.ai/api-reference
   - type: Documentation
     url: https://developer.instantly.ai
-- aid: instantly-ai:instantly-ai-apikey-api
-  name: Instantly API Key API
-  description: API Key
-  humanURL: https://developer.instantly.ai/api-reference
-  baseURL: https://api.instantly.ai/api/v2
-  tags:
-  - APIKeys
-  tags_raw:
-  - APIKey
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-apikey-api-openapi.yml
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: Documentation
-    url: https://developer.instantly.ai
-- aid: instantly-ai:instantly-ai-auditlog-api
-  name: Instantly Audit Log API
-  description: Audit log records for tracking system activities
-  humanURL: https://developer.instantly.ai/api-reference
-  baseURL: https://api.instantly.ai/api/v2
-  tags:
-  - Audit Log
-  tags_raw:
-  - AuditLog
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-auditlog-api-openapi.yml
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: Documentation
-    url: https://developer.instantly.ai
-- aid: instantly-ai:instantly-ai-backgroundjob-api
-  name: Instantly Background Job API
-  description: A background job that can be used to perform long-running tasks
-  humanURL: https://developer.instantly.ai/api-reference
-  baseURL: https://api.instantly.ai/api/v2
-  tags:
-  - BackgroundJob
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-backgroundjob-api-openapi.yml
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: Documentation
-    url: https://developer.instantly.ai
 - aid: instantly-ai:instantly-ai-blocklistentry-api
   name: Instantly Block List Entry API
   description: A blocked email or domain
@@ -271,22 +225,6 @@ apis:
     url: https://developer.instantly.ai/api-reference
   - type: Documentation
     url: https://developer.instantly.ai
-- aid: instantly-ai:instantly-ai-emailverification-api
-  name: Instantly Email Verification API
-  description: A single email verification
-  humanURL: https://developer.instantly.ai/api-reference
-  baseURL: https://api.instantly.ai/api/v2
-  tags:
-  - Email Verification
-  tags_raw:
-  - EmailVerification
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-emailverification-api-openapi.yml
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: Documentation
-    url: https://developer.instantly.ai
 - aid: instantly-ai:instantly-ai-inboxplacementanalytics-api
   name: Instantly Inbox Placement Analytics API
   description: Analytics data for individual emails in inbox placement tests
@@ -371,22 +309,6 @@ apis:
     url: https://developer.instantly.ai/api-reference
   - type: Documentation
     url: https://developer.instantly.ai
-- aid: instantly-ai:instantly-ai-oauth-api
-  name: Instantly O Auth API
-  description: OAuth authentication endpoints for connecting Google and Microsoft email accounts
-  humanURL: https://developer.instantly.ai/api-reference
-  baseURL: https://api.instantly.ai/api/v2
-  tags:
-  - Authentication
-  tags_raw:
-  - OAuth
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-oauth-api-openapi.yml
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: Documentation
-    url: https://developer.instantly.ai
 - aid: instantly-ai:instantly-ai-supersearchenrichment-api
   name: Instantly Super Search Enrichment API
   description: >-
@@ -414,20 +336,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/instantly-ai-webhook-api-openapi.yml
-  - type: APIReference
-    url: https://developer.instantly.ai/api-reference
-  - type: Documentation
-    url: https://developer.instantly.ai
-- aid: instantly-ai:instantly-ai-webhookevent-api
-  name: Instantly Webhook Event API
-  description: A webhook event that was sent or attempted to be sent
-  humanURL: https://developer.instantly.ai/api-reference
-  baseURL: https://api.instantly.ai/api/v2
-  tags:
-  - WebhookEvent
-  properties:
-  - type: OpenAPI
-    url: openapi/instantly-ai-webhookevent-api-openapi.yml
   - type: APIReference
     url: https://developer.instantly.ai/api-reference
   - type: Documentation
@@ -486,6 +394,90 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/instantly-ai-workspacemember-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-oauth-api
+  name: Instantly O Auth API
+  description: OAuth authentication endpoints for connecting Google and Microsoft email accounts
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-oauth-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-api-key-api
+  name: Instantly API Key API
+  description: API Key
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - API Key
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-api-key-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-audit-log-api
+  name: Instantly Audit Log API
+  description: Audit log records for tracking system activities
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Audit Log
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-audit-log-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-background-job-api
+  name: Instantly Background Job API
+  description: A background job that can be used to perform long-running tasks
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Background Job
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-background-job-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-email-verification-api
+  name: Instantly Email Verification API
+  description: A single email verification
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Email Verification
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-email-verification-api-openapi.yml
+  - type: APIReference
+    url: https://developer.instantly.ai/api-reference
+  - type: Documentation
+    url: https://developer.instantly.ai
+- aid: instantly-ai:instantly-ai-webhook-event-api
+  name: Instantly Webhook Event API
+  description: A webhook event that was sent or attempted to be sent
+  humanURL: https://developer.instantly.ai/api-reference
+  baseURL: https://api.instantly.ai/api/v2
+  tags:
+  - Webhook Event
+  properties:
+  - type: OpenAPI
+    url: openapi/instantly-ai-webhook-event-api-openapi.yml
   - type: APIReference
     url: https://developer.instantly.ai/api-reference
   - type: Documentation
