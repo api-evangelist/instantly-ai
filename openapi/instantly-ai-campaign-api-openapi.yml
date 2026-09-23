@@ -3298,7 +3298,6 @@ paths:
       summary: Get campaign steps analytics
       tags:
       - Campaign
-      description: Get campaign steps analytics
       parameters:
       - schema:
           type: string
@@ -4473,7 +4472,6 @@ paths:
       tags:
       - Campaign
       description: 'Returns sending status data explaining why a campaign may not be sending emails or is sending slower than expected. Note: Some fields may be missing when the campaign is out of schedule. Always-present fields: campaign_id, last_updated, status, issue_tracking.
-
 
 
         Requires one of the following scopes: `campaigns:read`, `campaigns:all`, `all:read`, `all:all`'

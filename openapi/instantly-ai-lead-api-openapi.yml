@@ -332,7 +332,6 @@ paths:
       description: 'Delete multiple leads from a campaign or list based on filters. You must provide either `campaign_id` or `list_id`. Optionally filter by status or specific IDs.
 
 
-
         Requires one of the following scopes: `leads:delete`, `leads:all`, `all:delete`, `all:all`'
       requestBody:
         content:
@@ -525,7 +524,6 @@ paths:
       tags:
       - Lead
       description: 'This endpoint is a POST endpoint, instead of GET - a deviation from the REST APIs standards we’re following because of the complex arguments it accepts, which would be too hard to express through query parameters. Results are ordered by each lead''s `id` field in ascending order (or by `contact` when distinct_contacts is true) so clients can paginate chronologically by reusing the cursor returned in `next_starting_after`. Leads created on or after October 15, 2025 respect this chronological ordering; older records may appear out of sequence when sorted by ID.
-
 
 
         Requires one of the following scopes: `leads:read`, `leads:all`, `all:read`, `all:all`'
@@ -1446,7 +1444,6 @@ paths:
       description: 'Merge two leads
 
 
-
         Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
       requestBody:
         content:
@@ -1601,7 +1598,6 @@ paths:
       summary: Update the interest status of a lead
       tags:
       - Lead
-      description: Update the interest status of a lead
       requestBody:
         content:
           application/json:
@@ -1788,7 +1784,6 @@ paths:
       description: 'Remove a lead from a subsequence
 
 
-
         Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
       requestBody:
         content:
@@ -1937,7 +1932,6 @@ paths:
       summary: Bulk assign leads to organization users
       tags:
       - Lead
-      description: Bulk assign leads to organization users
       requestBody:
         content:
           application/json:
@@ -2248,7 +2242,6 @@ paths:
       tags:
       - Lead
       description: 'Move leads to a different campaign or list. This endpoint will return a background job that will process the move. The job will be processed in the background and the leads will be moved to the destination campaign or list. You can use the `/background-jobs/:id` endpoint to check the job status. Note: When using the `ids` parameter, you must also provide either `campaign` or `list_id` to specify which campaign or list to filter the leads from.
-
 
 
         Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
@@ -2614,7 +2607,6 @@ paths:
       description: 'Move a lead to a subsequence
 
 
-
         Requires one of the following scopes: `leads:update`, `leads:all`, `all:update`, `all:all`'
       requestBody:
         content:
@@ -2768,7 +2760,6 @@ paths:
       tags:
       - Lead
       description: 'Adds up to 1000 leads to either a campaign or a list. You must provide a `campaign_id` or a `list_id`, but not both. The endpoint validates emails, checks against blocklists and existing leads.
-
 
 
         Requires one of the following scopes: `leads:create`, `leads:all`, `all:create`, `all:all`'
@@ -3164,6 +3155,140 @@ paths:
                 - message
 components:
   schemas:
+    BackgroundJob:
+      title: Background Job
+      description: A background job that can be used to perform long-running tasks
+      x-tags:
+      - Schemas
+      - BackgroundJob
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the background job
+          readOnly: true
+          example: 675266e304a8e55b17f0228b
+        workspace_id:
+          type: string
+          description: Workspace ID
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2d0ca3333c
+        user_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the user that triggered the action that created the job
+          readOnly: true
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2e0ec0b7f1
+        type:
+          type: string
+          description: Type of background job
+          enum:
+          - move-leads
+          - import-leads
+          - export-leads
+          - update-warmup-accounts
+          - rename-variable
+          - broadcast-ai-generate
+          - broadcast-website-scrape
+          - import-subscribers-from-crm
+          - resync-subscriber-crm-tags
+          x-enumDescriptions:
+            move-leads: Move Leads
+            import-leads: Import Leads
+            export-leads: Export Leads
+            update-warmup-accounts: Update Warmup Accounts
+            rename-variable: Rename Variable
+            broadcast-ai-generate: AI broadcast generation
+            broadcast-website-scrape: Broadcast website analysis
+            import-subscribers-from-crm: Import Subscribers From CRM
+            resync-subscriber-crm-tags: Re-sync Subscriber CRM Tags
+          example: move-leads
+        entity_id:
+          type:
+          - 'null'
+          - string
+          description: The id of the entity that the job is related to
+          format: uuid
+          example: 019ffad2-5c7d-70c2-b6ec-8a2f7b30b3ce
+        entity_type:
+          type: string
+          description: Type of entity
+          enum:
+          - list
+          - campaign
+          - workspace
+          - broadcast
+          - subscriber-group-sync
+          - subscriber-group
+          x-enumDescriptions:
+            list: The entity is a lead list
+            campaign: The entity is a campaign
+            workspace: The entity is a workspace
+            broadcast: The entity is an email-marketing broadcast
+            subscriber-group-sync: The entity is a subscriber-group sync
+            subscriber-group: The entity is a subscriber group
+          example: list
+        data:
+          type: object
+          description: Data about the job, used to store any additional information we need to process the job
+          properties:
+            moved_lead_emails:
+              type: array
+              description: For `move-leads` jobs, up to the first 10,000 email addresses of leads that actually moved or copied to the destination after all filters were applied. Use `moved_leads` for the full count.
+              items:
+                type: string
+                format: email
+                example: jane@example.com
+              example:
+              - jane@example.com
+              - john@example.com
+          additionalProperties: true
+        progress:
+          type: number
+          description: Progress of the job as a percentage (from 0 to 100)
+          minimum: 0
+          maximum: 100
+          example: 0
+        status:
+          type: string
+          description: Job status
+          enum:
+          - pending
+          - in-progress
+          - success
+          - failed
+          - draining
+          - paused
+          - cancelled
+          x-enumDescriptions:
+            pending: The background job is waiting in the queue to be processed
+            in-progress: The background job is being processed
+            success: The background job has been successfully processed
+            failed: The background job has failed
+            draining: The background job is replaying deferred live events
+            paused: The background job is paused (e.g. waiting for quota or auth)
+            cancelled: The background job was cancelled by the user
+          example: pending
+        created_at:
+          type: string
+          description: Timestamp when the job was created
+          example: '2026-08-13T11:11:58.077Z'
+        updated_at:
+          type: string
+          description: Timestamp when the job was last updated
+          example: '2026-08-13T11:11:58.077Z'
+      required:
+      - id
+      - workspace_id
+      - type
+      - progress
+      - status
+      - created_at
+      - updated_at
+      additionalProperties: false
     Lead:
       title: Lead
       description: A lead entity representing an individual lead
@@ -3675,140 +3800,6 @@ components:
       - email_click_count
       - company_domain
       - status_summary
-      additionalProperties: false
-    BackgroundJob:
-      title: Background Job
-      description: A background job that can be used to perform long-running tasks
-      x-tags:
-      - Schemas
-      - BackgroundJob
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the background job
-          readOnly: true
-          example: 675266e304a8e55b17f0228b
-        workspace_id:
-          type: string
-          description: Workspace ID
-          readOnly: true
-          format: uuid
-          example: 019ffad2-5c7d-70c2-b6ec-8a2d0ca3333c
-        user_id:
-          type:
-          - 'null'
-          - string
-          description: The id of the user that triggered the action that created the job
-          readOnly: true
-          format: uuid
-          example: 019ffad2-5c7d-70c2-b6ec-8a2e0ec0b7f1
-        type:
-          type: string
-          description: Type of background job
-          enum:
-          - move-leads
-          - import-leads
-          - export-leads
-          - update-warmup-accounts
-          - rename-variable
-          - broadcast-ai-generate
-          - broadcast-website-scrape
-          - import-subscribers-from-crm
-          - resync-subscriber-crm-tags
-          x-enumDescriptions:
-            move-leads: Move Leads
-            import-leads: Import Leads
-            export-leads: Export Leads
-            update-warmup-accounts: Update Warmup Accounts
-            rename-variable: Rename Variable
-            broadcast-ai-generate: AI broadcast generation
-            broadcast-website-scrape: Broadcast website analysis
-            import-subscribers-from-crm: Import Subscribers From CRM
-            resync-subscriber-crm-tags: Re-sync Subscriber CRM Tags
-          example: move-leads
-        entity_id:
-          type:
-          - 'null'
-          - string
-          description: The id of the entity that the job is related to
-          format: uuid
-          example: 019ffad2-5c7d-70c2-b6ec-8a2f7b30b3ce
-        entity_type:
-          type: string
-          description: Type of entity
-          enum:
-          - list
-          - campaign
-          - workspace
-          - broadcast
-          - subscriber-group-sync
-          - subscriber-group
-          x-enumDescriptions:
-            list: The entity is a lead list
-            campaign: The entity is a campaign
-            workspace: The entity is a workspace
-            broadcast: The entity is an email-marketing broadcast
-            subscriber-group-sync: The entity is a subscriber-group sync
-            subscriber-group: The entity is a subscriber group
-          example: list
-        data:
-          type: object
-          description: Data about the job, used to store any additional information we need to process the job
-          properties:
-            moved_lead_emails:
-              type: array
-              description: For `move-leads` jobs, up to the first 10,000 email addresses of leads that actually moved or copied to the destination after all filters were applied. Use `moved_leads` for the full count.
-              items:
-                type: string
-                format: email
-                example: jane@example.com
-              example:
-              - jane@example.com
-              - john@example.com
-          additionalProperties: true
-        progress:
-          type: number
-          description: Progress of the job as a percentage (from 0 to 100)
-          minimum: 0
-          maximum: 100
-          example: 0
-        status:
-          type: string
-          description: Job status
-          enum:
-          - pending
-          - in-progress
-          - success
-          - failed
-          - draining
-          - paused
-          - cancelled
-          x-enumDescriptions:
-            pending: The background job is waiting in the queue to be processed
-            in-progress: The background job is being processed
-            success: The background job has been successfully processed
-            failed: The background job has failed
-            draining: The background job is replaying deferred live events
-            paused: The background job is paused (e.g. waiting for quota or auth)
-            cancelled: The background job was cancelled by the user
-          example: pending
-        created_at:
-          type: string
-          description: Timestamp when the job was created
-          example: '2026-08-13T11:11:58.077Z'
-        updated_at:
-          type: string
-          description: Timestamp when the job was last updated
-          example: '2026-08-13T11:11:58.077Z'
-      required:
-      - id
-      - workspace_id
-      - type
-      - progress
-      - status
-      - created_at
-      - updated_at
       additionalProperties: false
   securitySchemes:
     ApiKeyAuth:

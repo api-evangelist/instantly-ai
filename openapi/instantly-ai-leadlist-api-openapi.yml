@@ -859,7 +859,6 @@ paths:
       summary: Get verification statistics for a lead list
       tags:
       - LeadList
-      description: Get verification statistics for a lead list
       parameters:
       - schema:
           type: string

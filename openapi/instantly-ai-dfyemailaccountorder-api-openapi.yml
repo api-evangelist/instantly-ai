@@ -53,7 +53,6 @@ paths:
         - The workspace must have an active free trial, paid CRM plan, or Outreach entitlement, and a default payment method.
 
 
-
         Requires one of the following scopes: `dfy_email_account_orders:create`, `dfy_email_account_orders:all`, `all:create`, `all:all`'
       requestBody:
         content:
@@ -823,7 +822,6 @@ paths:
       description: 'This endpoint will generate a list of similar AND available domains based on the provided domain.. It will return a maximum number of 67 suggestions per extension (tld) requested.. All the returned domains will be available for order.. Domains containing trademarks of well-known companies are restricted and cannot be ordered.
 
 
-
         Requires one of the following scopes: `dfy_email_account_orders:create`, `dfy_email_account_orders:all`, `all:create`, `all:all`'
       requestBody:
         content:
@@ -1030,7 +1028,6 @@ paths:
         . Please do not abuse this endpoint and do not use it for anything other than checking availability before ordering a domain.. This request has a rate limit of 30 request per minute, or 900 requests per hour.
 
 
-
         Requires one of the following scopes: `dfy_email_account_orders:create`, `dfy_email_account_orders:all`, `all:create`, `all:all`'
       requestBody:
         content:
@@ -1206,8 +1203,14 @@ paths:
       summary: Get pre-warmed up domains
       tags:
       - DFYEmailAccountOrder
-      description: 'This endpoint will return a list of pre-warmed up domains available for order.<br/>These domains are set up and configured in advance, allowing for quick deployment of email services.<br/>Use this endpoint to retrieve available pre-warmed up domains before placing an order.<br/><br/><b>IMPORTANT: if the endpoint returns a list of empty domains - it''s not a bug, please don''t retry right away or report this as a bug - it simply means that there are no available pre-warmed up domains at the moment.</b>
+      description: 'This endpoint will return a list of pre-warmed up domains available for order.
 
+        These domains are set up and configured in advance, allowing for quick deployment of email services.
+
+        Use this endpoint to retrieve available pre-warmed up domains before placing an order.
+
+
+        IMPORTANT: if the endpoint returns a list of empty domains - it''s not a bug, please don''t retry right away or report this as a bug - it simply means that there are no available pre-warmed up domains at the moment.
 
 
         Requires one of the following scopes: `dfy_email_account_orders:read`, `dfy_email_account_orders:all`, `all:read`, `all:all`'
@@ -1415,7 +1418,6 @@ paths:
       tags:
       - DFYEmailAccountOrder
       description: 'This endpoint will return a list of DFY email accounts ordered
-
 
 
         Requires one of the following scopes: `dfy_email_account_orders:read`, `dfy_email_account_orders:all`, `all:read`, `all:all`'
@@ -1688,7 +1690,6 @@ paths:
       tags:
       - DFYEmailAccountOrder
       description: 'This endpoint will cancel the DFY email accounts based on the provided email addresses. Cancelling permanently deletes all Unibox emails and conversations associated with the cancelled accounts. This cannot be undone.
-
 
 
         Requires one of the following scopes: `dfy_email_account_orders:delete`, `dfy_email_account_orders:all`, `all:delete`, `all:all`'

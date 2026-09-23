@@ -388,7 +388,6 @@ paths:
       description: 'Provides aggregated inbox, spam and category counts for specified test IDs
 
 
-
         Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'
       requestBody:
         content:
@@ -636,7 +635,6 @@ paths:
       tags:
       - InboxPlacementAnalytics
       description: 'Provides deliverability insights for a specific inbox placement test
-
 
 
         Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'
@@ -939,7 +937,6 @@ paths:
       tags:
       - InboxPlacementAnalytics
       description: 'Provides a time series representing the distribution of emails sent to inbox, spam, or category folders for scheduled inbox placement tests.
-
 
 
         Requires one of the following scopes: `inbox_placement_analytics:read`, `inbox_placement_analytics:all`, `all:read`, `all:all`'

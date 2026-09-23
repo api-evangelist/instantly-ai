@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: Explorer Inbox Placement Blacklist And Spam Assassin Report API
+  title: Explorer Inbox Placement Blacklist And Spam Assassin Report…
   description: The entire API V2 documentation is interactive and can be tested here. To the right side of every endpoint you will see a box with an example request. You can click on the "Try it" button to send a request to the server right from the docs. You will need to provide an API key by clicking the `ApiKeyAuth_token` blue text.
   version: 2.0.0
 servers:

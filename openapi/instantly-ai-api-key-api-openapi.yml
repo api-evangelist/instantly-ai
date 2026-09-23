@@ -9,7 +9,7 @@ servers:
 security:
 - ApiKeyAuth: []
 tags:
-- name: APIKey
+- name: API Key
   description: API Key
   x-group: API Key
 paths:
@@ -18,7 +18,7 @@ paths:
       operationId: createAPIKey
       summary: Create api key
       tags:
-      - APIKey
+      - API Key
       description: 'Requires one of the following scopes: `api_keys:create`, `api_keys:all`, `all:create`, `all:all`'
       requestBody:
         content:
@@ -382,7 +382,7 @@ paths:
       operationId: listAPIKey
       summary: List api key
       tags:
-      - APIKey
+      - API Key
       description: 'Requires one of the following scopes: `api_keys:read`, `api_keys:all`, `all:read`, `all:all`'
       parameters:
       - schema:
@@ -551,7 +551,7 @@ paths:
       operationId: deleteAPIKey
       summary: Delete api key
       tags:
-      - APIKey
+      - API Key
       description: 'Requires one of the following scopes: `api_keys:delete`, `api_keys:all`, `all:delete`, `all:all`'
       requestBody:
         content:

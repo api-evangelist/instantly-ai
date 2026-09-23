@@ -1285,7 +1285,6 @@ paths:
       description: 'Resume a webhook that was disabled due to repeated delivery failures
 
 
-
         Requires one of the following scopes: `webhooks:update`, `webhooks:all`, `all:update`, `all:all`'
       parameters:
       - schema:

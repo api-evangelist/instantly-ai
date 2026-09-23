@@ -22,7 +22,6 @@ paths:
       description: 'Return the top matching keyword tokens for a given signal category and keyword field, aggregated from the last 90 days of signal data. Powers the Signals filter autocomplete in the Lead Finder. Unknown (category, field) pairs return 400.
 
 
-
         Requires one of the following scopes: `supersearch_enrichments:read`, `supersearch_enrichments:all`, `all:read`, `all:all`'
       requestBody:
         content:
@@ -201,7 +200,6 @@ paths:
       tags:
       - SuperSearchEnrichment
       description: 'Create an AI enrichment for a resource (list or campaign)
-
 
 
         Requires one of the following scopes: `supersearch_enrichments:create`, `supersearch_enrichments:all`, `all:create`, `all:all`'
@@ -545,7 +543,6 @@ paths:
       tags:
       - SuperSearchEnrichment
       description: 'Get the AI enrichment for a specific resource
-
 
 
         Requires one of the following scopes: `supersearch_enrichments:read`, `supersearch_enrichments:all`, `all:read`, `all:all`'
@@ -1233,7 +1230,6 @@ paths:
       tags:
       - SuperSearchEnrichment
       description: 'Update auto-update and skip settings for a SuperSearch enrichment tied to a specific resource
-
 
 
         Requires one of the following scopes: `supersearch_enrichments:create`, `supersearch_enrichments:all`, `all:create`, `all:all`'
@@ -3374,7 +3370,6 @@ paths:
       description: 'Count the number of leads matching a SuperSearch query without enriching them. This endpoint is intended to estimate lead availability before running an enrichment.
 
 
-
         Requires one of the following scopes: `supersearch_enrichments:read`, `supersearch_enrichments:all`, `all:read`, `all:all`'
       requestBody:
         content:
@@ -4960,7 +4955,6 @@ paths:
       tags:
       - SuperSearchEnrichment
       description: 'Preview the leads matching a SuperSearch query without enriching them
-
 
 
         Requires one of the following scopes: `supersearch_enrichments:read`, `supersearch_enrichments:all`, `all:read`, `all:all`'
@@ -6600,7 +6594,6 @@ paths:
       tags:
       - SuperSearchEnrichment
       description: 'Retrieve the enrichment history for a specific resource
-
 
 
         Requires one of the following scopes: `supersearch_enrichments:read`, `supersearch_enrichments:all`, `all:read`, `all:all`'

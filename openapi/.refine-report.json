@@ -1,14 +1,82 @@
 {
   "provider": "instantly-ai",
   "sources": [
-    "instantly-ai-campaigns-api-openapi.yml"
+    "_original/instantly-ai-api-v2-openapi.json"
   ],
   "outputs": [
-    "instantly-ai-campaigns-api-openapi.yml"
+    "instantly-ai-apikey-api-openapi.yml",
+    "instantly-ai-account-api-openapi.yml",
+    "instantly-ai-accountcampaignmapping-api-openapi.yml",
+    "instantly-ai-analytics-api-openapi.yml",
+    "instantly-ai-auditlog-api-openapi.yml",
+    "instantly-ai-backgroundjob-api-openapi.yml",
+    "instantly-ai-blocklistentry-api-openapi.yml",
+    "instantly-ai-crmactions-api-openapi.yml",
+    "instantly-ai-campaign-api-openapi.yml",
+    "instantly-ai-campaignsubsequence-api-openapi.yml",
+    "instantly-ai-customtag-api-openapi.yml",
+    "instantly-ai-customtagmapping-api-openapi.yml",
+    "instantly-ai-dfyemailaccountorder-api-openapi.yml",
+    "instantly-ai-email-api-openapi.yml",
+    "instantly-ai-emailverification-api-openapi.yml",
+    "instantly-ai-inboxplacementanalytics-api-openapi.yml",
+    "instantly-ai-inboxplacementblacklistandspamassassinreport-api-openapi.yml",
+    "instantly-ai-inboxplacementtest-api-openapi.yml",
+    "instantly-ai-lead-api-openapi.yml",
+    "instantly-ai-leadlabel-api-openapi.yml",
+    "instantly-ai-leadlist-api-openapi.yml",
+    "instantly-ai-oauth-api-openapi.yml",
+    "instantly-ai-supersearchenrichment-api-openapi.yml",
+    "instantly-ai-webhook-api-openapi.yml",
+    "instantly-ai-webhookevent-api-openapi.yml",
+    "instantly-ai-workspace-api-openapi.yml",
+    "instantly-ai-workspacebilling-api-openapi.yml",
+    "instantly-ai-workspacegroupmember-api-openapi.yml",
+    "instantly-ai-workspacemember-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 6 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "2 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "instantly-ai-api-v2-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "superseded outputs removed: instantly-ai-api-key-api-openapi.yml, instantly-ai-audit-log-api-openapi.yml, instantly-ai-background-job-api-openapi.yml, instantly-ai-email-verification-api-openapi.yml, instantly-ai-o-auth-api-openapi.yml \u2026",
+    "apis.yml register: written (+6 apis, 29 total)"
+  ],
+  "skipped": [
+    "_original/instantly-ai-openapi.yml: archived document superseded by a larger archived document",
+    "_original/instantly-ai-api-v2-openapi.yml: archived document superseded by a larger archived document",
+    "instantly-ai-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-accountcampaignmapping-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-analytics-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-api-key-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-audit-log-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-background-job-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-blocklistentry-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-campaign-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-campaignsubsequence-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-crmactions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-customtag-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-customtagmapping-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-dfyemailaccountorder-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-email-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-email-verification-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-inboxplacementanalytics-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-inboxplacementblacklistandspamassassinreport-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-inboxplacementtest-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-lead-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-leadlabel-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-leadlist-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-o-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-supersearchenrichment-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-webhook-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-webhook-event-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-workspace-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-workspacebilling-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-workspacegroupmember-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-workspacemember-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

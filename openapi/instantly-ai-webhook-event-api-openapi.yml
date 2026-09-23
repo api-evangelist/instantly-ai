@@ -9,7 +9,7 @@ servers:
 security:
 - ApiKeyAuth: []
 tags:
-- name: WebhookEvent
+- name: Webhook Event
   description: A webhook event that was sent or attempted to be sent
   x-group: Webhook Event
 paths:
@@ -18,7 +18,7 @@ paths:
       operationId: listWebhookEvent
       summary: List webhook event
       tags:
-      - WebhookEvent
+      - Webhook Event
       description: 'Requires one of the following scopes: `webhook_events:read`, `webhook_events:all`, `all:read`, `all:all`'
       parameters:
       - schema:
@@ -229,7 +229,7 @@ paths:
       operationId: getWebhookEvent
       summary: Get webhook event
       tags:
-      - WebhookEvent
+      - Webhook Event
       description: 'Requires one of the following scopes: `webhook_events:read`, `webhook_events:all`, `all:read`, `all:all`'
       parameters:
       - schema:
@@ -373,7 +373,7 @@ paths:
       operationId: getWebhookEventsSummary
       summary: Get overview aggregates for webhook events
       tags:
-      - WebhookEvent
+      - Webhook Event
       description: Get overview aggregates for webhook events including success/failure rates
       parameters:
       - schema:
@@ -553,7 +553,7 @@ paths:
       operationId: getWebhookEventsSummaryByDate
       summary: Get overview aggregates for webhook events by date
       tags:
-      - WebhookEvent
+      - Webhook Event
       description: Get overview aggregates for webhook events by Date for charts
       parameters:
       - schema:
