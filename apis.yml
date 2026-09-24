@@ -52,6 +52,7 @@ tags:
 - Lead Database
 - Email Verification
 - Webhook
+- A2A
 tags_raw:
 - Cold Email
 - Outbound
@@ -60,6 +61,7 @@ tags_raw:
 - Lead Database
 - Email Verification
 - Webhooks
+- A2A
 created: '2026-05-23'
 modified: '2026-08-13'
 specificationVersion: '0.23'
