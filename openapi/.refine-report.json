@@ -35,7 +35,7 @@
     "instantly-ai-workspacemember-api-openapi.yml"
   ],
   "archived": [
-    "deleted 6 superseded output(s) from the previous generation"
+    "deleted 5 superseded output(s) from the previous generation"
   ],
   "errors": [],
   "warnings": [],
@@ -43,8 +43,8 @@
     "2 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "instantly-ai-api-v2-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "superseded outputs removed: instantly-ai-api-key-api-openapi.yml, instantly-ai-audit-log-api-openapi.yml, instantly-ai-background-job-api-openapi.yml, instantly-ai-email-verification-api-openapi.yml, instantly-ai-o-auth-api-openapi.yml \u2026",
-    "apis.yml register: written (+6 apis, 29 total)"
+    "superseded outputs removed: instantly-ai-api-key-api-openapi.yml, instantly-ai-audit-log-api-openapi.yml, instantly-ai-background-job-api-openapi.yml, instantly-ai-email-verification-api-openapi.yml, instantly-ai-webhook-event-api-openapi.yml",
+    "apis.yml register: written (+5 apis, 29 total)"
   ],
   "skipped": [
     "_original/instantly-ai-openapi.yml: archived document superseded by a larger archived document",
@@ -70,7 +70,7 @@
     "instantly-ai-lead-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "instantly-ai-leadlabel-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "instantly-ai-leadlist-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "instantly-ai-o-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "instantly-ai-oauth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "instantly-ai-supersearchenrichment-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "instantly-ai-webhook-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "instantly-ai-webhook-event-api-openapi.yml: previously refined output, superseded by openapi/_original/",
