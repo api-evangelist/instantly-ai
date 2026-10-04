@@ -44,6 +44,10 @@ accessModel:
     published OpenAPI document a 402 response meaning "the workspace does not have an active paid
     plan". Signup is self-serve, but an API key cannot be exercised without paying.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/instantly-ai.png
+x-docs-platform: mintlify
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-10-03
+x-docs-hosting: vercel
 tags:
 - Cold Email
 - Outbound
@@ -424,6 +428,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - APIKeys
+  tags_raw:
   - API Key
   properties:
   - type: OpenAPI
@@ -438,6 +444,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - Audit Logs
+  tags_raw:
   - Audit Log
   properties:
   - type: OpenAPI
@@ -480,6 +488,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - WebhookEvent
+  tags_raw:
   - Webhook Event
   properties:
   - type: OpenAPI
