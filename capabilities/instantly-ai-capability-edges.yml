@@ -1,0 +1,33 @@
+slug: instantly-ai
+provider: Instantly
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 2
+edges:
+- tag: Campaign
+  spec_file: instantly-ai-campaign-api-openapi.yml
+  capability_id: BC-400.40
+  capability_id_l1: BC-400
+  capability_name: Demand Generation Management
+  confidence: 0.8
+  evidence: POST /api/v2/campaigns createCampaign Create campaign; GET /api/v2/campaigns/analytics getCampaignAnalytics
+  reason: Cold-email outbound campaign lifecycle (create, activate, pause) with campaign analytics — outbound
+    lead-generation campaign management, i.e. demand generation marketing.
+- tag: CampaignSubsequence
+  spec_file: instantly-ai-campaignsubsequence-api-openapi.yml
+  capability_id: BC-400.40
+  capability_id_l1: BC-400
+  capability_name: Demand Generation Management
+  confidence: 0.72
+  evidence: POST /api/v2/subsequences createCampaignSubsequence Create campaign subsequence; GET /api/v2/subsequences/analytics
+  reason: Follow-up sequences within cold-email outbound campaigns, with step/variant analytics — a sub-component
+    of lead-generation campaign execution. Slightly thinner evidence than the Campaign tag.
