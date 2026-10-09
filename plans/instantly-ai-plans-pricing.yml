@@ -207,3 +207,127 @@ plans:
 references:
 - {name: Pricing page, url: 'https://instantly.ai/pricing'}
 - {name: Rate limits, url: 'rate-limits/instantly-ai-rate-limits.yml'}
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  - negotiated
+  - subscription
+  units:
+  - active-user
+  - credit
+  - message
+  - object
+  plans:
+  - name: Growth
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - active-user
+    - message
+    - object
+    periods:
+    - month
+  - name: Hypergrowth
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - active-user
+    - message
+    - object
+    periods:
+    - month
+  - name: Light Speed
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - active-user
+    - message
+    periods:
+    - month
+  - name: Enterprise
+    access: negotiated
+    model: negotiated
+    model_how: stated
+    units:
+    - active-user
+    - message
+    periods: []
+  - name: Growth Credits
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - credit
+    periods:
+    - month
+  - name: Supersonic
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - credit
+    periods:
+    - month
+  - name: Hyper Credits
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - credit
+    periods:
+    - month
+  - name: Enterprise Credits
+    access: negotiated
+    model: negotiated
+    model_how: stated
+    units:
+    - credit
+    periods:
+    - month
+  - name: Starter
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - active-user
+    - credit
+    - message
+    periods:
+    - month
+  - name: Scale
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - active-user
+    - credit
+    - message
+    periods:
+    - month
+  - name: Agency
+    access: other
+    model: subscription
+    model_how: stated
+    units:
+    - active-user
+    - credit
+    - message
+    periods:
+    - month
+  - name: VIP Service
+    access: negotiated
+    model: negotiated
+    model_how: stated
+    units: []
+    periods: []
+  - name: Done-For-You email accounts and domains
+    access: other
+    model: metered
+    model_how: stated
+    units: []
+    periods: []
