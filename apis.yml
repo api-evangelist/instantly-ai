@@ -428,6 +428,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - APIKeys
+  tags_raw:
   - API Key
   properties:
   - type: OpenAPI
@@ -442,6 +444,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - Audit Logs
+  tags_raw:
   - Audit Log
   properties:
   - type: OpenAPI
@@ -484,6 +488,8 @@ apis:
   humanURL: https://developer.instantly.ai/api-reference
   baseURL: https://api.instantly.ai/api/v2
   tags:
+  - WebhookEvent
+  tags_raw:
   - Webhook Event
   properties:
   - type: OpenAPI
