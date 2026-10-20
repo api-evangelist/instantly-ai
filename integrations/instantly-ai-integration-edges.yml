@@ -112,6 +112,38 @@ edges:
     builder: Pipedream repo (component)
   detected_by: sweep-workflow-automation.py
   first_seen: '2026-10-15'
+- partner_name: Agent Skills (own GitHub org)
+  partner: null
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: Agent Skills package
+  evidence: https://github.com/Instantly-ai/instantly-skills
+  channel: provider-built
+  relationship: compatible
+  shape: agent-skills
+  evidence_kind: own-repo
+  degree: skill-repo
+  report_only: true
+  agent_skills:
+    org: instantly-ai
+    current: true
+    repos:
+    - repo: Instantly-ai/instantly-skills
+      archived: false
+      lapsed: false
+      pushed: '2026-08-06'
+  contract_reference:
+    register: 'provider''s own GitHub org (GitHub REST API: repo + git tree holds SKILL.md)'
+    spec_file: null
+    standard: Agent Skills (agentskills.io)
+    role: agent-skills-repo
+    matched_org: instantly-ai
+    matched_by: org-profile-domain:instantly.ai
+    detected_by: sweep-agent-skills.py
+    detected: '2026-10-20'
+  detected_by: sweep-agent-skills.py
+  first_seen: '2026-10-20'
 generated: '2026-10-15'
 method: searched
 source:
@@ -122,3 +154,9 @@ checked:
 - https://github.com/PipedreamHQ/pipedream/tree/d5872355ef27b4efa769f05352f2820c299a456e/components/
 - https://github.com/meltano/hub
 - https://zapier.com/api/v4/apps/
+- https://api.github.com
+- https://claude-plugins.dev/sitemap.xml
+- https://github.com/VoltAgent/awesome-agent-skills
+- https://officialskills.sh/sitemap.xml
+- https://skillsmp.com/sitemap.xml
+- https://www.skills.sh/sitemap.xml
