@@ -1,4 +1,4 @@
-# Instantly (instantly-ai)
+# Instantly
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,228 +64,185 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Instantly is a cold email outbound platform that combines mailbox sending infrastructure, email warmup, a B2B lead database, deliverability tools, and a unified inbox for replies. The Instantly v2 REST API at api.instantly.ai/api/v2 covers campaigns, leads, accounts, email verification, inbox placement tests, webhooks, analytics, API keys, and workspaces, with Bearer token authentication and scoped API keys.
+Instantly is a cold email outbound platform that combines mailbox sending infrastructure, email warmup, a B2B lead database, deliverability tools, and a unified inbox for replies. The Instantly v2 REST API at api.instantly.ai/api/v2 publishes a 173-operation OpenAPI 3.1 covering campaigns and subsequences, leads and lead lists, sending accounts and warmup, email verification, inbox placement tests, SuperSearch enrichment, blocklists, custom tags, audit logs, background jobs, webhooks, analytics, API keys, workspaces and workspace groups. Authentication is a scoped Bearer API key backed by a full OAuth 2.0 authorization server with 178 published scopes, PKCE and dynamic client registration. Instantly also runs a hosted remote MCP server, publishes an A2A agent card, an llms.txt and first-party Agent Skills.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/instantly-ai/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/instantly-ai/refs/heads/main/apis.yml)
+**Areas:** Cold Email · Outbound · Sales · Deliverability · Lead Database · Email Verification · Webhook · A2A
 
-## Tags
+## Instantly on APIs.io
 
-- Cold Email
-- Outbound
-- Sales
-- Deliverability
-- Lead Database
-- Email Verification
-- Webhooks
+Everything profiled for Instantly is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/instantly-ai/](https://apis.io/providers/instantly-ai/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (29)
 
-- **Created:** 2026-05-23
-- **Modified:** 2026-05-23
+- [Instantly Account API](https://apis.io/apis/instantly-ai/instantly-ai-account-api/) — An email account that can be used to send campaigns
+- [Instantly Account Campaign Mapping API](https://apis.io/apis/instantly-ai/instantly-ai-accountcampaignmapping-api/) — Account Campaign Mapping
+- [Instantly Analytics API](https://apis.io/apis/instantly-ai/instantly-ai-analytics-api/) — Endpoints related to analytics
+- [Instantly Block List Entry API](https://apis.io/apis/instantly-ai/instantly-ai-blocklistentry-api/) — A blocked email or domain
+- [Instantly Campaign API](https://apis.io/apis/instantly-ai/instantly-ai-campaign-api/) — A campaign that can be sent to a list of recipients
+- [Instantly Campaign Subsequence API](https://apis.io/apis/instantly-ai/instantly-ai-campaignsubsequence-api/) — A subsequence entity representing a follow-up sequence
+- [Instantly CRM Actions API](https://apis.io/apis/instantly-ai/instantly-ai-crmactions-api/) — CRM related actions
+- [Instantly Custom Tag API](https://apis.io/apis/instantly-ai/instantly-ai-customtag-api/) — A custom tag for organizing and categorizing accounts and campaigns. You can use them as filters in apis that list accounts and campaigns.
+- [Instantly Custom Tag Mapping API](https://apis.io/apis/instantly-ai/instantly-ai-customtagmapping-api/) — This entity represents a tag being assigned to a specific campaign or email account. When an email account is assigned a tag, a new custom tag mapping entry…
+- [Instantly DFY Email Account Order API](https://apis.io/apis/instantly-ai/instantly-ai-dfyemailaccountorder-api/) — A Done-For-You email account order
+- [Instantly Email API](https://apis.io/apis/instantly-ai/instantly-ai-email-api/) — A campaign email, a reply, a manually sent email, or any other email that's visible in the Unibox
+- [Instantly Inbox Placement Analytics API](https://apis.io/apis/instantly-ai/instantly-ai-inboxplacementanalytics-api/) — Analytics data for individual emails in inbox placement tests
+- [Instantly Inbox Placement Blacklist And Spam Assassin Report API](https://apis.io/apis/instantly-ai/instantly-ai-inboxplacementblacklistandspamassassinreport-api/) — Report data for an inbox placement test
+- [Instantly Inbox Placement Test API](https://apis.io/apis/instantly-ai/instantly-ai-inboxplacementtest-api/) — An inbox placement test
+- [Instantly Lead API](https://apis.io/apis/instantly-ai/instantly-ai-lead-api/) — A lead entity representing an individual lead
+- [Instantly Lead Label API](https://apis.io/apis/instantly-ai/instantly-ai-leadlabel-api/) — A custom label for categorizing and managing leads
+- [Instantly Lead List API](https://apis.io/apis/instantly-ai/instantly-ai-leadlist-api/) — A list used to store leads
+- [Instantly Super Search Enrichment API](https://apis.io/apis/instantly-ai/instantly-ai-supersearchenrichment-api/) — An enrichment can take different forms, such as email enrichment or LinkedIn enrichment. Leads may be imported from SuperSearch using the dedicated…
+- [Instantly Webhook API](https://apis.io/apis/instantly-ai/instantly-ai-webhook-api/) — A webhook subscription for receiving event notifications
+- [Instantly Workspace API](https://apis.io/apis/instantly-ai/instantly-ai-workspace-api/) — A workspace entity representing a workspace
+- [Instantly Workspace Billing API](https://apis.io/apis/instantly-ai/instantly-ai-workspacebilling-api/) — Workspace Billing
+- [Instantly Workspace Group Member API](https://apis.io/apis/instantly-ai/instantly-ai-workspacegroupmember-api/) — A member of a workspace group. You can use the endpoints within this entity to manage the members of a workspace group.
+- [Instantly Workspace Member API](https://apis.io/apis/instantly-ai/instantly-ai-workspacemember-api/) — A member of a workspace with associated user details
+- [Instantly O Auth API](https://apis.io/apis/instantly-ai/instantly-ai-oauth-api/) — OAuth authentication endpoints for connecting Google and Microsoft email accounts
+- [Instantly API Key API](https://apis.io/apis/instantly-ai/instantly-ai-api-key-api/) — API Key
+- [Instantly Audit Log API](https://apis.io/apis/instantly-ai/instantly-ai-audit-log-api/) — Audit log records for tracking system activities
+- [Instantly Background Job API](https://apis.io/apis/instantly-ai/instantly-ai-background-job-api/) — A background job that can be used to perform long-running tasks
+- [Instantly Email Verification API](https://apis.io/apis/instantly-ai/instantly-ai-email-verification-api/) — A single email verification
+- [Instantly Webhook Event API](https://apis.io/apis/instantly-ai/instantly-ai-webhook-event-api/) — A webhook event that was sent or attempted to be sent
 
-## APIs
+### Published properties
 
-### Instantly Campaigns API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-REST endpoints to create, list, fetch, update, launch, pause, and schedule cold email campaigns, plus manage sequences, A/B variants, and sender mailbox assignments.
+#### AsyncAPI (1)
 
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/campaign](https://developer.instantly.ai/api-reference/groups/campaign)
-- **Base URL:** `https://api.instantly.ai/api/v2/campaigns`
+Event-driven and webhook contracts.
 
-#### Tags
+- [Instantly Ai Webhooks](https://apis.io/asyncapis/instantly-ai/instantly-ai-webhooks/)
 
-- Campaigns
-- Sequences
+#### GraphQL (1)
 
-#### Properties
+GraphQL schemas.
 
-- [Documentation](https://developer.instantly.ai/api-reference/groups/campaign)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Moved to /providers/instantly-ai/](https://apis.io/graphqls/instantly-ai/instantly-ai-graphql/)
 
-### Instantly Leads API
+#### MCP servers (1)
 
-Endpoints to create, list, fetch, update, and delete leads, manage lead lists, move leads between campaigns, and update lead interest status.
+Model Context Protocol servers that expose the API to agents.
 
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/lead](https://developer.instantly.ai/api-reference/groups/lead)
-- **Base URL:** `https://api.instantly.ai/api/v2/leads`
+- [instantly-ai-mcp.yml](https://apis.io/servers/instantly-ai/instantly-ai-mcp-yml/)
 
-#### Tags
+#### Agentic access (1)
 
-- Leads
-- Contacts
-- Lists
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Properties
+- [Instantly Ai Agentic Access](https://apis.io/agentic-access/instantly-ai/instantly-ai-agentic-access/)
 
-- [Documentation](https://developer.instantly.ai/api-reference/groups/lead)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Collections (2)
 
-### Instantly Accounts API
+Postman and Open Collection request collections.
 
-Endpoints to add, list, update, and remove sender email accounts (SMTP, Gmail, Microsoft), configure per-account sending limits, and toggle warmup state.
+- [Instantly.ai API v2](https://apis.io/collections/instantly-ai/open-instantly-ai/)
+- [Instantly.ai API v2 Campaigns API](https://apis.io/collections/instantly-ai/open-instantly-ai-campaigns-api/)
 
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/account](https://developer.instantly.ai/api-reference/groups/account)
-- **Base URL:** `https://api.instantly.ai/api/v2/accounts`
+#### Overlays (1)
 
-#### Tags
+OpenAPI overlays, including conversational phrasing for each operation.
 
-- Email Accounts
-- Mailboxes
-- Warmup
+- [Instantly Ai Api V2 Overlay](https://apis.io/overlays/instantly-ai/instantly-ai-api-v2-overlay/)
 
-#### Properties
+#### Security (2)
 
-- [Documentation](https://developer.instantly.ai/api-reference/groups/account)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Authentication, trust centre, and vulnerability disclosure.
 
-### Instantly Email Verification API
+- [Instantly Ai Authentication](https://apis.io/security/instantly-ai/instantly-ai-authentication/)
+- [Instantly Ai Domain Security](https://apis.io/security/instantly-ai/instantly-ai-domain-security/)
 
-Single and bulk email address verification endpoints that check syntax, MX records, deliverability, and risk scoring before sending.
+#### OAuth scopes (1)
 
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/email-verification](https://developer.instantly.ai/api-reference/groups/email-verification)
-- **Base URL:** `https://api.instantly.ai/api/v2/email-verification`
+The permissions the API asks for.
 
-#### Tags
+- [Instantly Ai Scopes](https://apis.io/scopes/instantly-ai/instantly-ai-scopes/)
 
-- Verification
-- Deliverability
-- Email
+#### Plans and pricing (1)
 
-#### Properties
+Published plans, tiers and prices.
 
-- [Documentation](https://developer.instantly.ai/api-reference/groups/email-verification)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Instantly Ai Plans Pricing](https://apis.io/plans/instantly-ai/instantly-ai-plans-pricing/)
 
-### Instantly Inbox Placement Test API
+#### Rate limits (1)
 
-Endpoints to run and read inbox placement tests across major mailbox providers, used to measure deliverability and quantify spam-folder risk before launching campaigns.
+Published request limits.
 
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/inbox-placement-test](https://developer.instantly.ai/api-reference/groups/inbox-placement-test)
-- **Base URL:** `https://api.instantly.ai/api/v2/inbox-placement-tests`
+- [Instantly Ai Rate Limits](https://apis.io/rate-limits/instantly-ai/instantly-ai-rate-limits/)
 
-#### Tags
+#### FinOps (1)
 
-- Inbox Placement
-- Deliverability
-- Testing
+What the API costs to run, by operation.
 
-#### Properties
+- [Instantly Ai Finops](https://apis.io/finops/instantly-ai/instantly-ai-finops/)
 
-- [Documentation](https://developer.instantly.ai/api-reference/groups/inbox-placement-test)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+## Where to find this API
 
-### Instantly Webhooks API
-
-CRUD endpoints for webhook subscriptions on campaign, lead, and account events (sent, opened, replied, bounced, unsubscribed) for streaming activity to external systems.
-
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/webhook](https://developer.instantly.ai/api-reference/groups/webhook)
-- **Base URL:** `https://api.instantly.ai/api/v2/webhooks`
-
-#### Tags
-
-- Webhooks
-- Events
-- Subscriptions
-
-#### Properties
-
-- [Documentation](https://developer.instantly.ai/api-reference/groups/webhook)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Instantly Analytics API
-
-Campaign and account-level analytics — sent, open, click, reply, bounce, unsubscribe, and interested-lead counts aggregated over time ranges.
-
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/analytics](https://developer.instantly.ai/api-reference/groups/analytics)
-- **Base URL:** `https://api.instantly.ai/api/v2`
-
-#### Tags
-
-- Analytics
-- Reporting
-- Metrics
-
-#### Properties
-
-- [Documentation](https://developer.instantly.ai/api-reference/groups/analytics)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Instantly API Keys API
-
-Endpoints to create, list, scope, and revoke API keys — the v2 API uses scoped Bearer tokens that can be restricted to specific resource permissions.
-
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/api-key](https://developer.instantly.ai/api-reference/groups/api-key)
-- **Base URL:** `https://api.instantly.ai/api/v2/api-keys`
-
-#### Tags
-
-- API Keys
-- Auth
-- Scopes
-
-#### Properties
-
-- [Documentation](https://developer.instantly.ai/api-reference/groups/api-key)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Instantly Workspaces API
-
-Endpoints for managing workspaces — the multi-tenant boundary used by agencies and large teams to isolate campaigns, accounts, and billing.
-
-- **Human URL:** [https://developer.instantly.ai/api-reference/groups/workspace](https://developer.instantly.ai/api-reference/groups/workspace)
-- **Base URL:** `https://api.instantly.ai/api/v2/workspaces`
-
-#### Tags
-
-- Workspaces
-- Multi-Tenant
-- Agency
-
-#### Properties
-
-- [Documentation](https://developer.instantly.ai/api-reference/groups/workspace)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/instantly-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/instantly-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://instantly.ai)
-- [App](https://app.instantly.ai)
 - [Documentation](https://developer.instantly.ai)
-- [API Reference](https://developer.instantly.ai/api-reference)
-- [Getting Started](https://developer.instantly.ai/getting-started/getting-started)
-- [Authentication](https://developer.instantly.ai/getting-started/authorization)
-- [OpenAPI](https://api.instantly.ai/openapi/api_v2.json) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+- [Getting started](https://developer.instantly.ai/getting-started/getting-started)
+- [API reference](https://developer.instantly.ai/api-reference)
 - [Pricing](https://instantly.ai/pricing)
+- [Sign up](https://app.instantly.ai/auth/signup)
+- [Support](https://help.instantly.ai)
 - [Blog](https://instantly.ai/blog)
-- [Help](https://help.instantly.ai)
-- [Sign Up](https://app.instantly.ai/auth/signup)
-- [Sign In](https://app.instantly.ai/auth/login)
-- [Privacy Policy](https://instantly.ai/privacy-policy)
-- [Terms of Service](https://instantly.ai/terms)
-- [LinkedIn](https://www.linkedin.com/company/instantlyai)
-- [Twitter](https://x.com/Instantlydotai)
-- [YouTube](https://www.youtube.com/@instantly-ai)
-- [L L Ms Txt](https://developer.instantly.ai/llms.txt)
+- [Terms of service](https://instantly.ai/terms)
+- [Privacy policy](https://instantly.ai/privacy-policy)
+- [GitHub](https://github.com/Instantly-ai)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 64.0** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 60.8 |
+| Contract governance | 4.5 |
+| Operational transparency | 50.0 |
+| Developer ergonomics | 78.6 |
+| Access clarity | 76.3 |
+
+**Agent readiness 60.5** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | yes |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/instantly-ai/](https://apis.io/providers/instantly-ai/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Instantly: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/instantly-ai/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
